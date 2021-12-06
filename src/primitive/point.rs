@@ -45,9 +45,9 @@ impl PartialEq for Point {
 }
 
 impl ops::Add<Vector> for Point {
-    type Output = Point;
+    type Output = Self;
 
-    fn add(self, rhs: Vector) -> Point {
+    fn add(self, rhs: Vector) -> Self {
         Self {
             x: self.x + rhs.x(),
             y: self.y + rhs.y(),
@@ -60,16 +60,16 @@ impl ops::Add<Vector> for Point {
 impl ops::Sub for Point {
     type Output = Vector;
 
-    fn sub(self, rhs: Point) -> Vector {
+    fn sub(self, rhs: Self) -> Vector {
         Vector::new(self.x - rhs.x(), self.y - rhs.y(), self.z - rhs.z())
     }
 }
 
 // Conceptually, it's 'moving backwards' by the given Vector.
 impl ops::Sub<Vector> for Point {
-    type Output = Point;
+    type Output = Self;
 
-    fn sub(self, rhs: Vector) -> Point {
+    fn sub(self, rhs: Vector) -> Self {
         Self {
             x: self.x - rhs.x(),
             y: self.y - rhs.y(),

@@ -66,7 +66,7 @@ impl ops::Add<Point> for Vector {
 
 // The resulting Vector represents the change in direction between the two.
 impl ops::Sub for Vector {
-    type Output = Vector;
+    type Output = Self;
 
     fn sub(self, rhs: Self) -> Self {
         Self {
@@ -78,7 +78,7 @@ impl ops::Sub for Vector {
 }
 
 impl ops::Neg for Vector {
-    type Output = Vector;
+    type Output = Self;
 
     fn neg(self) -> Self {
         Self {
