@@ -1,4 +1,8 @@
-use {super::tuple::Tuple, crate::approx_eq::ApproxEq, std::ops};
+use {
+    super::{point::Point, tuple::Tuple},
+    crate::approx_eq::ApproxEq,
+    std::ops,
+};
 
 #[derive(Debug)]
 pub struct Vector {
@@ -52,6 +56,39 @@ impl ops::Add for Vector {
     }
 }
 
+impl ops::Add<Point> for Vector {
+    type Output = Point;
+
+    fn add(self, rhs: Point) -> Point {
+        Point::new(self.x + rhs.x(), self.y + rhs.y(), self.z + rhs.z())
+    }
+}
+
+// The resulting Vector represents the change in direction between the two.
+impl ops::Sub for Vector {
+    type Output = Vector;
+
+    fn sub(self, rhs: Self) -> Self {
+        Self {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
+    }
+}
+
+impl ops::Neg for Vector {
+    type Output = Vector;
+
+    fn neg(self) -> Self {
+        Self {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+        }
+    }
+}
+
 #[test]
 fn can_create_a_vector() {
     assert_eq!(
@@ -79,6 +116,7 @@ fn can_compare_vectors_for_equality() {
     assert_eq!(vector_a, vector_b);
 }
 
+// We test addition between Vector and Point in point.rs
 #[test]
 fn can_add_two_vectors() {
     let vector_a = Vector::new(3.0, -2.0, 5.0);
@@ -87,4 +125,10 @@ fn can_add_two_vectors() {
     assert_eq!(vector_a + vector_b, expected);
 }
 
-// We test addition between Vector and Point in point.rs
+#[test]
+fn can_subtract_a_vector_from_a_vector() {
+    let vector_a = Vector::new(3.0, 2.0, 1.0);
+    let vector_b = Vector::new(5.0, 6.0, 7.0);
+    let expected = Vector::new(-2.0, -4.0, -6.0);
+    assert_eq!(vector_a - vector_b, expected);
+}
