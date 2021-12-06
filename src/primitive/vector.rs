@@ -77,6 +77,9 @@ impl ops::Sub for Vector {
     }
 }
 
+/* Used to get the opposite of a Vector.
+ * Given a vector pointing from a surface toward a light source, we get the vector that points from the light source to the surface.
+ */
 impl ops::Neg for Vector {
     type Output = Self;
 
@@ -131,4 +134,11 @@ fn can_subtract_a_vector_from_a_vector() {
     let vector_b = Vector::new(5.0, 6.0, 7.0);
     let expected = Vector::new(-2.0, -4.0, -6.0);
     assert_eq!(vector_a - vector_b, expected);
+}
+
+#[test]
+fn can_negate_a_vector() {
+    let vector = Vector::new(3.0, 2.0, 1.0);
+    let expected = Vector::new(-3.0, -2.0, -1.0);
+    assert_eq!(-vector, expected);
 }
