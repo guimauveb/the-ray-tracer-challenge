@@ -78,6 +78,42 @@ impl ops::Sub<Vector> for Point {
     }
 }
 
+impl ops::Mul<f64> for Point {
+    type Output = Self;
+
+    fn mul(self, rhs: f64) -> Self {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
+    }
+}
+
+impl ops::Mul<Point> for f64 {
+    type Output = Point;
+
+    fn mul(self, rhs: Point) -> Point {
+        Point {
+            x: self * rhs.x,
+            y: self * rhs.y,
+            z: self * rhs.z,
+        }
+    }
+}
+
+impl ops::Div<f64> for Point {
+    type Output = Self;
+
+    fn div(self, rhs: f64) -> Self {
+        Self {
+            x: self.x / rhs,
+            y: self.y / rhs,
+            z: self.z / rhs,
+        }
+    }
+}
+
 #[test]
 fn can_create_a_point() {
     assert_eq!(
@@ -135,4 +171,28 @@ fn can_subtract_a_vector_from_point() {
     let vector = Vector::new(5.0, 6.0, 7.0);
     let expected = Point::new(-2.0, -4.0, -6.0);
     assert_eq!(point - vector, expected);
+}
+
+#[test]
+fn can_multiply_point_by_scalar() {
+    let point = Point::new(1.0, -2.0, 3.0);
+    let scalar = 3.5_f64;
+    let expected = Point::new(3.5, -7.0, 10.5);
+    assert_eq!(point * scalar, expected);
+}
+
+#[test]
+fn can_multiply_scalar_by_point() {
+    let scalar = 3.5_f64;
+    let point = Point::new(1.0, -2.0, 3.0);
+    let expected = Point::new(3.5, -7.0, 10.5);
+    assert_eq!(scalar * point, expected);
+}
+
+#[test]
+fn can_divide_point_by_scalar() {
+    let point = Point::new(1.0, -2.0, 3.0);
+    let scalar = 2_f64;
+    let expected = Point::new(0.5, -1.0, 1.5);
+    assert_eq!(point / scalar, expected);
 }

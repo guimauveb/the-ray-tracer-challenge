@@ -92,6 +92,42 @@ impl ops::Neg for Vector {
     }
 }
 
+impl ops::Mul<f64> for Vector {
+    type Output = Self;
+
+    fn mul(self, rhs: f64) -> Self {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
+    }
+}
+
+impl ops::Mul<Vector> for f64 {
+    type Output = Vector;
+
+    fn mul(self, rhs: Vector) -> Vector {
+        Vector {
+            x: self * rhs.x,
+            y: self * rhs.y,
+            z: self * rhs.z,
+        }
+    }
+}
+
+impl ops::Div<f64> for Vector {
+    type Output = Self;
+
+    fn div(self, rhs: f64) -> Self {
+        Self {
+            x: self.x / rhs,
+            y: self.y / rhs,
+            z: self.z / rhs,
+        }
+    }
+}
+
 #[test]
 fn can_create_a_vector() {
     assert_eq!(
@@ -141,4 +177,28 @@ fn can_negate_a_vector() {
     let vector = Vector::new(3.0, 2.0, 1.0);
     let expected = Vector::new(-3.0, -2.0, -1.0);
     assert_eq!(-vector, expected);
+}
+
+#[test]
+fn can_multiply_vector_by_scalar() {
+    let vector = Vector::new(1.0, -2.0, 3.0);
+    let scalar = 3.5_f64;
+    let expected = Vector::new(3.5, -7.0, 10.5);
+    assert_eq!(vector * scalar, expected);
+}
+
+#[test]
+fn can_multiply_scalar_by_vector() {
+    let scalar = 3.5_f64;
+    let vector = Vector::new(1.0, -2.0, 3.0);
+    let expected = Vector::new(3.5, -7.0, 10.5);
+    assert_eq!(scalar * vector, expected);
+}
+
+#[test]
+fn can_divide_vector_by_scalar() {
+    let vector = Vector::new(1.0, -2.0, 3.0);
+    let scalar = 2_f64;
+    let expected = Vector::new(0.5, -1.0, 1.5);
+    assert_eq!(vector / scalar, expected);
 }
