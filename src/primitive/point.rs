@@ -4,7 +4,7 @@ use {
     std::ops,
 };
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Point {
     x: f64,
     y: f64,
@@ -113,6 +113,8 @@ impl ops::Div<f64> for Point {
         }
     }
 }
+
+impl Point {}
 
 #[test]
 fn can_create_a_point() {

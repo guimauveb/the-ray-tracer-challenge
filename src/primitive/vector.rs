@@ -4,7 +4,7 @@ use {
     std::ops,
 };
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Vector {
     x: f64,
     y: f64,
@@ -128,6 +128,20 @@ impl ops::Div<f64> for Vector {
     }
 }
 
+impl Vector {
+    pub fn magnitude(&self) -> f64 {
+        f64::sqrt(self.x.powi(2) + self.y.powi(2) + self.z.powi(2))
+    }
+
+    pub fn normalize(&self) -> Self {
+        *self / self.magnitude()
+    }
+
+    pub fn dot(&self, rhs: Self) -> f64 {
+        (self.x * rhs.x) + (self.y * rhs.y) + (self.z * rhs.z)
+    }
+}
+
 #[test]
 fn can_create_a_vector() {
     assert_eq!(
@@ -201,4 +215,50 @@ fn can_divide_vector_by_scalar() {
     let scalar = 2_f64;
     let expected = Vector::new(0.5, -1.0, 1.5);
     assert_eq!(vector / scalar, expected);
+}
+
+#[test]
+fn can_compute_vector_magnitude_1() {
+    assert_eq!(Vector::new(0.0, 1.0, 0.0).magnitude(), 1.0)
+}
+#[test]
+fn can_compute_vector_magnitude_2() {
+    assert_eq!(Vector::new(0.0, 0.0, 1.0).magnitude(), 1.0)
+}
+#[test]
+fn can_compute_vector_magnitude_3() {
+    assert_eq!(Vector::new(1.0, 2.0, 3.0).magnitude(), f64::sqrt(14.0))
+}
+#[test]
+fn can_compute_vector_magnitude_4() {
+    assert_eq!(Vector::new(-1.0, -2.0, -3.0).magnitude(), f64::sqrt(14.0))
+}
+
+#[test]
+fn can_normalize_vector_1() {
+    assert_eq!(
+        Vector::new(4.0, 0.0, 0.0).normalize(),
+        Vector::new(1.0, 0.0, 0.0)
+    );
+}
+#[test]
+fn can_normalize_vector_2() {
+    assert_eq!(
+        Vector::new(1.0, 2.0, 3.0).normalize(),
+        // Vector { 1.0/sqrt(14.0), 2.0/sqrt(14.0), 3.0/sqrt(14.0) }
+        Vector::new(0.26726, 0.53452, 0.80178)
+    );
+}
+#[test]
+fn can_normalize_unit_vector() {
+    let vector = Vector::new(1.0, 2.0, 3.0);
+    let normalized = vector.normalize();
+    assert_eq!(normalized.magnitude(), 1.0)
+}
+
+#[test]
+fn can_compute_vector_dot_product() {
+    let vector_a = Vector::new(1.0, 2.0, 3.0);
+    let vector_b = Vector::new(2.0, 3.0, 4.0);
+    assert_eq!(vector_a.dot(vector_b), 20.0)
 }
