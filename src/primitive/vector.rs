@@ -140,6 +140,14 @@ impl Vector {
     pub fn dot(&self, rhs: Self) -> f64 {
         (self.x * rhs.x) + (self.y * rhs.y) + (self.z * rhs.z)
     }
+
+    pub fn cross(&self, rhs: Self) -> Self {
+        Self {
+            x: (self.y * rhs.z) - (self.z * rhs.y),
+            y: (self.z * rhs.x) - (self.x * rhs.z),
+            z: (self.x * rhs.y) - (self.y * rhs.x),
+        }
+    }
 }
 
 #[test]
@@ -261,4 +269,12 @@ fn can_compute_vector_dot_product() {
     let vector_a = Vector::new(1.0, 2.0, 3.0);
     let vector_b = Vector::new(2.0, 3.0, 4.0);
     assert_eq!(vector_a.dot(vector_b), 20.0)
+}
+
+#[test]
+fn can_compute_vector_cross_product() {
+    let vector_a = Vector::new(1.0, 2.0, 3.0);
+    let vector_b = Vector::new(2.0, 3.0, 4.0);
+    assert_eq!(vector_a.cross(vector_b), Vector::new(-1.0, 2.0, -1.0));
+    assert_eq!(vector_b.cross(vector_a), Vector::new(1.0, -2.0, 1.0));
 }
