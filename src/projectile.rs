@@ -34,7 +34,7 @@ pub fn launch_projecticle() {
     let environment = Environment::new(Vector::new(0.0, -0.1, 0.0), Vector::new(-0.01, 0.0, 0.0));
     let mut projectile = Projectile::new(
         Point::new(0.0, 1.0, 0.0),
-        Vector::new(1.0, 1.0, 0.0).normalize(),
+        Vector::new(6.0, 0.0, 0.0).normalize(),
     );
 
     while projectile.position.y() > 0.0 {

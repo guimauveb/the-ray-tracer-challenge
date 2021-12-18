@@ -114,8 +114,6 @@ impl ops::Div<f64> for Point {
     }
 }
 
-impl Point {}
-
 #[test]
 fn can_create_a_point() {
     assert_eq!(
