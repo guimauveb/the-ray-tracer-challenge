@@ -1,5 +1,7 @@
 use std::fmt::{Display, Formatter, Result};
 
+pub const PPM_MAX_CHARACTERS_PER_LINE: usize = 70;
+
 #[derive(Debug, PartialEq)]
 pub struct Ppm {
     header: String,
@@ -41,6 +43,14 @@ impl Ppm {
 
     pub fn pixel_data(&self) -> &str {
         &self.pixel_data
+    }
+
+    pub fn data(&self) -> String {
+        let mut data = String::with_capacity(self.header.len() + self.pixel_data.len());
+        data.push_str(&self.header);
+        data.push_str(&self.pixel_data);
+
+        data
     }
 }
 

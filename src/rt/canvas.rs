@@ -1,5 +1,8 @@
 use {
-    super::{color::Color, ppm::Ppm},
+    super::{
+        color::Color,
+        ppm::{Ppm, PPM_MAX_CHARACTERS_PER_LINE},
+    },
     crate::primitive::point2d::Point2d,
 };
 
@@ -103,19 +106,46 @@ impl Canvas {
                 );
 
                 // If we haven't reached the end of the line, insert a space.
-                if x != self.width - 1 {
+                if x < self.width - 1 {
                     pixel_data.push(' ');
                 }
             }
             pixel_data.push('\n');
         }
 
+        // TODO - Fix bug
+        // Some image softwares won't read PPM with lines over 70 chars
+        let mut final_pixel_data = String::new();
+        for line in pixel_data.split('\n') {
+            for (i, c) in line.chars().enumerate() {
+                // Insert newline if we arrive at the 70th char
+                if (i > 0) && (i % PPM_MAX_CHARACTERS_PER_LINE == 0) {
+                    let mut j = i;
+                    // To avoid splitting a number(pixel), we go back to a white space to insert a new line
+                    while pixel_data.chars().nth(j).unwrap().is_numeric() {
+                        j -= 1;
+                    }
+                    // When we find a whitespace, we insert a new line
+                    final_pixel_data.push('\n');
+                    // Then, we insert what is after the white space until the current iterated char included
+                    final_pixel_data.push_str(&pixel_data[j + 1..i + 1]);
+                } else {
+                    final_pixel_data.push(c);
+                }
+            }
+            // TODO - Check if we need to insert it (lines len())
+            final_pixel_data.push('\n');
+        }
+
+        // TODO
+        // PPM files need to be terminated by a newline to work with certain image softwares
+
         Ppm::new(
             "P3",
             &self.width.to_string(),
             &self.height.to_string(),
             &MAX_COLOR_VALUE.to_string(),
-            pixel_data,
+            final_pixel_data,
         )
     }
 }
@@ -142,15 +172,14 @@ fn pixel_at_returns_expected_color() {
     assert_eq!(canvas.pixel_at(2, 3), red);
 }
 
-// TODO - Update
-//#[test]
-//fn construct_ppm_header() {
-//    let canvas = Canvas::new(5, 3);
-//    let ppm = canvas.to_ppm();
-//    let ppm_header_lines: Vec<&str> = ppm.header().split("\n").collect();
-//    let expected_ppm_header_lines = vec!["P3", "5 3", "255"];
-//    assert_eq!(ppm_header_lines, expected_ppm_header_lines);
-//}
+#[test]
+fn construct_ppm_header() {
+    let canvas = Canvas::new(5, 3);
+    let ppm = canvas.to_ppm();
+    let ppm_header_lines: Vec<&str> = ppm.header().split("\n").collect();
+    let expected_ppm_header_lines = vec!["P3", "5 3", "255"];
+    assert_eq!(ppm_header_lines, expected_ppm_header_lines);
+}
 
 #[test]
 fn construct_ppm_pixel_data() {
@@ -183,6 +212,7 @@ fn construct_ppm_pixel_data_max_char_per_line() {
     //    "255 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ",
     //    "0 0 0 0 0 0 0 128 0 0 0 0 0 0 0",
     //    "0 0 0 0 0 0 0 0 0 0 0 0 0 0 255",
+    //    "",
     //];
     //assert_eq!(pixel_data_lines, expected_pixel_data_lines);
 }
