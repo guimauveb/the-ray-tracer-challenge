@@ -113,32 +113,35 @@ impl Canvas {
             pixel_data.push('\n');
         }
 
-        // TODO - Fix bug
         // Some image softwares won't read PPM with lines over 70 chars
-        let mut final_pixel_data = String::new();
+        /* NOTE - The final PPM pixel_data in which we split lines greater than 70 chars will be the same length as the pixel_data, since we are only
+         * replacing spaces by newlines.*/
+        let mut final_pixel_data = String::with_capacity(pixel_data.len());
         for line in pixel_data.split('\n') {
             for (i, c) in line.chars().enumerate() {
-                // Insert newline if we arrive at the 70th char
+                // Insert newline if we arrive at % 70 char
                 if (i > 0) && (i % PPM_MAX_CHARACTERS_PER_LINE == 0) {
                     let mut j = i;
                     // To avoid splitting a number(pixel), we go back to a white space to insert a new line
                     while pixel_data.chars().nth(j).unwrap().is_numeric() {
+                        final_pixel_data.pop();
                         j -= 1;
                     }
-                    // When we find a whitespace, we insert a new line
+                    // When we have found a whitespace, we insert a new line
                     final_pixel_data.push('\n');
-                    // Then, we insert what is after the white space until the current iterated char included
+                    // Then, we insert what was after the white space (the one before the split number) and until the current iterated char (included).
                     final_pixel_data.push_str(&pixel_data[j + 1..i + 1]);
                 } else {
                     final_pixel_data.push(c);
                 }
             }
+            // PPM files need to be terminated by a newline to work with certain image softwares
             // TODO - Check if we need to insert it (lines len())
             final_pixel_data.push('\n');
         }
 
-        // TODO
-        // PPM files need to be terminated by a newline to work with certain image softwares
+        // Remove final newline (or do not insert it in the first place)
+        final_pixel_data.pop();
 
         Ppm::new(
             "P3",
