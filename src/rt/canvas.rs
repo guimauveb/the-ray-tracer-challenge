@@ -30,7 +30,6 @@ pub struct Canvas {
 
 impl Canvas {
     pub fn new(width: usize, height: usize) -> Self {
-        // TODO - Check for reallocations!
         let mut pixels = Vec::<Pixel>::with_capacity(width * height);
         let default_color = Color::black();
 
@@ -41,6 +40,8 @@ impl Canvas {
                 pixels.push(pixel);
             }
         }
+
+        // assert_eq!(vec.initial_capacity(), vec.final_capacity())
 
         Self {
             width,
@@ -77,33 +78,26 @@ impl Canvas {
         }
     }
 
-    pub fn to_ppm(&self) -> Ppm {
-        // TODO - String::with_capacity to avoid reallocations (compute capacity: char (colors + spaces + new lines)
+    fn build_ppm_pixel_data(&self) -> String {
+        /* Transform the color value originally ranging from 0.0 to 1.0 to a value between 0.0 and 255.0.
+         * Then take the smallest integer greater than the result.
+         * Finally, convert it to a string.*/
+        fn process_color_for_ppm(color: f64) -> String {
+            ((color * MAX_COLOR_VALUE)
+                .clamp(MIN_COLOR_VALUE, MAX_COLOR_VALUE)
+                .ceil() as usize)
+                .to_string()
+        }
+        // TODO - String::with_capacity to avoid reallocations (compute capacity: char (colors + spaces + new lines) -> take maximum possible size of pixel_data.
         let mut pixel_data = String::new();
 
-        // TODO - "process_color" (*MAX_COLOR_VALUE . clamp . ceil etc)
         for y in 0..self.height {
             for x in 0..self.width {
-                pixel_data.push_str(
-                    &((self.pixel_at(x, y).red() * MAX_COLOR_VALUE)
-                        .clamp(MIN_COLOR_VALUE, MAX_COLOR_VALUE)
-                        .ceil() as usize)
-                        .to_string(),
-                );
+                pixel_data.push_str(&process_color_for_ppm(self.pixel_at(x, y).red()));
                 pixel_data.push(' ');
-                pixel_data.push_str(
-                    &((self.pixel_at(x, y).green() * MAX_COLOR_VALUE)
-                        .clamp(MIN_COLOR_VALUE, MAX_COLOR_VALUE)
-                        .ceil() as usize)
-                        .to_string(),
-                );
+                pixel_data.push_str(&process_color_for_ppm(self.pixel_at(x, y).green()));
                 pixel_data.push(' ');
-                pixel_data.push_str(
-                    &((self.pixel_at(x, y).blue() * MAX_COLOR_VALUE)
-                        .clamp(MIN_COLOR_VALUE, MAX_COLOR_VALUE)
-                        .ceil() as usize)
-                        .to_string(),
-                );
+                pixel_data.push_str(&process_color_for_ppm(self.pixel_at(x, y).blue()));
 
                 // If we haven't reached the end of the line, insert a space.
                 if x < self.width - 1 {
@@ -112,43 +106,53 @@ impl Canvas {
             }
             pixel_data.push('\n');
         }
+        pixel_data
+    }
 
-        // Some image softwares won't read PPM with lines over 70 chars
-        /* NOTE - The final PPM pixel_data in which we split lines greater than 70 chars will be the same length as the pixel_data, since we are only
-         * replacing spaces by newlines.*/
-        let mut final_pixel_data = String::with_capacity(pixel_data.len());
-        for line in pixel_data.split('\n') {
+    /* Some image softwares won't read PPM with lines over 70 chars
+     * The final PPM pixel_data in which we split lines greater than 70 chars will be the same length as the pixel_data, since we are only
+     * replacing spaces by newlines.*/
+    fn split_ppm_lines_too_long(&self, pixel_data: &str) -> String {
+        let mut split_pixel_data = String::with_capacity(pixel_data.len());
+        let lines: Vec<&str> = pixel_data.split('\n').collect();
+        let line_count = lines.len();
+
+        for (line_index, line) in lines.into_iter().enumerate() {
             for (i, c) in line.chars().enumerate() {
-                // Insert newline if we arrive at % 70 char
+                // Insert a newline if we arrive at char which position is a multiple of 70.
                 if (i > 0) && (i % PPM_MAX_CHARACTERS_PER_LINE == 0) {
                     let mut j = i;
-                    // To avoid splitting a number(pixel), we go back to a white space to insert a new line
+                    // To avoid splitting a number (pixel), we go back to the white space before it to insert a new line.
                     while pixel_data.chars().nth(j).unwrap().is_numeric() {
-                        final_pixel_data.pop();
+                        split_pixel_data.pop();
                         j -= 1;
                     }
-                    // When we have found a whitespace, we insert a new line
-                    final_pixel_data.push('\n');
+                    // When we have found a whitespace, we insert a new line.
+                    split_pixel_data.push('\n');
                     // Then, we insert what was after the white space (the one before the split number) and until the current iterated char (included).
-                    final_pixel_data.push_str(&pixel_data[j + 1..i + 1]);
+                    split_pixel_data.push_str(&pixel_data[j + 1..i + 1]);
                 } else {
-                    final_pixel_data.push(c);
+                    split_pixel_data.push(c);
                 }
             }
-            // PPM files need to be terminated by a newline to work with certain image softwares
-            // TODO - Check if we need to insert it (lines len())
-            final_pixel_data.push('\n');
+            // Insert a new line unless we've arrived at the last line.
+            if line_index < (line_count - 1) {
+                split_pixel_data.push('\n');
+            }
         }
 
-        // Remove final newline (or do not insert it in the first place)
-        final_pixel_data.pop();
+        split_pixel_data
+    }
 
+    pub fn to_ppm(&self) -> Ppm {
+        let pixel_data = self.build_ppm_pixel_data();
+        let split_pixel_data = self.split_ppm_lines_too_long(&pixel_data);
         Ppm::new(
             "P3",
             &self.width.to_string(),
             &self.height.to_string(),
             &MAX_COLOR_VALUE.to_string(),
-            final_pixel_data,
+            split_pixel_data,
         )
     }
 }
@@ -198,11 +202,17 @@ fn construct_ppm_pixel_data() {
 
     let ppm = canvas.to_ppm();
     let pixel_data_lines: Vec<&str> = ppm.pixel_data().split("\n").collect();
-    println!("{:#?}", &pixel_data_lines);
+    let expected_pixel_data_lines = vec![
+        "255 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+        "0 0 0 0 0 0 0 128 0 0 0 0 0 0 0",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 255",
+        "",
+    ];
+    assert_eq!(pixel_data_lines, expected_pixel_data_lines);
 }
 
 #[test]
-fn construct_ppm_pixel_data_max_char_per_line() {
+fn construct_ppm_pixel_data_lines_too_long_are_split() {
     let mut canvas = Canvas::new(10, 2);
     let color = Color::new(1.0, 0.8, 0.6);
 
@@ -210,17 +220,22 @@ fn construct_ppm_pixel_data_max_char_per_line() {
 
     let ppm = canvas.to_ppm();
     let pixel_data_lines: Vec<&str> = ppm.pixel_data().split("\n").collect();
-    println!("{:#?}", &pixel_data_lines);
-    //let expected_pixel_data_lines = vec![
-    //    "255 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ",
-    //    "0 0 0 0 0 0 0 128 0 0 0 0 0 0 0",
-    //    "0 0 0 0 0 0 0 0 0 0 0 0 0 0 255",
-    //    "",
-    //];
-    //assert_eq!(pixel_data_lines, expected_pixel_data_lines);
+    let expected_pixel_data_lines = vec![
+        "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204",
+        "153 255 204 153 255 204 153 255 204 153 255 204 153",
+        "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204",
+        "153 255 204 153 255 204 153 255 204 153 255 204 153",
+        "",
+    ];
+    assert_eq!(pixel_data_lines, expected_pixel_data_lines);
 }
 
 #[test]
-fn ppm_files_are_terminated_with_a_newline() {
-    // TODO
+fn ppm_files_are_terminated_by_a_newline_character() {
+    let canvas = Canvas::new(5, 3);
+    let ppm = canvas.to_ppm();
+    let pixel_data_lines: Vec<&str> = ppm.pixel_data().split("\n").collect();
+    let last_line = pixel_data_lines[pixel_data_lines.len() - 1];
+    let expected_last_line = "";
+    assert_eq!(last_line, expected_last_line);
 }
