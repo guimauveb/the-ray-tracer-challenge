@@ -109,11 +109,12 @@ impl Canvas {
         pixel_data
     }
 
-    /* Some image softwares won't read PPM with lines over 70 chars
-     * The final PPM pixel_data in which we split lines greater than 70 chars will be the same length as the pixel_data, since we are only
-     * replacing spaces by newlines.*/
+    // Some image softwares won't read PPM with lines over 70 chars.
     fn split_ppm_lines_too_long(&self, pixel_data: &str) -> String {
+        /* The final PPM pixel_data in which we split lines greater than 70 chars will be the same length as the pixel_data, since we are only
+         * replacing spaces by newlines. */
         let mut split_pixel_data = String::with_capacity(pixel_data.len());
+
         let lines: Vec<&str> = pixel_data.split('\n').collect();
         let line_count = lines.len();
 
