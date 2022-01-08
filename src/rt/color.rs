@@ -9,11 +9,11 @@ pub struct Color {
 
 #[allow(dead_code)]
 impl Color {
-    pub fn new(red: f64, green: f64, blue: f64) -> Self {
+    pub const fn new(red: f64, green: f64, blue: f64) -> Self {
         Self { red, green, blue }
     }
 
-    pub fn black() -> Self {
+    pub const fn black() -> Self {
         Self {
             red: 0.0,
             green: 0.0,
@@ -21,7 +21,7 @@ impl Color {
         }
     }
 
-    pub fn white() -> Self {
+    pub const fn white() -> Self {
         Self {
             red: 1.0,
             green: 1.0,
@@ -29,13 +29,13 @@ impl Color {
         }
     }
 
-    pub fn red(&self) -> f64 {
+    pub const fn red(&self) -> f64 {
         self.red
     }
-    pub fn green(&self) -> f64 {
+    pub const fn green(&self) -> f64 {
         self.green
     }
-    pub fn blue(&self) -> f64 {
+    pub const fn blue(&self) -> f64 {
         self.blue
     }
 }

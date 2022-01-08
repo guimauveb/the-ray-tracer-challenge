@@ -5,7 +5,7 @@ pub struct Point2d {
 }
 
 impl Point2d {
-    pub fn new(x: usize, y: usize) -> Self {
+    pub const fn new(x: usize, y: usize) -> Self {
         Self { x, y }
     }
 }

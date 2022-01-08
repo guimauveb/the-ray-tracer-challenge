@@ -16,7 +16,7 @@ pub struct Pixel {
 }
 
 impl Pixel {
-    pub fn new(point: Point2d, color: Color) -> Self {
+    pub const fn new(point: Point2d, color: Color) -> Self {
         Self { point, color }
     }
 }
@@ -51,7 +51,7 @@ impl Canvas {
     }
 
     // Might not be needed
-    pub fn pixels(&self) -> &Vec<Pixel> {
+    pub const fn pixels(&self) -> &Vec<Pixel> {
         &self.pixels
     }
 
@@ -88,9 +88,44 @@ impl Canvas {
                 .ceil() as usize)
                 .to_string()
         }
+
+        fn split_ppm_lines_too_long(pixel_data: &str) -> String {
+            /* The final PPM pixel_data in which we split lines greater than 70 chars will be the same length as the pixel_data, since we are only
+             * replacing spaces by newlines. */
+            let mut split_pixel_data = String::with_capacity(pixel_data.len());
+
+            let lines: Vec<&str> = pixel_data.split('\n').collect();
+            let line_count = lines.len();
+
+            for (line_index, line) in lines.into_iter().enumerate() {
+                for (i, c) in line.chars().enumerate() {
+                    // Insert a newline if we arrive at a char which position is a multiple of 70.
+                    if (i > 0) && (i % PPM_MAX_CHARACTERS_PER_LINE == 0) {
+                        let mut j = i;
+                        // To avoid splitting a number (pixel), we go back to the white space before it to insert a new line.
+                        while pixel_data.chars().nth(j).unwrap().is_numeric() {
+                            split_pixel_data.pop();
+                            j -= 1;
+                        }
+                        // When we have found a whitespace, we insert a new line.
+                        split_pixel_data.push('\n');
+                        // Then, we insert what was after the white space (the one before the split number) and until the current iterated char (included).
+                        split_pixel_data.push_str(&pixel_data[(j + 1)..=i]);
+                    } else {
+                        split_pixel_data.push(c);
+                    }
+                }
+                // Insert a new line unless we've arrived at the last line.
+                if line_index < (line_count - 1) {
+                    split_pixel_data.push('\n');
+                }
+            }
+
+            split_pixel_data
+        }
+
         // TODO - String::with_capacity to avoid reallocations (compute capacity: char (colors + spaces + new lines) -> take maximum possible size of pixel_data.
         let mut pixel_data = String::new();
-
         for y in 0..self.height {
             for x in 0..self.width {
                 pixel_data.push_str(&process_color_for_ppm(self.pixel_at(x, y).red()));
@@ -106,54 +141,20 @@ impl Canvas {
             }
             pixel_data.push('\n');
         }
-        pixel_data
+
+        split_ppm_lines_too_long(&pixel_data)
     }
 
     // Some image softwares won't read PPM with lines over 70 chars.
-    fn split_ppm_lines_too_long(&self, pixel_data: &str) -> String {
-        /* The final PPM pixel_data in which we split lines greater than 70 chars will be the same length as the pixel_data, since we are only
-         * replacing spaces by newlines. */
-        let mut split_pixel_data = String::with_capacity(pixel_data.len());
-
-        let lines: Vec<&str> = pixel_data.split('\n').collect();
-        let line_count = lines.len();
-
-        for (line_index, line) in lines.into_iter().enumerate() {
-            for (i, c) in line.chars().enumerate() {
-                // Insert a newline if we arrive at char which position is a multiple of 70.
-                if (i > 0) && (i % PPM_MAX_CHARACTERS_PER_LINE == 0) {
-                    let mut j = i;
-                    // To avoid splitting a number (pixel), we go back to the white space before it to insert a new line.
-                    while pixel_data.chars().nth(j).unwrap().is_numeric() {
-                        split_pixel_data.pop();
-                        j -= 1;
-                    }
-                    // When we have found a whitespace, we insert a new line.
-                    split_pixel_data.push('\n');
-                    // Then, we insert what was after the white space (the one before the split number) and until the current iterated char (included).
-                    split_pixel_data.push_str(&pixel_data[j + 1..i + 1]);
-                } else {
-                    split_pixel_data.push(c);
-                }
-            }
-            // Insert a new line unless we've arrived at the last line.
-            if line_index < (line_count - 1) {
-                split_pixel_data.push('\n');
-            }
-        }
-
-        split_pixel_data
-    }
 
     pub fn to_ppm(&self) -> Ppm {
         let pixel_data = self.build_ppm_pixel_data();
-        let split_pixel_data = self.split_ppm_lines_too_long(&pixel_data);
         Ppm::new(
             "P3",
             &self.width.to_string(),
             &self.height.to_string(),
             &MAX_COLOR_VALUE.to_string(),
-            split_pixel_data,
+            pixel_data,
         )
     }
 }

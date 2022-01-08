@@ -13,7 +13,7 @@ pub struct Environment {
 }
 
 impl Projectile {
-    pub fn new(position: Point, velocity: Vector) -> Self {
+    pub const fn new(position: Point, velocity: Vector) -> Self {
         Self { position, velocity }
     }
     pub fn tick(&self, environment: &Environment) -> Self {
@@ -25,7 +25,7 @@ impl Projectile {
 }
 
 impl Environment {
-    pub fn new(gravity: Vector, wind: Vector) -> Self {
+    pub const fn new(gravity: Vector, wind: Vector) -> Self {
         Self { gravity, wind }
     }
 }

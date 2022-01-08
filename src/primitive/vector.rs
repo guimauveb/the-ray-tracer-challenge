@@ -130,7 +130,10 @@ impl ops::Div<f64> for Vector {
 
 impl Vector {
     pub fn magnitude(&self) -> f64 {
-        f64::sqrt(self.x.powi(2) + self.y.powi(2) + self.z.powi(2))
+        f64::sqrt(
+            self.z
+                .mul_add(self.z, self.y.mul_add(self.y, self.x.powi(2))),
+        )
     }
 
     pub fn normalize(&self) -> Self {
@@ -138,7 +141,8 @@ impl Vector {
     }
 
     pub fn dot(&self, rhs: Self) -> f64 {
-        (self.x * rhs.x) + (self.y * rhs.y) + (self.z * rhs.z)
+        //(self.x * rhs.x) + (self.y * rhs.y) + (self.z * rhs.z)
+        self.z.mul_add(rhs.z, self.x.mul_add(rhs.x, self.y * rhs.y))
     }
 
     pub fn cross(&self, rhs: Self) -> Self {
