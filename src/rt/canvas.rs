@@ -1,83 +1,54 @@
-use {
-    super::{
-        color::Color,
-        ppm::{Ppm, PPM_MAX_CHARACTERS_PER_LINE},
-    },
-    crate::primitive::point2d::Point2d,
+use super::{
+    color::Color,
+    ppm::{Ppm, PPM_MAX_CHARACTERS_PER_LINE, PPM_MAX_COLOR_VALUE, PPM_MIN_COLOR_VALUE},
 };
-
-const MIN_COLOR_VALUE: f64 = 0.0;
-const MAX_COLOR_VALUE: f64 = 255.0;
-
-#[derive(Debug)]
-pub struct Pixel {
-    point: Point2d,
-    color: Color,
-}
-
-impl Pixel {
-    pub const fn new(point: Point2d, color: Color) -> Self {
-        Self { point, color }
-    }
-}
 
 #[derive(Debug)]
 pub struct Canvas {
     width: usize,
     height: usize,
-    pixels: Vec<Pixel>,
+    pixels: Vec<Color>,
 }
 
 impl Canvas {
     pub fn new(width: usize, height: usize) -> Self {
-        let mut pixels = Vec::<Pixel>::with_capacity(width * height);
-        //let initial_capacity = pixels.capacity();
-
-        let default_color = Color::black();
-
-        for i in 0..width {
-            for j in 0..height {
-                let point = Point2d::new(i, j);
-                let pixel = Pixel::new(point, default_color);
-                pixels.push(pixel);
-            }
-        }
-
-        //let final_capacity = pixels.capacity();
-        //assert_eq!(initial_capacity, final_capacity);
-
         Self {
             width,
             height,
-            pixels,
+            pixels: vec![Color::black(); width * height],
         }
     }
 
-    // Might not be needed
-    pub const fn pixels(&self) -> &Vec<Pixel> {
+    pub const fn width(&self) -> usize {
+        self.width
+    }
+
+    pub const fn height(&self) -> usize {
+        self.height
+    }
+
+    pub const fn pixels(&self) -> &Vec<Color> {
         &self.pixels
     }
 
     pub fn write_pixel(&mut self, x: usize, y: usize, color: Color) {
-        self.pixels
-            .iter_mut()
-            .find(|pixel| pixel.point.x == x && pixel.point.y == y)
-            .unwrap_or_else(|| panic!("Pixel not found!"))
-            .color = color;
+        let index = self.get_pixel_index(x, y);
+        self.pixels[index] = color;
     }
 
     pub fn pixel_at(&self, x: usize, y: usize) -> Color {
-        self.pixels
-            .iter()
-            .find(|pixel| pixel.point.x == x && pixel.point.y == y)
-            .unwrap_or_else(|| panic!("Pixel not found!"))
-            .color
+        let index = self.get_pixel_index(x, y);
+        self.pixels[index]
+    }
+
+    fn get_pixel_index(&self, x: usize, y: usize) -> usize {
+        y * self.width + x
     }
 
     // Bonus
     pub fn set_all_pixels_to_color(&mut self, color: Color) {
-        for pixel in &mut self.pixels {
-            pixel.color = color;
+        for i in 0..self.pixels().len() {
+            self.pixels[i] = color;
         }
     }
 
@@ -86,12 +57,13 @@ impl Canvas {
          * Then take the smallest integer greater than the result.
          * Finally, convert it to a string.*/
         fn process_color_for_ppm(color: f64) -> String {
-            ((color * MAX_COLOR_VALUE)
-                .clamp(MIN_COLOR_VALUE, MAX_COLOR_VALUE)
+            ((color * PPM_MAX_COLOR_VALUE)
+                .clamp(PPM_MIN_COLOR_VALUE, PPM_MAX_COLOR_VALUE)
                 .ceil() as usize)
                 .to_string()
         }
 
+        // NOTE - Could certainly be improved
         fn split_ppm_lines_too_long(pixel_data: &str) -> String {
             /* The final PPM pixel_data in which we split lines greater than 70 chars will be the same length as the pixel_data, since we are only
              * replacing spaces by newlines. */
@@ -127,15 +99,21 @@ impl Canvas {
             split_pixel_data
         }
 
-        // TODO - String::with_capacity to avoid reallocations (compute capacity: char (colors + spaces + new lines) -> take maximum possible size of pixel_data.
+        // TODO - String::with_capacity to avoid reallocations (compute capacity: char (colors + spaces + new lines) -> take maximum possible size of pixel_data?
         let mut pixel_data = String::new();
         for y in 0..self.height {
             for x in 0..self.width {
-                pixel_data.push_str(&process_color_for_ppm(self.pixel_at(x, y).red()));
+                pixel_data.push_str(&process_color_for_ppm(
+                    self.pixels[y * self.width + x].red(),
+                ));
                 pixel_data.push(' ');
-                pixel_data.push_str(&process_color_for_ppm(self.pixel_at(x, y).green()));
+                pixel_data.push_str(&process_color_for_ppm(
+                    self.pixels[y * self.width + x].green(),
+                ));
                 pixel_data.push(' ');
-                pixel_data.push_str(&process_color_for_ppm(self.pixel_at(x, y).blue()));
+                pixel_data.push_str(&process_color_for_ppm(
+                    self.pixels[y * self.width + x].blue(),
+                ));
 
                 // If we haven't reached the end of the line, insert a space.
                 if x < self.width - 1 {
@@ -155,7 +133,7 @@ impl Canvas {
             "P3",
             &self.width.to_string(),
             &self.height.to_string(),
-            &MAX_COLOR_VALUE.to_string(),
+            &PPM_MAX_COLOR_VALUE.to_string(),
             pixel_data,
         )
     }
@@ -170,8 +148,9 @@ fn canvas_is_of_correct_size() {
 #[test]
 fn canvas_pixels_are_black_by_default() {
     let canvas = Canvas::new(16, 8);
-    for pixel in canvas.pixels() {
-        assert_eq!(pixel.color, Color::black());
+    let black = Color::black();
+    for &pixel in canvas.pixels() {
+        assert_eq!(pixel, black);
     }
 }
 

@@ -1,4 +1,7 @@
-use crate::primitive::{point::Point, tuple::Tuple, vector::Vector};
+use crate::{
+    primitive::{point::Point, tuple::Tuple, vector::Vector},
+    rt::{canvas::Canvas, color::Color},
+};
 
 #[derive(Debug)]
 pub struct Projectile {
@@ -16,11 +19,10 @@ impl Projectile {
     pub const fn new(position: Point, velocity: Vector) -> Self {
         Self { position, velocity }
     }
-    pub fn tick(&self, environment: &Environment) -> Self {
-        Self {
-            position: self.position + self.velocity,
-            velocity: self.velocity + environment.gravity + environment.wind,
-        }
+
+    pub fn tick(&mut self, environment: &Environment) {
+        self.position = self.position + self.velocity;
+        self.velocity = self.velocity + environment.gravity + environment.wind;
     }
 }
 
@@ -30,15 +32,28 @@ impl Environment {
     }
 }
 
-pub fn launch_projecticle() {
-    let environment = Environment::new(Vector::new(0.0, -0.1, 0.0), Vector::new(-0.01, 0.0, 0.0));
-    let mut projectile = Projectile::new(
-        Point::new(0.0, 1.0, 0.0),
-        Vector::new(6.0, 0.0, 0.0).normalize(),
-    );
+pub fn launch_projecticle() -> Result<(), std::io::Error> {
+    let start = Point::new(0.0, 1.0, 0.0);
+    let velocity = Vector::new(1.0, 1.8, 0.0).normalize() * 11.25;
+    let mut projectile = Projectile::new(start, velocity);
+
+    let gravity = Vector::new(0.0, -0.1, 0.0);
+    let wind = Vector::new(-0.01, 0.0, 0.0);
+    let environment = Environment::new(gravity, wind);
+
+    let mut canvas = Canvas::new(900, 550);
+    let projectile_color = Color::new(0.0, 0.0, 1.0);
 
     while projectile.position.y() > 0.0 {
-        println!("Projectile position: {:#?}", &projectile.position);
-        projectile = projectile.tick(&environment);
+        canvas.write_pixel(
+            projectile.position.x() as usize,
+            canvas.height() - (projectile.position.y() as usize),
+            projectile_color,
+        );
+        projectile.tick(&environment);
     }
+
+    let ppm = canvas.to_ppm();
+    ppm.save_to_disk("projectile")?;
+    Ok(())
 }

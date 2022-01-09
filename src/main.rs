@@ -5,5 +5,5 @@ pub mod projectile;
 pub mod rt;
 
 fn main() {
-    //projectile::launch_projecticle();
+    projectile::launch_projecticle().unwrap();
 }
