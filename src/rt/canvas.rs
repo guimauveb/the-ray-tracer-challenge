@@ -31,6 +31,8 @@ pub struct Canvas {
 impl Canvas {
     pub fn new(width: usize, height: usize) -> Self {
         let mut pixels = Vec::<Pixel>::with_capacity(width * height);
+        //let initial_capacity = pixels.capacity();
+
         let default_color = Color::black();
 
         for i in 0..width {
@@ -41,7 +43,8 @@ impl Canvas {
             }
         }
 
-        // assert_eq!(vec.initial_capacity(), vec.final_capacity())
+        //let final_capacity = pixels.capacity();
+        //assert_eq!(initial_capacity, final_capacity);
 
         Self {
             width,
@@ -103,7 +106,7 @@ impl Canvas {
                     if (i > 0) && (i % PPM_MAX_CHARACTERS_PER_LINE == 0) {
                         let mut j = i;
                         // To avoid splitting a number (pixel), we go back to the white space before it to insert a new line.
-                        while pixel_data.chars().nth(j).unwrap().is_numeric() {
+                        while line.chars().nth(j).unwrap().is_numeric() {
                             split_pixel_data.pop();
                             j -= 1;
                         }
@@ -142,10 +145,9 @@ impl Canvas {
             pixel_data.push('\n');
         }
 
+        // Some image softwares won't read PPM with lines that are more than 70 characters long.
         split_ppm_lines_too_long(&pixel_data)
     }
-
-    // Some image softwares won't read PPM with lines over 70 chars.
 
     pub fn to_ppm(&self) -> Ppm {
         let pixel_data = self.build_ppm_pixel_data();
@@ -186,7 +188,7 @@ fn construct_ppm_header() {
     let canvas = Canvas::new(5, 3);
     let ppm = canvas.to_ppm();
     let ppm_header_lines: Vec<&str> = ppm.header().split("\n").collect();
-    let expected_ppm_header_lines = vec!["P3", "5 3", "255"];
+    let expected_ppm_header_lines = vec!["P3", "5 3", "255", ""];
     assert_eq!(ppm_header_lines, expected_ppm_header_lines);
 }
 

@@ -1,4 +1,8 @@
-use std::fmt::{Display, Formatter, Result};
+use std::{
+    fmt::{Display, Formatter, Result},
+    fs::File,
+    io::prelude::*,
+};
 
 pub const PPM_MAX_CHARACTERS_PER_LINE: usize = 70;
 
@@ -16,7 +20,6 @@ impl Ppm {
         max_color_value: &str,
         pixel_data: String,
     ) -> Self {
-        // TODO - Check for reallocations!
         let mut header = String::with_capacity(
             identifier.len()
                 + "\n".len()
@@ -24,8 +27,12 @@ impl Ppm {
                 + "\n".len()
                 + height.len()
                 + "\n".len()
-                + max_color_value.len(),
+                + max_color_value.len()
+                + "\n".len(),
         );
+
+        //let initial_capacity = header.capacity();
+
         header.push_str(identifier);
         header.push('\n');
         header.push_str(width);
@@ -33,6 +40,10 @@ impl Ppm {
         header.push_str(height);
         header.push('\n');
         header.push_str(max_color_value);
+        header.push('\n');
+
+        //let final_capacity = header.capacity();
+        //assert_eq!(initial_capacity, final_capacity);
 
         Self { header, pixel_data }
     }
@@ -51,6 +62,12 @@ impl Ppm {
         data.push_str(&self.pixel_data);
 
         data
+    }
+
+    pub fn save_to_disk(&self, filename: &str) -> std::io::Result<()> {
+        let mut file = File::create(filename.to_string() + ".ppm")?;
+        file.write_all(self.data().as_bytes())?;
+        Ok(())
     }
 }
 
