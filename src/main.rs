@@ -5,5 +5,7 @@ pub mod projectile;
 pub mod rt;
 
 fn main() {
-    projectile::launch_projecticle().unwrap();
+    if let Err(e) = projectile::launch_projecticle() {
+        println!("{:#?}", e);
+    }
 }
