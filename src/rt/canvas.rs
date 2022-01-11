@@ -62,20 +62,17 @@ impl ToPPM for Canvas {
             .to_string()
     }
 
-    // NOTE - Could certainly be improved -> Avoid creating "lines" (vec of string representing lines) then a final string
     fn split_lines_too_long(pixel_data: &str) -> String {
-        // Create a vec with 1 string that will contain the split lines
-        let mut lines: Vec<String> = vec![String::new()];
+        let mut lines = String::with_capacity(pixel_data.len());
 
         let mut it_lines = pixel_data.split('\n').peekable();
+        let mut last_line_start_index: usize = 0;
+
         while let Some(line) = it_lines.next() {
             let mut it_colors = line.split(' ').peekable();
             while let Some(color) = it_colors.next() {
-                let last_line_index = lines.len() - 1;
-                let last_line_length = lines[last_line_index].len();
-
-                lines[last_line_index].push_str(color);
-
+                let last_line_length = &lines[last_line_start_index..].len();
+                lines.push_str(color);
                 if let Some(next_color) = it_colors.peek() {
                     // can_insert_next_color_into_line is true if we can insert a space and the next color without exceeding 70 chars
                     // If true, insert a space, else insert a new line.
@@ -83,31 +80,20 @@ impl ToPPM for Canvas {
                         (last_line_length + color.len() + 1 + next_color.len())
                             < PPM_MAX_CHARACTERS_PER_LINE;
                     if can_insert_next_color_into_line {
-                        lines[last_line_index].push(' ');
+                        lines.push(' ');
                     } else {
-                        lines.push(String::new());
+                        lines.push('\n');
+                        last_line_start_index = lines.len() - 1;
                     }
                 }
             }
 
             if it_lines.peek().is_some() {
-                lines.push(String::new());
+                lines.push('\n');
+                last_line_start_index = lines.len() - 1;
             }
         }
-
-        // Join the vector of split lines into a final string
-        // TODO - Map directly pixel_data to the "final" string result and avoid the Vec<String> of lines
         lines
-            .iter()
-            .enumerate()
-            .map(|(i, s)| {
-                return if i < lines.len() - 1 {
-                    s.to_string() + "\n"
-                } else {
-                    s.to_string()
-                };
-            })
-            .collect()
     }
 
     fn build_pixel_data(&self) -> String {
