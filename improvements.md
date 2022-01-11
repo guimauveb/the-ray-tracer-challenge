@@ -3,7 +3,7 @@
 - Canvas implementation
 - Avoid allocations (String::with_capacity when possible, and check for reallocations!)
 
-- Exemple of multiple iterations until we got an acceptable algo :
+- Exemple of multiple iterations until we got an acceptable algo (measure performance!) :
 ```
 First try (ugly but working, a bit slow):
     fn split_ppm_lines_too_long(pixel_data: &str) -> String {

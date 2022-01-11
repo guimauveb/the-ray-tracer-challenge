@@ -1,6 +1,6 @@
 use crate::{
     primitive::{point::Point, tuple::Tuple, vector::Vector},
-    rt::{canvas::Canvas, color::Color},
+    rt::{canvas::Canvas, color::Color, to_ppm::ToPPM},
 };
 
 #[derive(Debug)]
@@ -42,7 +42,7 @@ pub fn launch_projecticle() -> Result<(), std::io::Error> {
     let environment = Environment::new(gravity, wind);
 
     let mut canvas = Canvas::new(900, 550);
-    let projectile_color = Color::new(0.0, 0.0, 1.0);
+    let projectile_color = Color::new(1.0, 0.0, 0.0);
 
     while projectile.position.y() > 0.0 {
         canvas.write_pixel(

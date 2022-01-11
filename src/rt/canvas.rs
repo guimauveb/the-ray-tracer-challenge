@@ -1,6 +1,7 @@
 use super::{
     color::Color,
     ppm::{Ppm, PPM_MAX_CHARACTERS_PER_LINE, PPM_MAX_COLOR_VALUE, PPM_MIN_COLOR_VALUE},
+    to_ppm::ToPPM,
 };
 
 #[derive(Debug)]
@@ -51,85 +52,80 @@ impl Canvas {
             self.pixels[i] = color;
         }
     }
+}
 
-    // TODO - Trait ToPPM
-    fn build_ppm_pixel_data(&self) -> String {
-        /* Transform the color value originally ranging from 0.0 to 1.0 to a value between 0.0 and 255.0.
-         * Then take the smallest integer greater than the result.
-         * Finally, convert it to a string.*/
-        fn process_color_for_ppm(color: f64) -> String {
-            ((color * PPM_MAX_COLOR_VALUE)
-                .clamp(PPM_MIN_COLOR_VALUE, PPM_MAX_COLOR_VALUE)
-                .ceil() as usize)
-                .to_string()
-        }
+impl ToPPM for Canvas {
+    fn process_color(color: f64) -> String {
+        ((color * PPM_MAX_COLOR_VALUE)
+            .clamp(PPM_MIN_COLOR_VALUE, PPM_MAX_COLOR_VALUE)
+            .ceil() as usize)
+            .to_string()
+    }
 
-        // NOTE - Could certainly be improved -> Avoid creating "lines" (vec of string representing lines) then a final string
-        fn split_ppm_lines_too_long(pixel_data: &str) -> String {
-            /* NOTE (good to known when we get rid a the Vec<String>)
-             * The final PPM pixel_data in which we split lines greater than 70 chars will be the same length as the pixel_data, since we are only
-             * replacing spaces by newlines. */
+    // NOTE - Could certainly be improved -> Avoid creating "lines" (vec of string representing lines) then a final string
+    fn split_lines_too_long(pixel_data: &str) -> String {
+        // Create a vec with 1 string that will contain the split lines
+        let mut lines: Vec<String> = vec![String::new()];
 
-            // Create a vec with 1 string that will contain the split lines
-            let mut lines: Vec<String> = vec![String::new()];
+        let mut it_lines = pixel_data.split('\n').peekable();
+        while let Some(line) = it_lines.next() {
+            let mut it_colors = line.split(' ').peekable();
+            while let Some(color) = it_colors.next() {
+                let last_line_index = lines.len() - 1;
+                let last_line_length = lines[last_line_index].len();
 
-            let mut it_lines = pixel_data.split('\n').peekable();
-            while let Some(line) = it_lines.next() {
-                let mut it_colors = line.split(' ').peekable();
-                while let Some(color) = it_colors.next() {
-                    let last_line_index = lines.len() - 1;
-                    let current_line_length = lines[last_line_index].len();
+                // If the current line would exceed 70 char when appended with the current color, insert the color in a new line.
+                if (color.len() + last_line_length) > PPM_MAX_CHARACTERS_PER_LINE {
+                    lines.push(color.to_string());
+                // Else append the color to the current line
+                } else {
+                    lines[last_line_index].push_str(color);
 
-                    // If the current line would exceed 70 char when appended with the current color, insert the color in a new line.
-                    if (color.len() + current_line_length) > PPM_MAX_CHARACTERS_PER_LINE {
-                        lines.push(color.to_string());
-                    // Else append the color to the current line
-                    } else {
-                        lines[last_line_index].push_str(color);
-
-                        if let Some(next_color) = it_colors.peek() {
-                            let can_insert_next_color_into_line =
-                                (current_line_length + color.len() + 1 + next_color.len())
-                                    < PPM_MAX_CHARACTERS_PER_LINE;
-                            if can_insert_next_color_into_line {
-                                lines[last_line_index].push(' ');
-                            } else {
-                                lines.push(String::new());
-                            }
+                    if let Some(next_color) = it_colors.peek() {
+                        // can_insert_next_color_into_line is true if we can insert a space and the next color without exceeding 70 chars
+                        let can_insert_next_color_into_line =
+                            (last_line_length + color.len() + 1 + next_color.len())
+                                < PPM_MAX_CHARACTERS_PER_LINE;
+                        if can_insert_next_color_into_line {
+                            lines[last_line_index].push(' ');
+                        } else {
+                            lines.push(String::new());
                         }
                     }
                 }
-
-                if it_lines.peek().is_some() {
-                    lines.push(String::new());
-                }
             }
 
-            // Join the vector of split lines into a final string
-            // TODO - Map directly pixel_data to the "final" string result and avoid the Vec<String> of lines
-            lines
-                .iter()
-                .enumerate()
-                .map(|(i, s)| {
-                    return if i < lines.len() - 1 {
-                        s.to_string() + "\n"
-                    } else {
-                        s.to_string()
-                    };
-                })
-                .collect()
+            if it_lines.peek().is_some() {
+                lines.push(String::new());
+            }
         }
 
+        // Join the vector of split lines into a final string
+        // TODO - Map directly pixel_data to the "final" string result and avoid the Vec<String> of lines
+        lines
+            .iter()
+            .enumerate()
+            .map(|(i, s)| {
+                return if i < lines.len() - 1 {
+                    s.to_string() + "\n"
+                } else {
+                    s.to_string()
+                };
+            })
+            .collect()
+    }
+
+    fn build_pixel_data(&self) -> String {
         // TODO - String::with_capacity to avoid reallocations (compute capacity: char (colors + spaces + new lines) -> take maximum possible size of pixel_data?
         let mut pixel_data = String::new();
         for y in 0..self.height {
             for x in 0..self.width {
                 let index = self.get_pixel_index(x, y);
-                pixel_data.push_str(&process_color_for_ppm(self.pixels[index].red()));
+                pixel_data.push_str(&Self::process_color(self.pixels[index].red()));
                 pixel_data.push(' ');
-                pixel_data.push_str(&process_color_for_ppm(self.pixels[index].green()));
+                pixel_data.push_str(&Self::process_color(self.pixels[index].green()));
                 pixel_data.push(' ');
-                pixel_data.push_str(&process_color_for_ppm(self.pixels[index].blue()));
+                pixel_data.push_str(&Self::process_color(self.pixels[index].blue()));
 
                 // If we haven't reached the end of the line, insert a space.
                 if x < self.width - 1 {
@@ -140,11 +136,11 @@ impl Canvas {
         }
 
         // Some image softwares won't read PPM with lines that are more than 70 characters long.
-        split_ppm_lines_too_long(&pixel_data)
+        Self::split_lines_too_long(&pixel_data)
     }
 
-    pub fn to_ppm(&self) -> Ppm {
-        let pixel_data = self.build_ppm_pixel_data();
+    fn to_ppm(&self) -> Ppm {
+        let pixel_data = self.build_pixel_data();
         Ppm::new(
             "P3",
             &self.width.to_string(),
