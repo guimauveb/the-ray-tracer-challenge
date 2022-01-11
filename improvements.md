@@ -88,41 +88,38 @@ Third try: More idiomatic and much faster than the previous ones
 (using iterators and peek()), more readable)
 Though could still be improved by avoiding creating a Vec<String> and then mapping it to a final String
     fn split_ppm_lines_too_long(pixel_data: &str) -> String {
-
-        // Create a vec with 1 string that will contain the split lines
-        let mut lines: Vec<String> = vec![String::new()];
-
         let mut it_lines = pixel_data.split('\n').peekable();
-        while let Some(line) = it_lines.next() {
 
+        while let Some(line) = it_lines.next() {
             let mut it_colors = line.split(' ').peekable();
             while let Some(color) = it_colors.next() {
                 let last_line_index = lines.len() - 1;
-                let current_line_length = lines[last_line_index].len();
+                let last_line_length = lines[last_line_index].len();
 
-                // If the current line would be greater than 70 char when appended with the next color, insert the color in a new line.
-                if (color.len() + current_line_length) > PPM_MAX_CHARACTERS_PER_LINE {
-                    lines.push(color.to_string());
-                // Else append the current line
-                } else {
-                    lines[last_line_index].push_str(color);
-                    if let Some(next_color) = it_colors.peek() {
-                        let can_insert_next_color_into_line =
-                            (current_line_length + color.len() + 1 + next_color.len())
-                                < PPM_MAX_CHARACTERS_PER_LINE;
-                        if can_insert_next_color_into_line {
-                            lines[last_line_index].push(' ');
-                        } else {
-                            lines.push(String::new());
-                        }
+                lines[last_line_index].push_str(color);
+
+                if let Some(next_color) = it_colors.peek() {
+                    // can_insert_next_color_into_line is true if we can insert a space and the next color without exceeding 70 chars
+                    // If true, insert a space, else insert a new line.
+                    let can_insert_next_color_into_line =
+                        (last_line_length + color.len() + 1 + next_color.len())
+                            < PPM_MAX_CHARACTERS_PER_LINE;
+                    if can_insert_next_color_into_line {
+                        lines[last_line_index].push(' ');
+                    } else {
+                        lines.push(String::new());
                     }
                 }
             }
 
-            // If there is a next line, insert a new line in the final string
             if it_lines.peek().is_some() {
                 lines.push(String::new());
             }
+        } 
+
+        // If there is a next line, insert a new line in the final string
+        if it_lines.peek().is_some() {
+            lines.push(String::new());
         }
     }
 ```

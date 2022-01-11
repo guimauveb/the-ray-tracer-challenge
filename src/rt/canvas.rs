@@ -74,23 +74,18 @@ impl ToPPM for Canvas {
                 let last_line_index = lines.len() - 1;
                 let last_line_length = lines[last_line_index].len();
 
-                // If the current line would exceed 70 char when appended with the current color, insert the color in a new line.
-                if (color.len() + last_line_length) > PPM_MAX_CHARACTERS_PER_LINE {
-                    lines.push(color.to_string());
-                // Else append the color to the current line
-                } else {
-                    lines[last_line_index].push_str(color);
+                lines[last_line_index].push_str(color);
 
-                    if let Some(next_color) = it_colors.peek() {
-                        // can_insert_next_color_into_line is true if we can insert a space and the next color without exceeding 70 chars
-                        let can_insert_next_color_into_line =
-                            (last_line_length + color.len() + 1 + next_color.len())
-                                < PPM_MAX_CHARACTERS_PER_LINE;
-                        if can_insert_next_color_into_line {
-                            lines[last_line_index].push(' ');
-                        } else {
-                            lines.push(String::new());
-                        }
+                if let Some(next_color) = it_colors.peek() {
+                    // can_insert_next_color_into_line is true if we can insert a space and the next color without exceeding 70 chars
+                    // If true, insert a space, else insert a new line.
+                    let can_insert_next_color_into_line =
+                        (last_line_length + color.len() + 1 + next_color.len())
+                            < PPM_MAX_CHARACTERS_PER_LINE;
+                    if can_insert_next_color_into_line {
+                        lines[last_line_index].push(' ');
+                    } else {
+                        lines.push(String::new());
                     }
                 }
             }
