@@ -85,19 +85,18 @@ Second try (less ugly but still difficult to read, might be faster than the firs
 
 
 Third try: More idiomatic and much faster than the previous ones
-(using iterators and peek()), more readable)
+(using iterators and Peakable, more readable)
 Though could still be improved by avoiding creating a Vec<String> and then mapping it to a final String
-    fn split_ppm_lines_too_long(pixel_data: &str) -> String {
+    fn split_lines_too_long(pixel_data: &str) -> String {
+        let mut cleaned_pixel_data = String::with_capacity(pixel_data.len());
         let mut it_lines = pixel_data.split('\n').peekable();
-
+        let mut last_line_start_index: usize = 0;
+    
         while let Some(line) = it_lines.next() {
             let mut it_colors = line.split(' ').peekable();
             while let Some(color) = it_colors.next() {
-                let last_line_index = lines.len() - 1;
-                let last_line_length = lines[last_line_index].len();
-
-                lines[last_line_index].push_str(color);
-
+                let last_line_length = &cleaned_pixel_data[last_line_start_index..].len();
+                cleaned_pixel_data.push_str(color);
                 if let Some(next_color) = it_colors.peek() {
                     // can_insert_next_color_into_line is true if we can insert a space and the next color without exceeding 70 chars
                     // If true, insert a space, else insert a new line.
@@ -105,21 +104,19 @@ Though could still be improved by avoiding creating a Vec<String> and then mappi
                         (last_line_length + color.len() + 1 + next_color.len())
                             < PPM_MAX_CHARACTERS_PER_LINE;
                     if can_insert_next_color_into_line {
-                        lines[last_line_index].push(' ');
+                        cleaned_pixel_data.push(' ');
                     } else {
-                        lines.push(String::new());
+                        cleaned_pixel_data.push('\n');
+                        last_line_start_index = cleaned_pixel_data.len() - 1;
                     }
                 }
             }
-
+    
             if it_lines.peek().is_some() {
-                lines.push(String::new());
+                cleaned_pixel_data.push('\n');
+                last_line_start_index = cleaned_pixel_data.len() - 1;
             }
-        } 
-
-        // If there is a next line, insert a new line in the final string
-        if it_lines.peek().is_some() {
-            lines.push(String::new());
         }
+        cleaned_pixel_data
     }
 ```

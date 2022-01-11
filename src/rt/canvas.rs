@@ -62,17 +62,17 @@ impl ToPPM for Canvas {
             .to_string()
     }
 
+    // NOTE - Check tuple windows implementation and compare performance
     fn split_lines_too_long(pixel_data: &str) -> String {
-        let mut lines = String::with_capacity(pixel_data.len());
-
+        let mut cleaned_pixel_data = String::with_capacity(pixel_data.len());
         let mut it_lines = pixel_data.split('\n').peekable();
         let mut last_line_start_index: usize = 0;
 
         while let Some(line) = it_lines.next() {
             let mut it_colors = line.split(' ').peekable();
             while let Some(color) = it_colors.next() {
-                let last_line_length = &lines[last_line_start_index..].len();
-                lines.push_str(color);
+                let last_line_length = &cleaned_pixel_data[last_line_start_index..].len();
+                cleaned_pixel_data.push_str(color);
                 if let Some(next_color) = it_colors.peek() {
                     // can_insert_next_color_into_line is true if we can insert a space and the next color without exceeding 70 chars
                     // If true, insert a space, else insert a new line.
@@ -80,20 +80,20 @@ impl ToPPM for Canvas {
                         (last_line_length + color.len() + 1 + next_color.len())
                             < PPM_MAX_CHARACTERS_PER_LINE;
                     if can_insert_next_color_into_line {
-                        lines.push(' ');
+                        cleaned_pixel_data.push(' ');
                     } else {
-                        lines.push('\n');
-                        last_line_start_index = lines.len() - 1;
+                        cleaned_pixel_data.push('\n');
+                        last_line_start_index = cleaned_pixel_data.len() - 1;
                     }
                 }
             }
 
             if it_lines.peek().is_some() {
-                lines.push('\n');
-                last_line_start_index = lines.len() - 1;
+                cleaned_pixel_data.push('\n');
+                last_line_start_index = cleaned_pixel_data.len() - 1;
             }
         }
-        lines
+        cleaned_pixel_data
     }
 
     fn build_pixel_data(&self) -> String {
@@ -116,7 +116,6 @@ impl ToPPM for Canvas {
             pixel_data.push('\n');
         }
 
-        // Some image softwares won't read PPM with lines that are more than 70 characters long.
         Self::split_lines_too_long(&pixel_data)
     }
 
