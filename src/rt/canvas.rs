@@ -62,7 +62,6 @@ impl ToPPM for Canvas {
             .to_string()
     }
 
-    // NOTE - Check tuple windows implementation and compare performance
     fn split_lines_too_long(pixel_data: &str) -> String {
         let mut cleaned_pixel_data = String::with_capacity(pixel_data.len());
         let mut it_lines = pixel_data.split('\n').peekable();
@@ -87,12 +86,12 @@ impl ToPPM for Canvas {
                     }
                 }
             }
-
             if it_lines.peek().is_some() {
                 cleaned_pixel_data.push('\n');
                 last_line_start_index = cleaned_pixel_data.len() - 1;
             }
         }
+
         cleaned_pixel_data
     }
 
