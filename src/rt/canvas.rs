@@ -32,6 +32,10 @@ impl Canvas {
         &self.pixels
     }
 
+    const fn get_pixel_index(&self, x: usize, y: usize) -> usize {
+        y * self.width + x
+    }
+
     pub fn write_pixel(&mut self, x: usize, y: usize, color: Color) {
         let index = self.get_pixel_index(x, y);
         self.pixels[index] = color;
@@ -40,10 +44,6 @@ impl Canvas {
     pub fn pixel_at(&self, x: usize, y: usize) -> Color {
         let index = self.get_pixel_index(x, y);
         self.pixels[index]
-    }
-
-    fn get_pixel_index(&self, x: usize, y: usize) -> usize {
-        y * self.width + x
     }
 
     // Bonus
