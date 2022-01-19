@@ -67,7 +67,7 @@ impl Ppm {
     }
 
     pub fn save_to_disk(&self, filename: &str) -> std::io::Result<()> {
-        let mut file = File::create(filename.to_string() + ".ppm")?;
+        let mut file = File::create(filename)?;
         file.write_all(self.data().as_bytes())?;
         Ok(())
     }

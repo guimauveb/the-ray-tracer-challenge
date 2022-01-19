@@ -2,7 +2,7 @@ use {
     crate::approx_eq::ApproxEq,
     std::{
         fmt::{Display, Formatter, Result},
-        ops::Index,
+        ops::{Index, IndexMut},
     },
 };
 
@@ -14,6 +14,12 @@ impl<const N: usize> Index<[usize; 2]> for Matrix<{ N }> {
     type Output = f64;
     fn index(&self, index: [usize; 2]) -> &f64 {
         &self.0[index[0]][index[1]]
+    }
+}
+
+impl<const N: usize> IndexMut<[usize; 2]> for Matrix<{ N }> {
+    fn index_mut(&mut self, index: [usize; 2]) -> &mut f64 {
+        &mut self.0[index[0]][index[1]]
     }
 }
 

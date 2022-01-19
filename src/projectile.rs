@@ -54,6 +54,6 @@ pub fn launch_projecticle() -> Result<(), std::io::Error> {
     }
 
     let ppm = canvas.to_ppm();
-    ppm.save_to_disk("projectile")?;
+    ppm.save_to_disk("projectile.ppm")?;
     Ok(())
 }
