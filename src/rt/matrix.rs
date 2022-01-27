@@ -2,7 +2,7 @@ use {
     crate::approx_eq::ApproxEq,
     std::{
         fmt::{Display, Formatter, Result},
-        ops::{Index, IndexMut},
+        ops::{Index, IndexMut, Mul},
     },
 };
 
@@ -35,6 +35,24 @@ impl<const N: usize> PartialEq for Matrix<N> {
 impl<const N: usize> Display for Matrix<N> {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         write!(f, "{:#?}", self.0)
+    }
+}
+
+impl<const N: usize> Mul for Matrix<N> {
+    type Output = Self;
+
+    fn mul(self, rhs: Self) -> Self {
+        let mut result = Self([[0.0; N]; N]);
+        for r in 0..N {
+            for c in 0..N {
+                result[[r, c]] = (0..N)
+                    .map(|n| self[[r, n]] * rhs[[n, c]])
+                    .collect::<Vec<f64>>()
+                    .iter()
+                    .sum();
+            }
+        }
+        result
     }
 }
 
@@ -111,4 +129,30 @@ fn matrix_equality_with_different_matrices() {
     ]);
 
     assert_ne!(A, B);
+}
+
+#[test]
+fn can_multiply_matrices() {
+    const A: Matrix<4_usize> = Matrix::<4_usize>([
+        [1.0, 2.0, 3.0, 4.0],
+        [5.0, 6.0, 7.0, 8.0],
+        [9.0, 8.0, 7.0, 6.0],
+        [5.0, 4.0, 3.0, 2.0],
+    ]);
+
+    const B: Matrix<4_usize> = Matrix::<4_usize>([
+        [-2.0, 1.0, 2.0, 3.0],
+        [3.0, 2.0, 1.0, -1.0],
+        [4.0, 3.0, 6.0, 5.0],
+        [1.0, 2.0, 7.0, 8.0],
+    ]);
+
+    const C: Matrix<4_usize> = Matrix::<4_usize>([
+        [20.0, 22.0, 50.0, 48.0],
+        [44.0, 54.0, 114.0, 108.0],
+        [40.0, 58.0, 110.0, 102.0],
+        [16.0, 26.0, 46.0, 42.0],
+    ]);
+
+    assert_eq!(A * B, C);
 }
