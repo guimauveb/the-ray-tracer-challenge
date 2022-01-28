@@ -1,5 +1,8 @@
 use {
-    crate::approx_eq::ApproxEq,
+    crate::{
+        approx_eq::ApproxEq,
+        primitive::{point::Point, tuple::Tuple, vector::Vector},
+    },
     std::{
         fmt::{Display, Formatter, Result},
         ops::{Index, IndexMut, Mul},
@@ -9,16 +12,18 @@ use {
 #[derive(Debug)]
 pub struct Matrix<const N: usize>([[f64; N]; N]);
 
+type Idx = [usize; 2];
+
 // Index Matrix like this: M[[0, 1]]
-impl<const N: usize> Index<[usize; 2]> for Matrix<{ N }> {
+impl<const N: usize> Index<Idx> for Matrix<{ N }> {
     type Output = f64;
-    fn index(&self, index: [usize; 2]) -> &f64 {
+    fn index(&self, index: Idx) -> &f64 {
         &self.0[index[0]][index[1]]
     }
 }
 
-impl<const N: usize> IndexMut<[usize; 2]> for Matrix<{ N }> {
-    fn index_mut(&mut self, index: [usize; 2]) -> &mut f64 {
+impl<const N: usize> IndexMut<Idx> for Matrix<{ N }> {
+    fn index_mut(&mut self, index: Idx) -> &mut f64 {
         &mut self.0[index[0]][index[1]]
     }
 }
@@ -53,6 +58,39 @@ impl<const N: usize> Mul for Matrix<N> {
             }
         }
         result
+    }
+}
+
+impl Mul<Point> for Matrix<4_usize> {
+    type Output = Point;
+
+    fn mul(self, rhs: Point) -> Point {
+        let mut point = Point::zero();
+        for r in 0..(4_usize - 1) {
+            point[r] = (0..4_usize)
+                .map(|c| self[[r, c]] * if c < 3 { rhs[c] } else { 1.0 }) // rhs[3] is (self.w) is equal to 1.0 but not accessible from the Point type.
+                .collect::<Vec<f64>>()
+                .iter()
+                .sum();
+        }
+        point
+    }
+}
+
+// Might not be needed
+impl Mul<Vector> for Matrix<4_usize> {
+    type Output = Vector;
+
+    fn mul(self, rhs: Vector) -> Vector {
+        let mut vec = Vector::zero();
+        for r in 0..(4_usize - 1) {
+            vec[r] = (0..4_usize)
+                .map(|c| self[[r, c]] * if c < 3 { rhs[c] } else { 0.0 }) // rhs[3] (self.w) is equal to 0.0 but not accessible from the Vector type.
+                .collect::<Vec<f64>>()
+                .iter()
+                .sum();
+        }
+        vec
     }
 }
 
@@ -155,4 +193,35 @@ fn can_multiply_matrices() {
     ]);
 
     assert_eq!(A * B, C);
+}
+
+#[test]
+fn can_multiply_4x4_matrix_and_point() {
+    const A: Matrix<4_usize> = Matrix::<4_usize>([
+        [1.0, 2.0, 3.0, 4.0],
+        [2.0, 4.0, 4.0, 2.0],
+        [8.0, 6.0, 4.0, 1.0],
+        [0.0, 0.0, 0.0, 1.0],
+    ]);
+
+    let point = Point::new(1.0, 2.0, 3.0);
+    let expected = Point::new(18.0, 24.0, 33.0);
+
+    assert_eq!(A * point, expected);
+}
+
+// The book mentions multiplication between a 4x4 matrix and a Tuple, but only gives a test for a mulitplication by a Point (w = 1.0).
+#[test]
+fn can_multiply_4x4_matrix_and_vector() {
+    const A: Matrix<4_usize> = Matrix::<4_usize>([
+        [1.0, 2.0, 3.0, 4.0],
+        [2.0, 4.0, 4.0, 2.0],
+        [8.0, 6.0, 4.0, 1.0],
+        [0.0, 0.0, 0.0, 1.0],
+    ]);
+
+    let vector = Vector::new(1.0, 2.0, 3.0);
+    let expected = Vector::new(14.0, 22.0, 32.0);
+
+    assert_eq!(A * vector, expected);
 }

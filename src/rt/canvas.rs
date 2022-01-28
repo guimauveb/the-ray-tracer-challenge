@@ -70,7 +70,7 @@ impl ToPPM for Canvas {
         while let Some(line) = it_lines.next() {
             let mut it_colors = line.split(' ').peekable();
             while let Some(color) = it_colors.next() {
-                let last_line_length = &cleaned_pixel_data[last_line_start_index..].len();
+                let last_line_length = cleaned_pixel_data[last_line_start_index..].len();
                 cleaned_pixel_data.push_str(color);
                 if let Some(next_color) = it_colors.peek() {
                     // can_insert_next_color_into_line is true if we can insert a space and the next color without exceeding 70 chars

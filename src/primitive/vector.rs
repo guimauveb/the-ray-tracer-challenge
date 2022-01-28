@@ -1,7 +1,7 @@
 use {
     super::{point::Point, tuple::Tuple},
     crate::approx_eq::ApproxEq,
-    std::ops,
+    std::ops::{Add, Div, Index, IndexMut, Mul, Neg, Sub},
 };
 
 #[derive(Debug, Clone, Copy)]
@@ -38,13 +38,39 @@ impl Tuple for Vector {
     }
 }
 
+type Idx = usize;
+
+impl Index<Idx> for Vector {
+    type Output = f64;
+
+    fn index(&self, index: Idx) -> &f64 {
+        match index {
+            0 => &self.x,
+            1 => &self.y,
+            2 => &self.z,
+            _ => panic!("Index out of bound!"),
+        }
+    }
+}
+
+impl IndexMut<Idx> for Vector {
+    fn index_mut(&mut self, index: Idx) -> &mut f64 {
+        match index {
+            0 => &mut self.x,
+            1 => &mut self.y,
+            2 => &mut self.z,
+            _ => panic!("Index out of bound!"),
+        }
+    }
+}
+
 impl PartialEq for Vector {
     fn eq(&self, rhs: &Self) -> bool {
         self.x.approx_eq(rhs.x) && self.y.approx_eq(rhs.y) && self.z.approx_eq(rhs.z)
     }
 }
 
-impl ops::Add for Vector {
+impl Add for Vector {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self {
@@ -56,7 +82,7 @@ impl ops::Add for Vector {
     }
 }
 
-impl ops::Add<Point> for Vector {
+impl Add<Point> for Vector {
     type Output = Point;
 
     fn add(self, rhs: Point) -> Point {
@@ -65,7 +91,7 @@ impl ops::Add<Point> for Vector {
 }
 
 // The resulting Vector represents the change in direction between the two.
-impl ops::Sub for Vector {
+impl Sub for Vector {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self {
@@ -80,7 +106,7 @@ impl ops::Sub for Vector {
 /* Used to get the opposite of a Vector.
  * Given a vector pointing from a surface toward a light source, we get the vector that points from the light source to the surface.
  */
-impl ops::Neg for Vector {
+impl Neg for Vector {
     type Output = Self;
 
     fn neg(self) -> Self {
@@ -92,7 +118,7 @@ impl ops::Neg for Vector {
     }
 }
 
-impl ops::Mul<f64> for Vector {
+impl Mul<f64> for Vector {
     type Output = Self;
 
     fn mul(self, rhs: f64) -> Self {
@@ -104,7 +130,7 @@ impl ops::Mul<f64> for Vector {
     }
 }
 
-impl ops::Mul<Vector> for f64 {
+impl Mul<Vector> for f64 {
     type Output = Vector;
 
     fn mul(self, rhs: Vector) -> Vector {
@@ -116,7 +142,7 @@ impl ops::Mul<Vector> for f64 {
     }
 }
 
-impl ops::Div<f64> for Vector {
+impl Div<f64> for Vector {
     type Output = Self;
 
     fn div(self, rhs: f64) -> Self {

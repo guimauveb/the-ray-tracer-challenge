@@ -1,7 +1,7 @@
 use {
     super::{tuple::Tuple, vector::Vector},
     crate::approx_eq::ApproxEq,
-    std::ops,
+    std::ops::{Add, Div, Index, IndexMut, Mul, Sub},
 };
 
 #[derive(Debug, Clone, Copy)]
@@ -38,13 +38,37 @@ impl Tuple for Point {
     }
 }
 
+impl Index<usize> for Point {
+    type Output = f64;
+
+    fn index(&self, index: usize) -> &f64 {
+        match index {
+            0 => &self.x,
+            1 => &self.y,
+            2 => &self.z,
+            _ => panic!("Index out of bound!"),
+        }
+    }
+}
+
+impl IndexMut<usize> for Point {
+    fn index_mut(&mut self, index: usize) -> &mut f64 {
+        match index {
+            0 => &mut self.x,
+            1 => &mut self.y,
+            2 => &mut self.z,
+            _ => panic!("Index out of bound!"),
+        }
+    }
+}
+
 impl PartialEq for Point {
     fn eq(&self, rhs: &Self) -> bool {
         self.x.approx_eq(rhs.x) && self.y.approx_eq(rhs.y) && self.z.approx_eq(rhs.z)
     }
 }
 
-impl ops::Add<Vector> for Point {
+impl Add<Vector> for Point {
     type Output = Self;
 
     fn add(self, rhs: Vector) -> Self {
@@ -57,7 +81,7 @@ impl ops::Add<Vector> for Point {
 }
 
 // The resulting Vector is the Vector pointing from p2 to p1 (rhs to self).
-impl ops::Sub for Point {
+impl Sub for Point {
     type Output = Vector;
 
     fn sub(self, rhs: Self) -> Vector {
@@ -66,7 +90,7 @@ impl ops::Sub for Point {
 }
 
 // Conceptually, it's 'moving backwards' by the given Vector.
-impl ops::Sub<Vector> for Point {
+impl Sub<Vector> for Point {
     type Output = Self;
 
     fn sub(self, rhs: Vector) -> Self {
@@ -78,7 +102,7 @@ impl ops::Sub<Vector> for Point {
     }
 }
 
-impl ops::Mul<f64> for Point {
+impl Mul<f64> for Point {
     type Output = Self;
 
     fn mul(self, rhs: f64) -> Self {
@@ -90,7 +114,7 @@ impl ops::Mul<f64> for Point {
     }
 }
 
-impl ops::Mul<Point> for f64 {
+impl Mul<Point> for f64 {
     type Output = Point;
 
     fn mul(self, rhs: Point) -> Point {
@@ -102,7 +126,7 @@ impl ops::Mul<Point> for f64 {
     }
 }
 
-impl ops::Div<f64> for Point {
+impl Div<f64> for Point {
     type Output = Self;
 
     fn div(self, rhs: f64) -> Self {
