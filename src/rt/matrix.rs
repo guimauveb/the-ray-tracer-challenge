@@ -66,6 +66,7 @@ impl Mul<Point> for Matrix<4_usize> {
 
     fn mul(self, rhs: Point) -> Point {
         let mut point = Point::zero();
+        // Could map as well but the index (usize) is moved instead of being copied?
         for r in 0..(4_usize - 1) {
             point[r] = (0..4_usize)
                 .map(|c| self[[r, c]] * if c < 3 { rhs[c] } else { 1.0 }) // rhs[3] is (self.w) is equal to 1.0 but not accessible from the Point type.
@@ -83,6 +84,7 @@ impl Mul<Vector> for Matrix<4_usize> {
 
     fn mul(self, rhs: Vector) -> Vector {
         let mut vec = Vector::zero();
+        // Could map as well but the index (usize) is moved instead of being copied?
         for r in 0..(4_usize - 1) {
             vec[r] = (0..4_usize)
                 .map(|c| self[[r, c]] * if c < 3 { rhs[c] } else { 0.0 }) // rhs[3] (self.w) is equal to 0.0 but not accessible from the Vector type.
@@ -91,6 +93,18 @@ impl Mul<Vector> for Matrix<4_usize> {
                 .sum();
         }
         vec
+    }
+}
+
+#[allow(dead_code)]
+impl Matrix<4_usize> {
+    const fn identity() -> Self {
+        Matrix::<4_usize>([
+            [1.0, 0.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ])
     }
 }
 
@@ -224,4 +238,26 @@ fn can_multiply_4x4_matrix_and_vector() {
     let expected = Vector::new(14.0, 22.0, 32.0);
 
     assert_eq!(A * vector, expected);
+}
+
+#[test]
+fn can_multiply_matrix_by_the_identity_matrix() {
+    const A: Matrix<4_usize> = Matrix::<4_usize>([
+        [0.0, 1.0, 2.0, 3.0],
+        [1.0, 2.0, 4.0, 8.0],
+        [2.0, 4.0, 8.0, 16.0],
+        [4.0, 8.0, 16.0, 32.0],
+    ]);
+
+    assert_eq!(A * Matrix::<4_usize>::identity(), A);
+}
+
+// Point and Vector
+#[test]
+fn can_multiply_tuples_by_identity_matrix() {
+    let point = Point::new(1.0, 2.0, 3.0);
+    assert_eq!(Matrix::<4_usize>::identity() * point, point);
+
+    let vector = Vector::new(1.0, 2.0, 3.0);
+    assert_eq!(Matrix::<4_usize>::identity() * vector, vector);
 }
