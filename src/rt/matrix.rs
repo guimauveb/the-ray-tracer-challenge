@@ -108,6 +108,20 @@ impl Matrix<4_usize> {
     }
 }
 
+// TODO - Make it const?
+#[allow(dead_code)]
+impl<const N: usize> Matrix<N> {
+    fn transpose(&self) -> Self {
+        let mut result = Self([[0.0; N]; N]);
+        for r in 0..N {
+            for c in 0..N {
+                result[[r, c]] = self[[c, r]];
+            }
+        }
+        result
+    }
+}
+
 #[test]
 fn can_create_4x4_matrix() {
     const M: Matrix<4_usize> = Matrix::<4_usize>([
@@ -260,4 +274,33 @@ fn can_multiply_tuples_by_identity_matrix() {
 
     let vector = Vector::new(1.0, 2.0, 3.0);
     assert_eq!(Matrix::<4_usize>::identity() * vector, vector);
+}
+
+#[test]
+fn can_transpose_matrices() {
+    const A: Matrix<4_usize> = Matrix::<4_usize>([
+        [0.0, 9.0, 3.0, 0.0],
+        [9.0, 8.0, 0.0, 8.0],
+        [1.0, 8.0, 5.0, 3.0],
+        [0.0, 0.0, 5.0, 8.0],
+    ]);
+
+    const B: Matrix<4_usize> = Matrix::<4_usize>([
+        [0.0, 9.0, 1.0, 0.0],
+        [9.0, 8.0, 8.0, 0.0],
+        [3.0, 0.0, 5.0, 5.0],
+        [0.0, 8.0, 3.0, 8.0],
+    ]);
+
+    let transposed_a = A.transpose();
+
+    assert_eq!(transposed_a, B);
+}
+
+#[test]
+fn can_transpose_identity_matrix() {
+    const IDENTITY_MATRIX: Matrix<4_usize> = Matrix::<4_usize>::identity();
+    let transposed_identity_matrix = IDENTITY_MATRIX.transpose();
+
+    assert_eq!(IDENTITY_MATRIX, transposed_identity_matrix);
 }
