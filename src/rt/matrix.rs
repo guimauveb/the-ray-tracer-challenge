@@ -108,6 +108,14 @@ impl Matrix<4_usize> {
     }
 }
 
+#[allow(dead_code)]
+impl Matrix<2_usize> {
+    // det = ad - bc
+    fn determinant(&self) -> f64 {
+        self[[0, 0]] * self[[1, 1]] - self[[0, 1]] * self[[1, 0]]
+    }
+}
+
 // TODO - Make it const?
 #[allow(dead_code)]
 impl<const N: usize> Matrix<N> {
@@ -119,6 +127,34 @@ impl<const N: usize> Matrix<N> {
             }
         }
         result
+    }
+
+    // NOTE - Unstable
+    fn submatrix(&self, index: Idx) -> Matrix<{ N - 1 }> {
+        let mut submatrix = Matrix::<{ N - 1 }>([[0.0; N - 1]; N - 1]);
+        let (mut i, mut j) = (0_usize, 0_usize);
+
+        // Iterate over rows
+        for r in 0..N {
+            // Skip excluded row
+            if r == index[0] {
+                continue;
+            }
+            // Iterate over columns
+            for c in 0..N {
+                // Skip excluded column
+                if c == index[1] {
+                    continue;
+                }
+                submatrix[[i, j]] = self[[r, c]];
+                j += 1;
+            }
+            // Reset submatrix column index
+            j = 0;
+            // Increment submatrix row index
+            i += 1;
+        }
+        submatrix
     }
 }
 
@@ -238,7 +274,7 @@ fn can_multiply_4x4_matrix_and_point() {
     assert_eq!(A * point, expected);
 }
 
-// The book mentions multiplication between a 4x4 matrix and a Tuple, but only gives a test for a mulitplication by a Point (w = 1.0).
+// NOTE - The book mentions multiplication between a 4x4 matrix and a Tuple, but only gives a test for a mulitplication by a Point (w = 1.0).
 #[test]
 fn can_multiply_4x4_matrix_and_vector() {
     const A: Matrix<4_usize> = Matrix::<4_usize>([
@@ -303,4 +339,38 @@ fn can_transpose_identity_matrix() {
     let transposed_identity_matrix = IDENTITY_MATRIX.transpose();
 
     assert_eq!(IDENTITY_MATRIX, transposed_identity_matrix);
+}
+
+#[test]
+fn can_compute_determinant() {
+    const A: Matrix<2_usize> = Matrix::<2_usize>([[1.0, 5.0], [-3.0, 2.0]]);
+    let determinant = A.determinant();
+    let expected_determinant = 17.0;
+
+    assert_eq!(determinant, expected_determinant);
+}
+
+#[test]
+fn a_submatrix_of_a_3x3_matrix_is_a_2x2_matrix() {
+    const A: Matrix<3_usize> =
+        Matrix::<3_usize>([[1.0, 5.0, 0.0], [-3.0, 2.0, 7.0], [0.0, 6.0, -3.0]]);
+    let submatrix = A.submatrix([0, 2]);
+    const EXPECTED_SUBMATRIX: Matrix<2_usize> = Matrix::<2_usize>([[-3.0, 2.0], [0.0, 6.0]]);
+
+    assert_eq!(submatrix, EXPECTED_SUBMATRIX);
+}
+
+#[test]
+fn a_submatrix_of_a_4x4_matrix_is_a_3x3_matrix() {
+    const A: Matrix<4_usize> = Matrix::<4_usize>([
+        [-6.0, 1.0, 1.0, 6.0],
+        [-8.0, 5.0, 8.0, 6.0],
+        [-1.0, 0.0, 8.0, 2.0],
+        [-7.0, 1.0, -1.0, 1.0],
+    ]);
+    let submatrix = A.submatrix([2, 1]);
+    const EXPECTED_SUBMATRIX: Matrix<3_usize> =
+        Matrix::<3_usize>([[-6.0, 1.0, 6.0], [-8.0, 8.0, 6.0], [-7.0, -1.0, 1.0]]);
+
+    assert_eq!(submatrix, EXPECTED_SUBMATRIX);
 }

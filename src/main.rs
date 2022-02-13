@@ -1,3 +1,5 @@
+#![feature(generic_const_exprs)]
+
 pub mod approx_eq;
 pub mod float;
 pub mod primitive;
