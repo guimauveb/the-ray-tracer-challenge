@@ -61,6 +61,77 @@ impl<const N: usize> Mul for Matrix<N> {
     }
 }
 
+#[allow(dead_code)]
+impl<const N: usize> Matrix<N> {
+    fn determinant(&self) -> f64 {
+        match N {
+            // det = ad - bc
+            2_usize => self[[0, 0]] * self[[1, 1]] - self[[0, 1]] * self[[1, 0]],
+            _ => panic!("Determinant computation is only implemented for a 2x2 matrix."),
+        }
+    }
+
+    fn transpose(&self) -> Self {
+        let mut result = Self([[0.0; N]; N]);
+        for r in 0..N {
+            for c in 0..N {
+                result[[r, c]] = self[[c, r]];
+            }
+        }
+        result
+    }
+
+    // NOTE - Const generics expressions are unstable (but have been working nicely so far)
+    fn submatrix(&self, index: Idx) -> Matrix<{ N - 1 }> {
+        let mut submatrix = Matrix::<{ N - 1 }>([[0.0; N - 1]; N - 1]);
+        let (mut i, mut j) = (0_usize, 0_usize);
+
+        // Iterate over rows
+        for r in 0..N {
+            // Skip excluded row
+            if r == index[0] {
+                continue;
+            }
+            // Iterate over columns
+            for c in 0..N {
+                // Skip excluded column
+                if c == index[1] {
+                    continue;
+                }
+                submatrix[[i, j]] = self[[r, c]];
+                j += 1;
+            }
+            // Reset submatrix column index
+            j = 0;
+            // Increment submatrix row index
+            i += 1;
+        }
+        submatrix
+    }
+
+    fn minor(&self, index: Idx) -> f64
+    where
+        [(); N - 1]:,
+    {
+        let submatrix = self.submatrix(index);
+        submatrix.determinant()
+    }
+
+    fn cofactor(&self, index: Idx) -> f64
+    where
+        [(); N - 1]:,
+    {
+        let minor = self.minor(index);
+
+        // If column + row is odd, the cofactor is equal to the minor negated. Else it's equal to the minor itself.
+        if (index[0] + index[1]) % 2 == 0 {
+            minor
+        } else {
+            -minor
+        }
+    }
+}
+
 impl Mul<Point> for Matrix<4_usize> {
     type Output = Point;
 
@@ -105,56 +176,6 @@ impl Matrix<4_usize> {
             [0.0, 0.0, 1.0, 0.0],
             [0.0, 0.0, 0.0, 1.0],
         ])
-    }
-}
-
-#[allow(dead_code)]
-impl Matrix<2_usize> {
-    // det = ad - bc
-    fn determinant(&self) -> f64 {
-        self[[0, 0]] * self[[1, 1]] - self[[0, 1]] * self[[1, 0]]
-    }
-}
-
-// TODO - Make it const?
-#[allow(dead_code)]
-impl<const N: usize> Matrix<N> {
-    fn transpose(&self) -> Self {
-        let mut result = Self([[0.0; N]; N]);
-        for r in 0..N {
-            for c in 0..N {
-                result[[r, c]] = self[[c, r]];
-            }
-        }
-        result
-    }
-
-    // NOTE - Unstable
-    fn submatrix(&self, index: Idx) -> Matrix<{ N - 1 }> {
-        let mut submatrix = Matrix::<{ N - 1 }>([[0.0; N - 1]; N - 1]);
-        let (mut i, mut j) = (0_usize, 0_usize);
-
-        // Iterate over rows
-        for r in 0..N {
-            // Skip excluded row
-            if r == index[0] {
-                continue;
-            }
-            // Iterate over columns
-            for c in 0..N {
-                // Skip excluded column
-                if c == index[1] {
-                    continue;
-                }
-                submatrix[[i, j]] = self[[r, c]];
-                j += 1;
-            }
-            // Reset submatrix column index
-            j = 0;
-            // Increment submatrix row index
-            i += 1;
-        }
-        submatrix
     }
 }
 
@@ -373,4 +394,29 @@ fn a_submatrix_of_a_4x4_matrix_is_a_3x3_matrix() {
         Matrix::<3_usize>([[-6.0, 1.0, 6.0], [-8.0, 8.0, 6.0], [-7.0, -1.0, 1.0]]);
 
     assert_eq!(submatrix, EXPECTED_SUBMATRIX);
+}
+
+#[test]
+fn calculating_a_minor_of_a_3x3_matrix() {
+    const A: Matrix<3_usize> =
+        Matrix::<3_usize>([[3.0, 5.0, 0.0], [2.0, -1.0, -7.0], [6.0, -1.0, 5.0]]);
+    let minor = A.minor([1, 0]);
+    let expected_minor = 25.0;
+
+    assert_eq!(minor, expected_minor);
+}
+
+#[test]
+fn calculating_a_cofactor_of_a_3x3_matrix() {
+    const A: Matrix<3_usize> =
+        Matrix::<3_usize>([[3.0, 5.0, 0.0], [2.0, -1.0, -7.0], [6.0, -1.0, 5.0]]);
+    let cofactor_at_0_0 = A.cofactor([0, 0]);
+    let expected_cofactor_at_0_0 = -12.0;
+
+    assert_eq!(cofactor_at_0_0, expected_cofactor_at_0_0);
+
+    let cofactor_at_1_0 = A.cofactor([1, 0]);
+    let expected_cofactor_at_1_0 = -25.0;
+
+    assert_eq!(cofactor_at_1_0, expected_cofactor_at_1_0);
 }
