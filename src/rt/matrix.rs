@@ -63,14 +63,6 @@ impl<const N: usize> Mul for Matrix<N> {
 
 #[allow(dead_code)]
 impl<const N: usize> Matrix<N> {
-    fn determinant(&self) -> f64 {
-        match N {
-            // det = ad - bc
-            2_usize => self[[0, 0]] * self[[1, 1]] - self[[0, 1]] * self[[1, 0]],
-            _ => panic!("Determinant computation is only implemented for a 2x2 matrix."),
-        }
-    }
-
     fn transpose(&self) -> Self {
         let mut result = Self([[0.0; N]; N]);
         for r in 0..N {
@@ -128,6 +120,17 @@ impl<const N: usize> Matrix<N> {
             minor
         } else {
             -minor
+        }
+    }
+
+    fn determinant(&self) -> f64
+    where
+        [(); N - 1]:,
+    {
+        match N {
+            // det = ad - bc
+            2_usize => self[[0, 0]] * self[[1, 1]] - self[[0, 1]] * self[[1, 0]],
+            _ => (0..N).map(|x| self[[0, x]] * self.cofactor([0, x])).sum(),
         }
     }
 }
@@ -419,4 +422,30 @@ fn calculating_a_cofactor_of_a_3x3_matrix() {
     let expected_cofactor_at_1_0 = -25.0;
 
     assert_eq!(cofactor_at_1_0, expected_cofactor_at_1_0);
+}
+
+#[test]
+fn calculating_the_determinant_of_3x3_matrix() {
+    const A: Matrix<3_usize> =
+        Matrix::<3_usize>([[1.0, 2.0, 6.0], [-5.0, 8.0, -4.0], [2.0, 6.0, 4.0]]);
+
+    assert_eq!(A.cofactor([0, 0]), 56.0);
+    assert_eq!(A.cofactor([0, 1]), 12.0);
+    assert_eq!(A.cofactor([0, 2]), -46.0);
+    assert_eq!(A.determinant(), -196.0);
+}
+
+#[test]
+fn calculating_the_determinant_of_4x4_matrix() {
+    const A: Matrix<4_usize> = Matrix::<4_usize>([
+        [-2.0, -8.0, 3.0, 5.0],
+        [-3.0, 1.0, 7.0, 3.0],
+        [1.0, 2.0, -9.0, 6.0],
+        [-6.0, 7.0, 7.0, -9.0],
+    ]);
+
+    assert_eq!(A.cofactor([0, 0]), 690.0);
+    assert_eq!(A.cofactor([0, 1]), 447.0);
+    assert_eq!(A.cofactor([0, 2]), 210.0);
+    assert_eq!(A.determinant(), -4071.0);
 }
