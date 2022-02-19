@@ -2,10 +2,10 @@
 
 #### ✅ Chapter 1 - Tuples, Points and Vectors 
 
-~~Working on Tuple, Point and Vector operations.~~
-
 #### ✅  Chapter 2 - Drawing on a canvas
 
-~~Working on PPM format~~
+#### ✅ Chapter 3 - Matrices 
 
-#### 👨🏼‍💻Chapter 3 - Matrices
+#### 👨🏼‍💻Chapter 4 - Matrix transformations
+
+

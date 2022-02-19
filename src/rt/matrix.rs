@@ -4,13 +4,14 @@ use {
         primitive::{point::Point, tuple::Tuple, vector::Vector},
     },
     std::{
-        fmt::{Display, Formatter, Result},
+        error::Error,
+        fmt::{Display, Formatter},
         ops::{Index, IndexMut, Mul},
     },
 };
 
 #[derive(Debug)]
-pub struct Matrix<const N: usize>([[f64; N]; N]);
+pub struct Matrix<const N: usize>(pub [[f64; N]; N]);
 
 type Idx = [usize; 2];
 
@@ -38,8 +39,8 @@ impl<const N: usize> PartialEq for Matrix<N> {
 }
 
 impl<const N: usize> Display for Matrix<N> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        write!(f, "{:#?}", self.0)
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:#?}", self)
     }
 }
 
@@ -61,15 +62,31 @@ impl<const N: usize> Mul for Matrix<N> {
     }
 }
 
-/* NOTE - Defining submatrix, determinant, minor and cofactor for Matrix<N> unfortunatly currently
+#[derive(Debug)]
+pub enum MatrixError<'a, const N: usize> {
+    NotInvertible(&'a Matrix<N>),
+    /* NotImplemented(Matrix<N>), // Would take a reference to the not implemented method, but
+     * NotImplemented ... is not implemented.*/
+}
+
+impl<'a, const N: usize> Display for MatrixError<'a, N> {
+    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
+        match *self {
+            //MatrixError::NotImplemented => write!(f, "{}", self.as_str()),
+            MatrixError::NotInvertible(matrix) => write!(f, "{} is not invertible", matrix),
+        }
+    }
+}
+
+/* NOTE - Defining determinant, minor and cofactor for Matrix<N> unfortunatly currently
  * doesn't work with the generic type Matrix<{ N-1 }> returned by submatrix(). Therefore I have to
  * implement these methods for Matrix<2_usize>, Matrix<3_usize> and Matrix<4_usize>. BTW all these
- * methods could certtainly be defined as const methods.*/
+ * methods could also certainly be defined as const methods.*/
 
 // Matrix<N>
 #[allow(dead_code)]
 impl<const N: usize> Matrix<N> {
-    fn transpose(&self) -> Self {
+    pub fn transpose(&self) -> Self {
         let mut result = Self([[0.0; N]; N]);
         for r in 0..N {
             for c in 0..N {
@@ -80,10 +97,13 @@ impl<const N: usize> Matrix<N> {
     }
 }
 
+#[allow(dead_code)]
+impl<const N: usize> Error for Matrix<N> {}
+
 // Matrix<2_usize>
 #[allow(dead_code)]
 impl Matrix<2_usize> {
-    fn determinant(&self) -> f64 {
+    pub fn determinant(&self) -> f64 {
         self[[0, 0]] * self[[1, 1]] - self[[0, 1]] * self[[1, 0]]
     }
 }
@@ -91,7 +111,7 @@ impl Matrix<2_usize> {
 // Matrix<2_usize>
 #[allow(dead_code)]
 impl Matrix<3_usize> {
-    fn submatrix(&self, index: Idx) -> Matrix<2_usize> {
+    pub fn submatrix(&self, index: Idx) -> Matrix<2_usize> {
         let mut submatrix = Matrix::<2_usize>([[0.0; 2_usize]; 2_usize]);
         let (mut i, mut j) = (0_usize, 0_usize);
 
@@ -118,12 +138,12 @@ impl Matrix<3_usize> {
         submatrix
     }
 
-    fn minor(&self, index: Idx) -> f64 {
+    pub fn minor(&self, index: Idx) -> f64 {
         let submatrix = self.submatrix(index);
         submatrix.determinant()
     }
 
-    fn cofactor(&self, index: Idx) -> f64 {
+    pub fn cofactor(&self, index: Idx) -> f64 {
         let minor = self.minor(index);
 
         // If column + row is odd, the cofactor is equal to the minor negated. Else it's equal to the minor itself.
@@ -134,7 +154,7 @@ impl Matrix<3_usize> {
         }
     }
 
-    fn determinant(&self) -> f64 {
+    pub fn determinant(&self) -> f64 {
         (0..3_usize)
             .map(|x| self[[0, x]] * self.cofactor([0, x]))
             .sum()
@@ -144,7 +164,7 @@ impl Matrix<3_usize> {
 // Matrix<4_usize>
 #[allow(dead_code)]
 impl Matrix<4_usize> {
-    const fn identity() -> Self {
+    pub const fn identity() -> Self {
         Matrix::<4_usize>([
             [1.0, 0.0, 0.0, 0.0],
             [0.0, 1.0, 0.0, 0.0],
@@ -152,7 +172,8 @@ impl Matrix<4_usize> {
             [0.0, 0.0, 0.0, 1.0],
         ])
     }
-    fn submatrix(&self, index: Idx) -> Matrix<3_usize> {
+
+    pub fn submatrix(&self, index: Idx) -> Matrix<3_usize> {
         let mut submatrix = Matrix::<3_usize>([[0.0; 3_usize]; 3_usize]);
         let (mut i, mut j) = (0_usize, 0_usize);
 
@@ -179,12 +200,12 @@ impl Matrix<4_usize> {
         submatrix
     }
 
-    fn minor(&self, index: Idx) -> f64 {
+    pub fn minor(&self, index: Idx) -> f64 {
         let submatrix = self.submatrix(index);
         submatrix.determinant()
     }
 
-    fn cofactor(&self, index: Idx) -> f64 {
+    pub fn cofactor(&self, index: Idx) -> f64 {
         let minor = self.minor(index);
 
         // If column + row is odd, the cofactor is equal to the minor negated. Else it's equal to the minor itself.
@@ -195,10 +216,33 @@ impl Matrix<4_usize> {
         }
     }
 
-    fn determinant(&self) -> f64 {
+    pub fn determinant(&self) -> f64 {
         (0..4_usize)
             .map(|x| self[[0, x]] * self.cofactor([0, x]))
             .sum()
+    }
+
+    pub fn is_invertible(&self) -> bool {
+        !(self.determinant() == 0.0)
+    }
+
+    /* If the matrix is invertible, we compute the inverse matrix like the following:
+     *      - Compute the cofactor of every element of the matrix
+     *      - Divide each cofactor by the determinant of the matrix
+     *      - Return the resulting matrix
+     */
+    pub fn inverse(&self) -> Result<Self, MatrixError<4_usize>> {
+        if !(self.is_invertible()) {
+            Err(MatrixError::NotInvertible(self))
+        } else {
+            let mut inverse_matrix = Matrix::<4_usize>([[0.0; 4_usize]; 4_usize]);
+            for r in 0..4_usize {
+                for c in 0..4_usize {
+                    inverse_matrix[[c, r]] = self.cofactor([r, c]) / self.determinant();
+                }
+            }
+            Ok(inverse_matrix)
+        }
     }
 }
 
@@ -503,4 +547,118 @@ fn calculating_the_determinant_of_4x4_matrix() {
     assert_eq!(A.cofactor([0, 1]), 447.0);
     assert_eq!(A.cofactor([0, 2]), 210.0);
     assert_eq!(A.determinant(), -4071.0);
+}
+
+#[test]
+fn testing_a_invertible_matrix_for_invertibility() {
+    const A: Matrix<4_usize> = Matrix::<4_usize>([
+        [6.0, 4.0, 4.0, 4.0],
+        [5.0, 5.0, 7.0, 6.0],
+        [4.0, -9.0, 3.0, 7.0],
+        [9.0, 1.0, 7.0, -6.0],
+    ]);
+
+    assert_eq!(A.is_invertible(), true);
+}
+
+#[test]
+fn testing_a_noninvertible_matrix_for_invertibility() {
+    const A: Matrix<4_usize> = Matrix::<4_usize>([
+        [-4.0, 2.0, -2.0, -3.0],
+        [9.0, 6.0, 2.0, 6.0],
+        [0.0, -5.0, 1.0, -5.0],
+        [0.0, 0.0, 0.0, 0.0],
+    ]);
+
+    assert_eq!(A.is_invertible(), false);
+}
+
+#[test]
+fn calculating_the_inverse_of_a_matrix() {
+    const A: Matrix<4_usize> = Matrix::<4_usize>([
+        [-5.0, 2.0, 6.0, -8.0],
+        [1.0, -5.0, 1.0, 8.0],
+        [7.0, 7.0, -6.0, -7.0],
+        [1.0, -3.0, 7.0, 4.0],
+    ]);
+
+    let inverse = A.inverse().unwrap_or_else(|err| panic!("{}", err));
+
+    assert_eq!(A.determinant(), 532.0);
+    assert_eq!(A.cofactor([2, 3]), -160.0);
+    assert_eq!(inverse[[3, 2]], -160.0 / 532.0);
+    assert_eq!(A.cofactor([3, 2]), 105.0);
+    assert_eq!(inverse[[2, 3]], 105.0 / 532.0);
+
+    const EXPECTED_INVERSE: Matrix<4_usize> = Matrix::<4_usize>([
+        [0.21805, 0.45113, 0.24060, -0.04511],
+        [-0.80827, -1.45677, -0.44361, 0.52068],
+        [-0.07895, -0.22368, -0.05263, 0.19737],
+        [-0.52256, -0.81391, -0.30075, 0.30639],
+    ]);
+
+    assert_eq!(inverse, EXPECTED_INVERSE);
+}
+
+#[test]
+fn calculating_the_inverse_of_another_matrix() {
+    const A: Matrix<4_usize> = Matrix::<4_usize>([
+        [8.0, -5.0, 9.0, 2.0],
+        [7.0, 5.0, 6.0, 1.0],
+        [-6.0, 0.0, 9.0, 6.0],
+        [-3.0, 0.0, -9.0, -4.0],
+    ]);
+
+    let inverse = A.inverse().unwrap_or_else(|err| panic!("{}", err));
+
+    const EXPECTED_INVERSE: Matrix<4_usize> = Matrix::<4_usize>([
+        [-0.15385, -0.15385, -0.28205, -0.53846],
+        [-0.07692, 0.12308, 0.02564, 0.03077],
+        [0.35897, 0.35897, 0.43590, 0.92308],
+        [-0.69231, -0.69231, -0.76923, -1.92308],
+    ]);
+
+    assert_eq!(inverse, EXPECTED_INVERSE);
+}
+
+#[test]
+fn calculating_the_inverse_of_a_third_matrix() {
+    const A: Matrix<4_usize> = Matrix::<4_usize>([
+        [9.0, 3.0, 0.0, 9.0],
+        [-5.0, -2.0, -6.0, -3.0],
+        [-4.0, 9.0, 6.0, 4.0],
+        [-7.0, 6.0, 6.0, 2.0],
+    ]);
+
+    let inverse = A.inverse().unwrap_or_else(|err| panic!("{}", err));
+
+    const EXPECTED_INVERSE: Matrix<4_usize> = Matrix::<4_usize>([
+        [-0.04074, -0.07778, 0.14444, -0.22222],
+        [-0.07778, 0.03333, 0.36667, -0.33333],
+        [-0.02901, -0.14630, -0.10926, 0.12963],
+        [0.17778, 0.06667, -0.26667, 0.33333],
+    ]);
+
+    assert_eq!(inverse, EXPECTED_INVERSE);
+}
+
+#[test]
+fn multiplying_a_product_by_its_inverse() {
+    const A: Matrix<4_usize> = Matrix::<4_usize>([
+        [3.0, -9.0, 7.0, 3.0],
+        [3.0, -8.0, 2.0, -9.0],
+        [-4.0, 4.0, 4.0, 1.0],
+        [-6.0, 5.0, -1.0, 1.0],
+    ]);
+    const B: Matrix<4_usize> = Matrix::<4_usize>([
+        [8.0, 2.0, 2.0, 2.0],
+        [3.0, -1.0, 7.0, 0.0],
+        [7.0, 0.0, 5.0, 4.0],
+        [6.0, -2.0, 0.0, 5.0],
+    ]);
+
+    let c = A * B;
+    let b_inverse = B.inverse().unwrap_or_else(|err| panic!("{}", err));
+
+    assert_eq!(c * b_inverse, A);
 }
