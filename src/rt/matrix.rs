@@ -61,6 +61,12 @@ impl<const N: usize> Mul for Matrix<N> {
     }
 }
 
+/* NOTE - Defining submatrix, determinant, minor and cofactor for Matrix<N> unfortunatly currently
+ * doesn't work with the generic type Matrix<{ N-1 }> returned by submatrix(). Therefore I have to
+ * implement these methods for Matrix<2_usize>, Matrix<3_usize> and Matrix<4_usize>. BTW all these
+ * methods could certtainly be defined as const methods.*/
+
+// Matrix<N>
 #[allow(dead_code)]
 impl<const N: usize> Matrix<N> {
     fn transpose(&self) -> Self {
@@ -72,20 +78,31 @@ impl<const N: usize> Matrix<N> {
         }
         result
     }
+}
 
-    // NOTE - Const generics expressions are unstable (but have been working nicely so far)
-    fn submatrix(&self, index: Idx) -> Matrix<{ N - 1 }> {
-        let mut submatrix = Matrix::<{ N - 1 }>([[0.0; N - 1]; N - 1]);
+// Matrix<2_usize>
+#[allow(dead_code)]
+impl Matrix<2_usize> {
+    fn determinant(&self) -> f64 {
+        self[[0, 0]] * self[[1, 1]] - self[[0, 1]] * self[[1, 0]]
+    }
+}
+
+// Matrix<2_usize>
+#[allow(dead_code)]
+impl Matrix<3_usize> {
+    fn submatrix(&self, index: Idx) -> Matrix<2_usize> {
+        let mut submatrix = Matrix::<2_usize>([[0.0; 2_usize]; 2_usize]);
         let (mut i, mut j) = (0_usize, 0_usize);
 
         // Iterate over rows
-        for r in 0..N {
+        for r in 0..3_usize {
             // Skip excluded row
             if r == index[0] {
                 continue;
             }
             // Iterate over columns
-            for c in 0..N {
+            for c in 0..3_usize {
                 // Skip excluded column
                 if c == index[1] {
                     continue;
@@ -101,18 +118,12 @@ impl<const N: usize> Matrix<N> {
         submatrix
     }
 
-    fn minor(&self, index: Idx) -> f64
-    where
-        [(); N - 1]:,
-    {
+    fn minor(&self, index: Idx) -> f64 {
         let submatrix = self.submatrix(index);
         submatrix.determinant()
     }
 
-    fn cofactor(&self, index: Idx) -> f64
-    where
-        [(); N - 1]:,
-    {
+    fn cofactor(&self, index: Idx) -> f64 {
         let minor = self.minor(index);
 
         // If column + row is odd, the cofactor is equal to the minor negated. Else it's equal to the minor itself.
@@ -123,15 +134,71 @@ impl<const N: usize> Matrix<N> {
         }
     }
 
-    fn determinant(&self) -> f64
-    where
-        [(); N - 1]:,
-    {
-        match N {
-            // det = ad - bc
-            2_usize => self[[0, 0]] * self[[1, 1]] - self[[0, 1]] * self[[1, 0]],
-            _ => (0..N).map(|x| self[[0, x]] * self.cofactor([0, x])).sum(),
+    fn determinant(&self) -> f64 {
+        (0..3_usize)
+            .map(|x| self[[0, x]] * self.cofactor([0, x]))
+            .sum()
+    }
+}
+
+// Matrix<4_usize>
+#[allow(dead_code)]
+impl Matrix<4_usize> {
+    const fn identity() -> Self {
+        Matrix::<4_usize>([
+            [1.0, 0.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0, 0.0],
+            [0.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ])
+    }
+    fn submatrix(&self, index: Idx) -> Matrix<3_usize> {
+        let mut submatrix = Matrix::<3_usize>([[0.0; 3_usize]; 3_usize]);
+        let (mut i, mut j) = (0_usize, 0_usize);
+
+        // Iterate over rows
+        for r in 0..4_usize {
+            // Skip excluded row
+            if r == index[0] {
+                continue;
+            }
+            // Iterate over columns
+            for c in 0..4_usize {
+                // Skip excluded column
+                if c == index[1] {
+                    continue;
+                }
+                submatrix[[i, j]] = self[[r, c]];
+                j += 1;
+            }
+            // Reset submatrix column index
+            j = 0;
+            // Increment submatrix row index
+            i += 1;
         }
+        submatrix
+    }
+
+    fn minor(&self, index: Idx) -> f64 {
+        let submatrix = self.submatrix(index);
+        submatrix.determinant()
+    }
+
+    fn cofactor(&self, index: Idx) -> f64 {
+        let minor = self.minor(index);
+
+        // If column + row is odd, the cofactor is equal to the minor negated. Else it's equal to the minor itself.
+        if (index[0] + index[1]) % 2 == 0 {
+            minor
+        } else {
+            -minor
+        }
+    }
+
+    fn determinant(&self) -> f64 {
+        (0..4_usize)
+            .map(|x| self[[0, x]] * self.cofactor([0, x]))
+            .sum()
     }
 }
 
@@ -167,18 +234,6 @@ impl Mul<Vector> for Matrix<4_usize> {
                 .sum();
         }
         vec
-    }
-}
-
-#[allow(dead_code)]
-impl Matrix<4_usize> {
-    const fn identity() -> Self {
-        Matrix::<4_usize>([
-            [1.0, 0.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0, 0.0],
-            [0.0, 0.0, 1.0, 0.0],
-            [0.0, 0.0, 0.0, 1.0],
-        ])
     }
 }
 
