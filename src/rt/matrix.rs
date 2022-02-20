@@ -48,10 +48,10 @@ impl<const N: usize> Mul for Matrix<N> {
 
     fn mul(self, rhs: Self) -> Self {
         let mut result = Self([[0.0; N]; N]);
-        for r in 0..N {
-            for c in 0..N {
-                result[[r, c]] = (0..N)
-                    .map(|n| self[[r, n]] * rhs[[n, c]])
+        for row in 0..N {
+            for column in 0..N {
+                result[[row, column]] = (0..N)
+                    .map(|n| self[[row, n]] * rhs[[n, column]])
                     .collect::<Vec<f64>>()
                     .iter()
                     .sum();
@@ -84,9 +84,9 @@ impl<'a, const N: usize> Display for MatrixError<'a, N> {
 impl<const N: usize> Matrix<N> {
     pub fn transpose(&self) -> Self {
         let mut result = Self([[0.0; N]; N]);
-        for r in 0..N {
-            for c in 0..N {
-                result[[r, c]] = self[[c, r]];
+        for row in 0..N {
+            for column in 0..N {
+                result[[row, column]] = self[[column, row]];
             }
         }
         result
@@ -108,19 +108,17 @@ impl Matrix<3_usize> {
         let mut submatrix = Matrix::<2_usize>([[0.0; 2_usize]; 2_usize]);
         let (mut i, mut j) = (0_usize, 0_usize);
 
-        // Iterate over rows
-        for r in 0..3_usize {
+        for row in 0..3_usize {
             // Skip excluded row
-            if r == index[0] {
+            if row == index[0] {
                 continue;
             }
-            // Iterate over columns
-            for c in 0..3_usize {
+            for column in 0..3_usize {
                 // Skip excluded column
-                if c == index[1] {
+                if column == index[1] {
                     continue;
                 }
-                submatrix[[i, j]] = self[[r, c]];
+                submatrix[[i, j]] = self[[row, column]];
                 j += 1;
             }
             // Reset submatrix column index
@@ -170,19 +168,18 @@ impl Matrix<4_usize> {
         let mut submatrix = Matrix::<3_usize>([[0.0; 3_usize]; 3_usize]);
         let (mut i, mut j) = (0_usize, 0_usize);
 
-        // Iterate over rows
-        for r in 0..4_usize {
+        for row in 0..4_usize {
             // Skip excluded row
-            if r == index[0] {
+            if row == index[0] {
                 continue;
             }
             // Iterate over columns
-            for c in 0..4_usize {
+            for column in 0..4_usize {
                 // Skip excluded column
-                if c == index[1] {
+                if column == index[1] {
                     continue;
                 }
-                submatrix[[i, j]] = self[[r, c]];
+                submatrix[[i, j]] = self[[row, column]];
                 j += 1;
             }
             // Reset submatrix column index
@@ -229,9 +226,10 @@ impl Matrix<4_usize> {
             Err(MatrixError::NotInvertible(self))
         } else {
             let mut inverse_matrix = Matrix::<4_usize>([[0.0; 4_usize]; 4_usize]);
-            for r in 0..4_usize {
-                for c in 0..4_usize {
-                    inverse_matrix[[c, r]] = self.cofactor([r, c]) / self.determinant();
+            for row in 0..4_usize {
+                for column in 0..4_usize {
+                    inverse_matrix[[column, row]] =
+                        self.cofactor([row, column]) / self.determinant();
                 }
             }
             Ok(inverse_matrix)
@@ -245,9 +243,9 @@ impl Mul<Point> for Matrix<4_usize> {
     fn mul(self, rhs: Point) -> Point {
         let mut point = Point::zero();
         // Could map as well but the index (usize) is moved instead of being copied?
-        for r in 0..(4_usize - 1) {
-            point[r] = (0..4_usize)
-                .map(|c| self[[r, c]] * if c < 3 { rhs[c] } else { 1.0 }) // rhs[3] is (self.w) is equal to 1.0 but not accessible from the Point type.
+        for row in 0..(4_usize - 1) {
+            point[row] = (0..4_usize)
+                .map(|column| self[[row, column]] * if column < 3 { rhs[column] } else { 1.0 }) // rhs[3] is (self.w) is equal to 1.0 but not accessible from the Point type.
                 .collect::<Vec<f64>>()
                 .iter()
                 .sum();
@@ -263,9 +261,9 @@ impl Mul<Vector> for Matrix<4_usize> {
     fn mul(self, rhs: Vector) -> Vector {
         let mut vec = Vector::zero();
         // Could map as well but the index (usize) is moved instead of being copied?
-        for r in 0..(4_usize - 1) {
-            vec[r] = (0..4_usize)
-                .map(|c| self[[r, c]] * if c < 3 { rhs[c] } else { 0.0 }) // rhs[3] (self.w) is equal to 0.0 but not accessible from the Vector type.
+        for row in 0..(4_usize - 1) {
+            vec[row] = (0..4_usize)
+                .map(|column| self[[row, column]] * if column < 3 { rhs[column] } else { 0.0 }) // rhs[3] (self.w) is equal to 0.0 but not accessible from the Vector type.
                 .collect::<Vec<f64>>()
                 .iter()
                 .sum();
