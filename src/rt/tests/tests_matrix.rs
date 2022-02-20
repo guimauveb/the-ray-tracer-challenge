@@ -1,7 +1,7 @@
 #[cfg(test)]
 use crate::{
     primitive::{point::Point, tuple::Tuple, vector::Vector},
-    rt::matrix::{Cofactor, Determinant, Matrix, Minor, Submatrix, Transpose},
+    rt::matrix::{Cofactor, Determinant, Matrix, Minor, Submatrix, Translation, Transpose},
 };
 
 #[test]
@@ -387,4 +387,27 @@ fn multiplying_a_product_by_its_inverse() {
 }
 
 #[test]
-fn multiplying_by_a_translation_matrix() {}
+fn multiplying_by_a_translation_matrix() {
+    let transform = Matrix::<4_usize>::translation(5.0, -3.0, 2.0);
+    let point = Point::new(-3.0, 4.0, 5.0);
+    let expected_point = Point::new(2.0, 1.0, 7.0);
+
+    assert_eq!(transform * point, expected_point);
+}
+
+#[test]
+fn multiplying_by_the_inverse_of_translation_matrix() {
+    let transform = Matrix::<4_usize>::translation(5.0, -3.0, 2.0);
+    let inverse = transform.inverse().unwrap_or_else(|err| panic!("{}", err));
+    let point = Point::new(-3.0, 4.0, 5.0);
+    let expected_point = Point::new(-8.0, 7.0, 3.0);
+
+    assert_eq!(inverse * point, expected_point);
+}
+
+#[test]
+fn translation_does_not_affect_vectors() {
+    let transform = Matrix::<4_usize>::translation(5.0, -3.0, 2.0);
+    let vector = Vector::new(-3.0, 4.0, 5.0);
+    assert_eq!(transform * vector, vector);
+}
