@@ -4,7 +4,6 @@ use {
         primitive::{point::Point, tuple::Tuple, vector::Vector},
     },
     std::{
-        error::Error,
         fmt::{Display, Formatter},
         ops::{Index, IndexMut, Mul},
     },
@@ -65,14 +64,11 @@ impl<const N: usize> Mul for Matrix<N> {
 #[derive(Debug)]
 pub enum MatrixError<'a, const N: usize> {
     NotInvertible(&'a Matrix<N>),
-    /* NotImplemented(Matrix<N>), // Would take a reference to the not implemented method, but
-     * NotImplemented ... is not implemented.*/
 }
 
 impl<'a, const N: usize> Display for MatrixError<'a, N> {
     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
         match *self {
-            //MatrixError::NotImplemented => write!(f, "{}", self.as_str()),
             MatrixError::NotInvertible(matrix) => write!(f, "{} is not invertible", matrix),
         }
     }
@@ -96,9 +92,6 @@ impl<const N: usize> Matrix<N> {
         result
     }
 }
-
-#[allow(dead_code)]
-impl<const N: usize> Error for Matrix<N> {}
 
 // Matrix<2_usize>
 #[allow(dead_code)]
