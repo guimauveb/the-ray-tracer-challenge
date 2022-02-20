@@ -108,7 +108,7 @@ impl Matrix<2_usize> {
     }
 }
 
-// Matrix<2_usize>
+// Matrix<3_usize>
 #[allow(dead_code)]
 impl Matrix<3_usize> {
     pub fn submatrix(&self, index: Idx) -> Matrix<2_usize> {
