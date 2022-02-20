@@ -12,6 +12,45 @@ use {
 #[derive(Debug)]
 pub struct Matrix<const N: usize>(pub [[f64; N]; N]);
 
+#[derive(Debug)]
+pub enum MatrixError<'a, const N: usize> {
+    NotInvertible(&'a Matrix<N>),
+}
+
+impl<'a, const N: usize> Display for MatrixError<'a, N> {
+    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
+        match *self {
+            MatrixError::NotInvertible(matrix) => write!(f, "{} is not invertible", matrix),
+        }
+    }
+}
+
+pub trait Transpose {
+    fn transpose(&self) -> Self;
+}
+
+// Submatrix can only be a Matrix<M> where M >= 2
+pub trait Submatrix<T> {
+    fn submatrix(&self, index: Idx) -> T;
+}
+
+// Minor can only be computed for Matrix<M> where M >= 3
+pub trait Minor {
+    fn minor(&self, index: Idx) -> f64;
+}
+
+pub trait Cofactor {
+    fn cofactor(&self, index: Idx) -> f64;
+}
+
+pub trait Determinant {
+    fn determinant(&self) -> f64;
+}
+
+pub trait Translation {
+    fn translation(&self, x: f64, y: f64, z: f64) -> Self;
+}
+
 type Idx = [usize; 2];
 
 // Index Matrix like this: M[[0, 1]]
@@ -61,28 +100,8 @@ impl<const N: usize> Mul for Matrix<N> {
     }
 }
 
-#[derive(Debug)]
-pub enum MatrixError<'a, const N: usize> {
-    NotInvertible(&'a Matrix<N>),
-}
-
-impl<'a, const N: usize> Display for MatrixError<'a, N> {
-    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
-        match *self {
-            MatrixError::NotInvertible(matrix) => write!(f, "{} is not invertible", matrix),
-        }
-    }
-}
-
-/* NOTE - Defining determinant, minor and cofactor for Matrix<N> unfortunatly currently
- * doesn't work with the generic type Matrix<{ N-1 }> returned by submatrix(). Therefore I have to
- * implement these methods for Matrix<2_usize>, Matrix<3_usize> and Matrix<4_usize>. BTW all these
- * methods could also certainly be defined as const methods.*/
-
-// Matrix<N>
-#[allow(dead_code)]
-impl<const N: usize> Matrix<N> {
-    pub fn transpose(&self) -> Self {
+impl<const N: usize> Transpose for Matrix<N> {
+    fn transpose(&self) -> Self {
         let mut result = Self([[0.0; N]; N]);
         for row in 0..N {
             for column in 0..N {
@@ -93,27 +112,17 @@ impl<const N: usize> Matrix<N> {
     }
 }
 
-// Matrix<2_usize>
-#[allow(dead_code)]
-impl Matrix<2_usize> {
-    pub fn determinant(&self) -> f64 {
-        self[[0, 0]] * self[[1, 1]] - self[[0, 1]] * self[[1, 0]]
-    }
-}
-
-// Matrix<3_usize>
-#[allow(dead_code)]
-impl Matrix<3_usize> {
-    pub fn submatrix(&self, index: Idx) -> Matrix<2_usize> {
-        let mut submatrix = Matrix::<2_usize>([[0.0; 2_usize]; 2_usize]);
+impl<const N: usize> Submatrix<Matrix<{ N - 1 }>> for Matrix<N> {
+    fn submatrix(&self, index: Idx) -> Matrix<{ N - 1 }> {
+        let mut submatrix = Matrix::<{ N - 1 }>([[0.0; N - 1]; N - 1]);
         let (mut i, mut j) = (0_usize, 0_usize);
 
-        for row in 0..3_usize {
+        for row in 0..N {
             // Skip excluded row
             if row == index[0] {
                 continue;
             }
-            for column in 0..3_usize {
+            for column in 0..N {
                 // Skip excluded column
                 if column == index[1] {
                     continue;
@@ -128,32 +137,68 @@ impl Matrix<3_usize> {
         }
         submatrix
     }
+}
 
-    pub fn minor(&self, index: Idx) -> f64 {
+impl Minor for Matrix<3_usize> {
+    fn minor(&self, index: Idx) -> f64 {
         let submatrix = self.submatrix(index);
         submatrix.determinant()
     }
+}
 
-    pub fn cofactor(&self, index: Idx) -> f64 {
+impl Minor for Matrix<4_usize> {
+    fn minor(&self, index: Idx) -> f64 {
+        let submatrix = self.submatrix(index);
+        submatrix.determinant()
+    }
+}
+
+impl Cofactor for Matrix<3_usize> {
+    fn cofactor(&self, index: Idx) -> f64 {
         let minor = self.minor(index);
 
-        // If column + row is odd, the cofactor is equal to the minor negated. Else it's equal to the minor itself.
         if (index[0] + index[1]) % 2 == 0 {
             minor
         } else {
             -minor
         }
     }
+}
 
-    pub fn determinant(&self) -> f64 {
+impl Cofactor for Matrix<4_usize> {
+    fn cofactor(&self, index: Idx) -> f64 {
+        let minor = self.minor(index);
+
+        if (index[0] + index[1]) % 2 == 0 {
+            minor
+        } else {
+            -minor
+        }
+    }
+}
+
+impl Determinant for Matrix<2_usize> {
+    fn determinant(&self) -> f64 {
+        self[[0, 0]] * self[[1, 1]] - self[[0, 1]] * self[[1, 0]]
+    }
+}
+
+impl Determinant for Matrix<3_usize> {
+    fn determinant(&self) -> f64 {
         (0..3_usize)
             .map(|x| self[[0, x]] * self.cofactor([0, x]))
             .sum()
     }
 }
 
-// Matrix<4_usize>
-#[allow(dead_code)]
+impl Determinant for Matrix<4_usize> {
+    fn determinant(&self) -> f64 {
+        (0..4_usize)
+            .map(|x| self[[0, x]] * self.cofactor([0, x]))
+            .sum()
+    }
+}
+
 impl Matrix<4_usize> {
     pub const fn identity() -> Self {
         Matrix::<4_usize>([
@@ -162,54 +207,6 @@ impl Matrix<4_usize> {
             [0.0, 0.0, 1.0, 0.0],
             [0.0, 0.0, 0.0, 1.0],
         ])
-    }
-
-    pub fn submatrix(&self, index: Idx) -> Matrix<3_usize> {
-        let mut submatrix = Matrix::<3_usize>([[0.0; 3_usize]; 3_usize]);
-        let (mut i, mut j) = (0_usize, 0_usize);
-
-        for row in 0..4_usize {
-            // Skip excluded row
-            if row == index[0] {
-                continue;
-            }
-            // Iterate over columns
-            for column in 0..4_usize {
-                // Skip excluded column
-                if column == index[1] {
-                    continue;
-                }
-                submatrix[[i, j]] = self[[row, column]];
-                j += 1;
-            }
-            // Reset submatrix column index
-            j = 0;
-            // Increment submatrix row index
-            i += 1;
-        }
-        submatrix
-    }
-
-    pub fn minor(&self, index: Idx) -> f64 {
-        let submatrix = self.submatrix(index);
-        submatrix.determinant()
-    }
-
-    pub fn cofactor(&self, index: Idx) -> f64 {
-        let minor = self.minor(index);
-
-        // If column + row is odd, the cofactor is equal to the minor negated. Else it's equal to the minor itself.
-        if (index[0] + index[1]) % 2 == 0 {
-            minor
-        } else {
-            -minor
-        }
-    }
-
-    pub fn determinant(&self) -> f64 {
-        (0..4_usize)
-            .map(|x| self[[0, x]] * self.cofactor([0, x]))
-            .sum()
     }
 
     pub fn is_invertible(&self) -> bool {
@@ -234,6 +231,17 @@ impl Matrix<4_usize> {
             }
             Ok(inverse_matrix)
         }
+    }
+}
+
+impl Translation for Matrix<4_usize> {
+    fn translation(&self, x: f64, y: f64, z: f64) -> Self {
+        let mut identity = Matrix::<4_usize>::identity();
+        identity[[0, 3]] = x;
+        identity[[1, 3]] = y;
+        identity[[2, 3]] = z;
+
+        identity
     }
 }
 
