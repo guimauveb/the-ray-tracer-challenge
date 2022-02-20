@@ -51,6 +51,10 @@ pub trait Translation {
     fn translation(x: f64, y: f64, z: f64) -> Self;
 }
 
+pub trait Scaling {
+    fn scaling(x: f64, y: f64, z: f64) -> Self;
+}
+
 type Idx = [usize; 2];
 
 // Index Matrix like this: M[[0, 1]]
@@ -236,12 +240,23 @@ impl Matrix<4_usize> {
 
 impl Translation for Matrix<4_usize> {
     fn translation(x: f64, y: f64, z: f64) -> Self {
-        let mut identity = Matrix::<4_usize>::identity();
-        identity[[0, 3]] = x;
-        identity[[1, 3]] = y;
-        identity[[2, 3]] = z;
+        Matrix::<4_usize>([
+            [1.0, 0.0, 0.0, x],
+            [0.0, 1.0, 0.0, y],
+            [0.0, 0.0, 1.0, z],
+            [0.0, 0.0, 0.0, 1.0],
+        ])
+    }
+}
 
-        identity
+impl Scaling for Matrix<4_usize> {
+    fn scaling(x: f64, y: f64, z: f64) -> Self {
+        Matrix::<4_usize>([
+            [x, 0.0, 0.0, 0.0],
+            [0.0, y, 0.0, 0.0],
+            [0.0, 0.0, z, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ])
     }
 }
 

@@ -1,7 +1,9 @@
 #[cfg(test)]
 use crate::{
     primitive::{point::Point, tuple::Tuple, vector::Vector},
-    rt::matrix::{Cofactor, Determinant, Matrix, Minor, Submatrix, Translation, Transpose},
+    rt::matrix::{
+        Cofactor, Determinant, Matrix, Minor, Scaling, Submatrix, Translation, Transpose,
+    },
 };
 
 #[test]
@@ -410,4 +412,31 @@ fn translation_does_not_affect_vectors() {
     let transform = Matrix::<4_usize>::translation(5.0, -3.0, 2.0);
     let vector = Vector::new(-3.0, 4.0, 5.0);
     assert_eq!(transform * vector, vector);
+}
+
+#[test]
+fn scaling_matrix_applied_to_a_point() {
+    let transform = Matrix::<4_usize>::scaling(2.0, 3.0, 4.0);
+    let point = Point::new(-4.0, 6.0, 8.0);
+    let expected_point = Point::new(-8.0, 18.0, 32.0);
+
+    assert_eq!(transform * point, expected_point);
+}
+
+#[test]
+fn scaling_matrix_applied_to_a_vector() {
+    let transform = Matrix::<4_usize>::scaling(2.0, 3.0, 4.0);
+    let vector = Vector::new(-4.0, 6.0, 8.0);
+    let expected_vector = Vector::new(-8.0, 18.0, 32.0);
+
+    assert_eq!(transform * vector, expected_vector);
+}
+
+#[test]
+fn reflection_by_a_negative_value() {
+    let transform = Matrix::<4_usize>::scaling(-1.0, 1.0, 1.0);
+    let point = Point::new(2.0, 3.0, 4.0);
+    let expected_point = Point::new(-2.0, 3.0, 4.0);
+
+    assert_eq!(transform * point, expected_point);
 }
