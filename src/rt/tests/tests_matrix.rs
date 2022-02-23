@@ -1,9 +1,13 @@
 #[cfg(test)]
-use crate::{
-    primitive::{point::Point, tuple::Tuple, vector::Vector},
-    rt::matrix::{
-        Cofactor, Determinant, Matrix, Minor, Scaling, Submatrix, Translation, Transpose,
+use {
+    crate::{
+        primitive::{point::Point, tuple::Tuple, vector::Vector},
+        rt::matrix::{
+            Cofactor, Determinant, Matrix, Minor, Rotation, Scaling, Submatrix, Translation,
+            Transpose,
+        },
     },
+    std::f64::consts::PI,
 };
 
 #[test]
@@ -439,4 +443,44 @@ fn reflection_by_a_negative_value() {
     let expected_point = Point::new(-2.0, 3.0, 4.0);
 
     assert_eq!(transform * point, expected_point);
+}
+
+#[test]
+fn rotating_a_point_around_the_x_axis() {
+    let point = Point::new(0.0, 1.0, 0.0);
+    let half_quarter = Matrix::<4_usize>::rotation_x(PI / 4.0);
+    let full_quarter = Matrix::<4_usize>::rotation_x(PI / 2.0);
+
+    assert_eq!(
+        half_quarter * point,
+        Point::new(0.0, 2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0)
+    );
+    assert_eq!(full_quarter * point, Point::new(0.0, 0.0, 1.0));
+}
+
+#[test]
+fn the_inverse_of_an_x_rotation_rotates_in_the_opposite_direciton() {
+    let point = Point::new(0.0, 1.0, 0.0);
+    let half_quarter = Matrix::<4_usize>::rotation_x(PI / 4.0);
+    let inverse = half_quarter
+        .inverse()
+        .unwrap_or_else(|err| panic!("{}", err));
+
+    assert_eq!(
+        inverse * point,
+        Point::new(0.0, 2.0_f64.sqrt() / 2.0, -2.0_f64.sqrt() / 2.0)
+    );
+}
+
+#[test]
+fn rotating_a_point_around_the_y_axis() {
+    let point = Point::new(0.0, 0.0, 1.0);
+    let half_quarter = Matrix::<4_usize>::rotation_y(PI / 4.0);
+    let full_quarter = Matrix::<4_usize>::rotation_y(PI / 2.0);
+
+    assert_eq!(
+        half_quarter * point,
+        Point::new(2.0_f64.sqrt() / 2.0, 0.0, 2.0_f64.sqrt() / 2.0)
+    );
+    assert_eq!(full_quarter * point, Point::new(1.0, 0.0, 0.0));
 }

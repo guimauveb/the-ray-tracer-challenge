@@ -55,6 +55,12 @@ pub trait Scaling {
     fn scaling(x: f64, y: f64, z: f64) -> Self;
 }
 
+pub trait Rotation {
+    fn rotation_x(radians: f64) -> Self;
+    fn rotation_y(radians: f64) -> Self;
+    fn rotation_z(radians: f64) -> Self;
+}
+
 type Idx = [usize; 2];
 
 // Index Matrix like this: M[[0, 1]]
@@ -266,7 +272,7 @@ impl Mul<Point> for Matrix<4_usize> {
     fn mul(self, rhs: Point) -> Point {
         let mut point = Point::zero();
         // Could map as well but the index (usize) is moved instead of being copied?
-        for row in 0..(4_usize - 1) {
+        for row in 0..3_usize {
             point[row] = (0..4_usize)
                 .map(|column| self[[row, column]] * if column < 3 { rhs[column] } else { 1.0 }) // rhs[3] is (self.w) is equal to 1.0 but not accessible from the Point type.
                 .collect::<Vec<f64>>()
@@ -283,7 +289,7 @@ impl Mul<Vector> for Matrix<4_usize> {
     fn mul(self, rhs: Vector) -> Vector {
         let mut vec = Vector::zero();
         // Could map as well but the index (usize) is moved instead of being copied?
-        for row in 0..(4_usize - 1) {
+        for row in 0..3_usize {
             vec[row] = (0..4_usize)
                 .map(|column| self[[row, column]] * if column < 3 { rhs[column] } else { 0.0 }) // rhs[3] (self.w) is equal to 0.0 but not accessible from the Vector type.
                 .collect::<Vec<f64>>()
@@ -291,5 +297,32 @@ impl Mul<Vector> for Matrix<4_usize> {
                 .sum();
         }
         vec
+    }
+}
+
+impl Rotation for Matrix<4_usize> {
+    fn rotation_x(radians: f64) -> Self {
+        Matrix::<4_usize>([
+            [1.0, 0.0, 0.0, 0.0],
+            [0.0, radians.cos(), -radians.sin(), 0.0],
+            [0.0, radians.sin(), radians.cos(), 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ])
+    }
+    fn rotation_y(radians: f64) -> Self {
+        Matrix::<4_usize>([
+            [radians.cos(), 0.0, radians.sin(), 0.0],
+            [0.0, 1.0, 0.0, 0.0],
+            [-radians.sin(), 0.0, radians.cos(), 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ])
+    }
+    fn rotation_z(radians: f64) -> Self {
+        Matrix::<4_usize>([
+            [0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ])
     }
 }
