@@ -10,7 +10,7 @@ use {
 };
 
 #[derive(Debug)]
-pub struct Matrix<const N: usize>(pub [[f64; N]; N]);
+pub struct Matrix<const N: usize>([[f64; N]; N]);
 
 #[derive(Debug)]
 pub enum MatrixError<'a, const N: usize> {
@@ -29,12 +29,12 @@ pub trait Transpose {
     fn transpose(&self) -> Self;
 }
 
-// Submatrix can only be a Matrix<M> where M >= 2
+// Submatrix can only be a Matrix<N> where N >= 2
 pub trait Submatrix<T> {
     fn submatrix(&self, index: Idx) -> T;
 }
 
-// Minor can only be computed for Matrix<M> where M >= 3
+// Minor can only be computed for Matrix<N> where N >= 3
 pub trait Minor {
     fn minor(&self, index: Idx) -> f64;
 }
@@ -61,9 +61,18 @@ pub trait Rotation {
     fn rotation_z(radians: f64) -> Self;
 }
 
-type Idx = [usize; 2];
+pub trait Shearing {
+    fn shearing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Self;
+}
+
+impl<const N: usize> Matrix<N> {
+    pub const fn new(matrix: [[f64; N]; N]) -> Self {
+        Matrix::<N>(matrix)
+    }
+}
 
 // Index Matrix like this: M[[0, 1]]
+type Idx = [usize; 2];
 impl<const N: usize> Index<Idx> for Matrix<{ N }> {
     type Output = f64;
     fn index(&self, index: Idx) -> &f64 {
@@ -319,9 +328,20 @@ impl Rotation for Matrix<4_usize> {
     }
     fn rotation_z(radians: f64) -> Self {
         Matrix::<4_usize>([
-            [0.0, 0.0, 0.0, 0.0],
-            [0.0, 0.0, 0.0, 0.0],
-            [0.0, 0.0, 0.0, 0.0],
+            [radians.cos(), -radians.sin(), 0.0, 0.0],
+            [radians.sin(), radians.cos(), 0.0, 0.0],
+            [0.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ])
+    }
+}
+
+impl Shearing for Matrix<4_usize> {
+    fn shearing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Self {
+        Matrix::<4_usize>([
+            [1.0, xy, xz, 0.0],
+            [yx, 1.0, yz, 0.0],
+            [zx, zy, 1.0, 0.0],
             [0.0, 0.0, 0.0, 1.0],
         ])
     }
