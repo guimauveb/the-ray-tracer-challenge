@@ -6,6 +6,8 @@
 
 #### ✅ Chapter 3 - Matrices 
 
-#### 👨🏼‍💻Chapter 4 - Matrix transformations
+#### ✅ Chapter 4 - Matrix transformations
+
+#### 👨🏼‍💻Ray-Sphere intersections
 
 
