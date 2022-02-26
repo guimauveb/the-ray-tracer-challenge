@@ -31,6 +31,6 @@ pub fn draw_clock() -> Result<(), std::io::Error> {
     }
 
     let ppm = canvas.to_ppm();
-    ppm.save_to_disk("clock.ppm")?;
+    ppm.save_to_disk("src/drawings/ppms/clock.ppm")?;
     Ok(())
 }
