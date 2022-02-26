@@ -8,6 +8,6 @@
 
 #### ✅ Chapter 4 - Matrix transformations
 
-#### 👨🏼‍💻Ray-Sphere intersections
+#### 👨🏼‍💻Chapter 5 - Ray-Sphere intersections
 
 
