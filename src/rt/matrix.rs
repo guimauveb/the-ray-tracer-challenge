@@ -88,10 +88,11 @@ impl<const N: usize> IndexMut<Idx> for Matrix<{ N }> {
 
 impl<const N: usize> PartialEq for Matrix<N> {
     fn eq(&self, rhs: &Self) -> bool {
-        self.0
-            .iter()
-            .enumerate()
-            .all(|(i, x)| x.iter().enumerate().all(|(j, y)| y.approx_eq(rhs[[i, j]])))
+        self.0.iter().enumerate().all(|(r, row)| {
+            row.iter()
+                .enumerate()
+                .all(|(c, column)| column.approx_eq(rhs[[r, c]]))
+        })
     }
 }
 
