@@ -2,8 +2,9 @@
 use crate::{
     primitive::{point::Point, tuple::Tuple, vector::Vector},
     rt::{
+        intersect::Intersect,
         ray::{Position, Ray},
-        sphere::{Intersect, Sphere},
+        sphere::Sphere,
     },
 };
 
@@ -38,8 +39,8 @@ fn a_ray_intersects_a_sphere_at_two_points() {
     let intersection = sphere.intersect(&ray).expect("No intersection foud!");
 
     assert_eq!(intersection.len(), 2);
-    assert_eq!(intersection[0], 4.0);
-    assert_eq!(intersection[1], 6.0);
+    assert_eq!(intersection[0].t(), 4.0);
+    assert_eq!(intersection[1].t(), 6.0);
 }
 
 #[test]
@@ -51,8 +52,8 @@ fn a_ray_intersects_a_sphere_at_a_tangent() {
     let intersection = sphere.intersect(&ray).expect("No intersection found!");
 
     assert_eq!(intersection.len(), 2);
-    assert_eq!(intersection[0], 5.0);
-    assert_eq!(intersection[1], 5.0);
+    assert_eq!(intersection[0].t(), 5.0);
+    assert_eq!(intersection[1].t(), 5.0);
 }
 
 #[test]
@@ -64,8 +65,8 @@ fn a_ray_originates_inside_a_sphere() {
     let intersection = sphere.intersect(&ray).expect("No intersection found!");
 
     assert_eq!(intersection.len(), 2);
-    assert_eq!(intersection[0], -1.0);
-    assert_eq!(intersection[1], 1.0);
+    assert_eq!(intersection[0].t(), -1.0);
+    assert_eq!(intersection[1].t(), 1.0);
 }
 
 #[test]
@@ -77,6 +78,6 @@ fn a_sphere_is_behind_a_ray() {
     let intersection = sphere.intersect(&ray).expect("No intersection found!");
 
     assert_eq!(intersection.len(), 2);
-    assert_eq!(intersection[0], -6.0);
-    assert_eq!(intersection[1], -4.0);
+    assert_eq!(intersection[0].t(), -6.0);
+    assert_eq!(intersection[1].t(), -4.0);
 }

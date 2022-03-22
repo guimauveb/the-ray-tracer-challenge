@@ -1,15 +1,16 @@
 use {
-    super::ray::Ray,
-    crate::primitive::{point::Point, tuple::Tuple},
+    super::{intersection::Intersection, ray::Ray},
+    crate::{
+        primitive::{point::Point, tuple::Tuple},
+        rt::intersect::Intersect,
+    },
 };
+
+#[derive(PartialEq, Debug)]
 pub struct Sphere {
     id: u32, //?
     origin: Point,
     radii: f64, //?
-}
-
-pub trait Intersect<T> {
-    fn intersect(&self, object: &T) -> Option<[f64; 2]>;
 }
 
 impl Sphere {
@@ -28,7 +29,7 @@ impl Sphere {
 
 impl Intersect<Ray> for Sphere {
     // If the ray intersects the sphere at two points P and P', we return [P, P']. If it intersects the sphere at one point P, we return [P, P]. Else we return None.
-    fn intersect(&self, ray: &Ray) -> Option<[f64; 2]> {
+    fn intersect(&self, ray: &Ray) -> Option<[Intersection<'_, Sphere>; 2]> {
         /* From https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-sphere-intersection:
          1. Geometric solution
             - Get OC-> by computing the difference between O (ray origin) and C (sphere center)
@@ -68,13 +69,13 @@ impl Intersect<Ray> for Sphere {
             None
         } else if discriminant == 0.0 {
             let t0 = -b / (2.0 * a);
-            Some([t0, t0])
+            Some([Intersection::new(t0, &self), Intersection::new(t0, &self)])
         } else {
             let (t0, t1) = (
                 (-b - discriminant.sqrt()) / (2.0 * a),
                 (-b + discriminant.sqrt()) / (2.0 * a),
             );
-            Some([t0, t1])
+            Some([Intersection::new(t0, &self), Intersection::new(t1, &self)])
         }
     }
 }
