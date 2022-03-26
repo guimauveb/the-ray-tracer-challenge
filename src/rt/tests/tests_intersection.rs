@@ -1,13 +1,19 @@
 #[cfg(test)]
 use crate::{
     primitive::{point::Point, tuple::Tuple, vector::Vector},
-    rt::{intersect::Intersect, intersection::Intersection, ray::Ray, sphere::Sphere},
+    rt::{
+        intersect::Intersect,
+        intersection::{Intersection, Object},
+        intersections::Intersections,
+        ray::Ray,
+        sphere::Sphere,
+    },
 };
 
 #[test]
 fn an_intersection_encapsulates_t_and_object() {
     let sphere = Sphere::new();
-    let i = Intersection::new(3.5, &sphere);
+    let i = Intersection::Sphere(3.5, &sphere);
     assert_eq!(i.t(), 3.5);
     assert_eq!(i.object(), &sphere);
 }
@@ -16,8 +22,8 @@ fn an_intersection_encapsulates_t_and_object() {
 #[test]
 fn aggregating_intersections() {
     let sphere = Sphere::new();
-    let i1 = Intersection::new(1.0, &sphere);
-    let i2 = Intersection::new(2.0, &sphere);
+    let i1 = Intersection::Sphere(1.0, &sphere);
+    let i2 = Intersection::Sphere(2.0, &sphere);
 
     let xs = [i1, i2];
     assert_eq!(xs.len(), 2);
@@ -31,9 +37,59 @@ fn intersect_sets_the_object_on_the_intersection() {
     let direction = Vector::new(0.0, 0.0, 1.0);
     let ray = Ray::new(origin, direction);
     let sphere = Sphere::new();
-    let xs = sphere.intersect(&ray).expect("No intersection found!");
+    let xs = ray.intersect(&sphere).expect("No intersection found!");
 
     assert_eq!(xs.len(), 2);
     assert_eq!(xs[0].object(), &sphere);
     assert_eq!(xs[1].object(), &sphere);
+}
+
+// TODO
+#[test]
+fn the_hit_when_all_intersections_have_positive_t() {
+    let sphere = Sphere::new();
+    let i1 = Intersection::Sphere(1.0, &sphere);
+    let i2 = Intersection::Sphere(2.0, &sphere);
+    let ls = Intersections::new(&mut [i1, i2]);
+
+    //let i = hit(xs);
+    //assert_eq!(i, Some(i1);
+}
+
+// TODO
+#[test]
+fn the_hit_when_some_intersections_have_negative_t() {
+    let sphere = Sphere::new();
+    let i1 = Intersection::Sphere(-1.0, &sphere);
+    let i2 = Intersection::Sphere(1.0, &sphere);
+    let xs = [i1, i2];
+
+    //let i = hit(xs);
+    //assert_eq!(i, Some(i2);
+}
+
+// TODO
+#[test]
+fn the_hit_when_all_intersections_have_negative_t() {
+    let sphere = Sphere::new();
+    let i1 = Intersection::Sphere(-2.0, &sphere);
+    let i2 = Intersection::Sphere(-1.0, &sphere);
+    let _xs = [i1, i2];
+
+    //let i = hit(xs);
+    //assert_eq!(i, None);
+}
+
+// TODO
+#[test]
+fn the_hit_is_always_the_lowest_nonnegative_intersection() {
+    let sphere = Sphere::new();
+    let i1 = Intersection::Sphere(5.0, &sphere);
+    let i2 = Intersection::Sphere(7.0, &sphere);
+    let i3 = Intersection::Sphere(-3.0, &sphere);
+    let i4 = Intersection::Sphere(2.0, &sphere);
+
+    let xs = [i1, i2, i3, i4];
+    //let i = hit(xs);
+    //assert_eq!(i, Some(i4);
 }

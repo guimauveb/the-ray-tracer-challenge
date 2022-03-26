@@ -36,7 +36,7 @@ fn a_ray_intersects_a_sphere_at_two_points() {
     let direction = Vector::new(0.0, 0.0, 1.0);
     let ray = Ray::new(origin, direction);
     let sphere = Sphere::new();
-    let intersection = sphere.intersect(&ray).expect("No intersection foud!");
+    let intersection = ray.intersect(&sphere).expect("No intersection foud!");
 
     assert_eq!(intersection.len(), 2);
     assert_eq!(intersection[0].t(), 4.0);
@@ -49,7 +49,7 @@ fn a_ray_intersects_a_sphere_at_a_tangent() {
     let direction = Vector::new(0.0, 0.0, 1.0);
     let ray = Ray::new(origin, direction);
     let sphere = Sphere::new();
-    let intersection = sphere.intersect(&ray).expect("No intersection found!");
+    let intersection = ray.intersect(&sphere).expect("No intersection found!");
 
     assert_eq!(intersection.len(), 2);
     assert_eq!(intersection[0].t(), 5.0);
@@ -62,7 +62,7 @@ fn a_ray_originates_inside_a_sphere() {
     let direction = Vector::new(0.0, 0.0, 1.0);
     let ray = Ray::new(origin, direction);
     let sphere = Sphere::new();
-    let intersection = sphere.intersect(&ray).expect("No intersection found!");
+    let intersection = ray.intersect(&sphere).expect("No intersection found!");
 
     assert_eq!(intersection.len(), 2);
     assert_eq!(intersection[0].t(), -1.0);
@@ -75,7 +75,7 @@ fn a_sphere_is_behind_a_ray() {
     let direction = Vector::new(0.0, 0.0, 1.0);
     let ray = Ray::new(origin, direction);
     let sphere = Sphere::new();
-    let intersection = sphere.intersect(&ray).expect("No intersection found!");
+    let intersection = ray.intersect(&sphere).expect("No intersection found!");
 
     assert_eq!(intersection.len(), 2);
     assert_eq!(intersection[0].t(), -6.0);

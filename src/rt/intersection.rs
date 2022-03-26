@@ -1,16 +1,28 @@
-pub struct Intersection<'a, T> {
-    t: f64,
-    object: &'a T,
+use super::sphere::Sphere;
+
+pub enum Intersection<'a> {
+    Sphere(f64, &'a Sphere),
+    //...
 }
 
-impl<'a, T> Intersection<'a, T> {
-    pub fn new(t: f64, object: &'a T) -> Self {
-        Self { t, object }
-    }
+pub trait Object<T> {
+    fn object(&self) -> &T;
+}
+
+impl<'a> Intersection<'a> {
     pub fn t(&self) -> f64 {
-        self.t
+        match self {
+            Intersection::Sphere(t, _) => *t,
+        }
     }
-    pub fn object(&self) -> &T {
-        self.object
+}
+
+/* NOTE - Could use a dyn method here...
+ *   fn object(&self) -> &dyn Shape
+ * ...but to make the code as fast as possible I'd rather avoid the level of inderection brought by it. */
+impl<'a> Object<Sphere> for Intersection<'a> {
+    fn object(&self) -> &Sphere {
+        let Self::Sphere(_, object) = self;
+        object
     }
 }
