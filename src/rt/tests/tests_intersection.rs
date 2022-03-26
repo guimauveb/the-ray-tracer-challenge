@@ -24,8 +24,8 @@ fn aggregating_intersections() {
     let sphere = Sphere::new();
     let i1 = Intersection::Sphere(1.0, &sphere);
     let i2 = Intersection::Sphere(2.0, &sphere);
+    let xs = Intersections::new(vec![i1, i2]);
 
-    let xs = [i1, i2];
     assert_eq!(xs.len(), 2);
     assert_eq!(xs[0].t(), 1.0);
     assert_eq!(xs[1].t(), 2.0);
@@ -44,43 +44,39 @@ fn intersect_sets_the_object_on_the_intersection() {
     assert_eq!(xs[1].object(), &sphere);
 }
 
-// TODO
 #[test]
 fn the_hit_when_all_intersections_have_positive_t() {
     let sphere = Sphere::new();
     let i1 = Intersection::Sphere(1.0, &sphere);
     let i2 = Intersection::Sphere(2.0, &sphere);
-    let ls = Intersections::new(&mut [i1, i2]);
+    let xs = Intersections::new(vec![i1, i2]);
 
-    //let i = hit(xs);
-    //assert_eq!(i, Some(i1);
+    let i = xs.hit();
+    assert_eq!(i, Some(&i1));
 }
 
-// TODO
 #[test]
 fn the_hit_when_some_intersections_have_negative_t() {
     let sphere = Sphere::new();
     let i1 = Intersection::Sphere(-1.0, &sphere);
     let i2 = Intersection::Sphere(1.0, &sphere);
-    let xs = [i1, i2];
+    let xs = Intersections::new(vec![i1, i2]);
 
-    //let i = hit(xs);
-    //assert_eq!(i, Some(i2);
+    let i = xs.hit();
+    assert_eq!(i, Some(&i2));
 }
 
-// TODO
 #[test]
 fn the_hit_when_all_intersections_have_negative_t() {
     let sphere = Sphere::new();
     let i1 = Intersection::Sphere(-2.0, &sphere);
     let i2 = Intersection::Sphere(-1.0, &sphere);
-    let _xs = [i1, i2];
+    let xs = Intersections::new(vec![i1, i2]);
 
-    //let i = hit(xs);
-    //assert_eq!(i, None);
+    let i = xs.hit();
+    assert_eq!(i, None);
 }
 
-// TODO
 #[test]
 fn the_hit_is_always_the_lowest_nonnegative_intersection() {
     let sphere = Sphere::new();
@@ -89,7 +85,7 @@ fn the_hit_is_always_the_lowest_nonnegative_intersection() {
     let i3 = Intersection::Sphere(-3.0, &sphere);
     let i4 = Intersection::Sphere(2.0, &sphere);
 
-    let xs = [i1, i2, i3, i4];
-    //let i = hit(xs);
-    //assert_eq!(i, Some(i4);
+    let xs = Intersections::new(vec![i1, i2, i3, i4]);
+    let i = xs.hit();
+    assert_eq!(i, Some(&i4));
 }

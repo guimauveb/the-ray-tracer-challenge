@@ -1,10 +1,12 @@
 use super::sphere::Sphere;
 
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Intersection<'a> {
     Sphere(f64, &'a Sphere),
     //...
 }
 
+// To implement for each enum variant
 pub trait Object<T> {
     fn object(&self) -> &T;
 }
