@@ -82,10 +82,30 @@ impl Add for Vector {
     }
 }
 
+impl Add for &Vector {
+    type Output = Vector;
+
+    fn add(self, rhs: Self) -> Vector {
+        Vector {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+
 impl Add<Point> for Vector {
     type Output = Point;
 
     fn add(self, rhs: Point) -> Point {
+        Point::new(self.x + rhs.x(), self.y + rhs.y(), self.z + rhs.z())
+    }
+}
+
+impl Add<&Point> for &Vector {
+    type Output = Point;
+
+    fn add(self, rhs: &Point) -> Point {
         Point::new(self.x + rhs.x(), self.y + rhs.y(), self.z + rhs.z())
     }
 }
@@ -96,6 +116,18 @@ impl Sub for Vector {
 
     fn sub(self, rhs: Self) -> Self {
         Self {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
+    }
+}
+
+impl Sub for &Vector {
+    type Output = Vector;
+
+    fn sub(self, rhs: Self) -> Vector {
+        Vector {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
             z: self.z - rhs.z,
@@ -118,6 +150,18 @@ impl Neg for Vector {
     }
 }
 
+impl Neg for &Vector {
+    type Output = Vector;
+
+    fn neg(self) -> Vector {
+        Vector {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+        }
+    }
+}
+
 impl Mul<f64> for Vector {
     type Output = Self;
 
@@ -130,10 +174,34 @@ impl Mul<f64> for Vector {
     }
 }
 
+impl Mul<f64> for &Vector {
+    type Output = Vector;
+
+    fn mul(self, rhs: f64) -> Vector {
+        Vector {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
+    }
+}
+
 impl Mul<Vector> for f64 {
     type Output = Vector;
 
     fn mul(self, rhs: Vector) -> Vector {
+        Vector {
+            x: self * rhs.x,
+            y: self * rhs.y,
+            z: self * rhs.z,
+        }
+    }
+}
+
+impl Mul<&Vector> for f64 {
+    type Output = Vector;
+
+    fn mul(self, rhs: &Vector) -> Vector {
         Vector {
             x: self * rhs.x,
             y: self * rhs.y,
@@ -154,6 +222,18 @@ impl Div<f64> for Vector {
     }
 }
 
+impl Div<f64> for &Vector {
+    type Output = Vector;
+
+    fn div(self, rhs: f64) -> Vector {
+        Vector {
+            x: self.x / rhs,
+            y: self.y / rhs,
+            z: self.z / rhs,
+        }
+    }
+}
+
 impl Vector {
     pub fn magnitude(&self) -> f64 {
         f64::sqrt(
@@ -166,12 +246,12 @@ impl Vector {
         *self / self.magnitude()
     }
 
-    pub fn dot(&self, rhs: Self) -> f64 {
+    pub fn dot(&self, rhs: &Self) -> f64 {
         //(self.x * rhs.x) + (self.y * rhs.y) + (self.z * rhs.z)
         self.z.mul_add(rhs.z, self.x.mul_add(rhs.x, self.y * rhs.y))
     }
 
-    pub fn cross(&self, rhs: Self) -> Self {
+    pub fn cross(&self, rhs: &Self) -> Self {
         Self {
             x: (self.y * rhs.z) - (self.z * rhs.y),
             y: (self.z * rhs.x) - (self.x * rhs.z),

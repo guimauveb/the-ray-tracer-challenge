@@ -2,9 +2,9 @@
 use crate::{
     primitive::{point::Point, tuple::Tuple, vector::Vector},
     rt::{
-        intersect::Intersect,
+        matrix::{Matrix, Scaling, Translation},
         ray::{Position, Ray},
-        sphere::Sphere,
+        transform::Transform,
     },
 };
 
@@ -14,8 +14,8 @@ fn creating_and_querying_a_ray() {
     let direction = Vector::new(4.0, 5.0, 6.0);
     let ray = Ray::new(origin, direction);
 
-    assert_eq!(ray.origin(), origin);
-    assert_eq!(ray.direction(), direction);
+    assert_eq!(ray.origin(), &origin);
+    assert_eq!(ray.direction(), &direction);
 }
 
 #[test]
@@ -31,53 +31,25 @@ fn computing_a_point_from_a_distance() {
 }
 
 #[test]
-fn a_ray_intersects_a_sphere_at_two_points() {
-    let origin = Point::new(0.0, 0.0, -5.0);
-    let direction = Vector::new(0.0, 0.0, 1.0);
+fn translating_a_ray() {
+    let origin = Point::new(1.0, 2.0, 3.0);
+    let direction = Vector::new(0.0, 1.0, 0.0);
     let ray = Ray::new(origin, direction);
-    let sphere = Sphere::new();
-    let intersection = ray.intersect(&sphere).expect("No intersection foud!");
+    let m = Matrix::<4_usize>::translation(3.0, 4.0, 5.0);
 
-    assert_eq!(intersection.len(), 2);
-    assert_eq!(intersection[0].t(), 4.0);
-    assert_eq!(intersection[1].t(), 6.0);
+    let r2 = ray.transform(&m);
+    assert_eq!(r2.origin(), &Point::new(4.0, 6.0, 8.0));
+    assert_eq!(r2.direction(), &Vector::new(0.0, 1.0, 0.0));
 }
 
 #[test]
-fn a_ray_intersects_a_sphere_at_a_tangent() {
-    let origin = Point::new(0.0, 1.0, -5.0);
-    let direction = Vector::new(0.0, 0.0, 1.0);
+fn scaling_a_ray() {
+    let origin = Point::new(1.0, 2.0, 3.0);
+    let direction = Vector::new(0.0, 1.0, 0.0);
     let ray = Ray::new(origin, direction);
-    let sphere = Sphere::new();
-    let intersection = ray.intersect(&sphere).expect("No intersection found!");
+    let m = Matrix::<4_usize>::scaling(2.0, 3.0, 4.0);
 
-    assert_eq!(intersection.len(), 2);
-    assert_eq!(intersection[0].t(), 5.0);
-    assert_eq!(intersection[1].t(), 5.0);
-}
-
-#[test]
-fn a_ray_originates_inside_a_sphere() {
-    let origin = Point::new(0.0, 0.0, 0.0);
-    let direction = Vector::new(0.0, 0.0, 1.0);
-    let ray = Ray::new(origin, direction);
-    let sphere = Sphere::new();
-    let intersection = ray.intersect(&sphere).expect("No intersection found!");
-
-    assert_eq!(intersection.len(), 2);
-    assert_eq!(intersection[0].t(), -1.0);
-    assert_eq!(intersection[1].t(), 1.0);
-}
-
-#[test]
-fn a_sphere_is_behind_a_ray() {
-    let origin = Point::new(0.0, 0.0, 5.0);
-    let direction = Vector::new(0.0, 0.0, 1.0);
-    let ray = Ray::new(origin, direction);
-    let sphere = Sphere::new();
-    let intersection = ray.intersect(&sphere).expect("No intersection found!");
-
-    assert_eq!(intersection.len(), 2);
-    assert_eq!(intersection[0].t(), -6.0);
-    assert_eq!(intersection[1].t(), -4.0);
+    let r2 = ray.transform(&m);
+    assert_eq!(r2.origin(), &Point::new(2.0, 6.0, 12.0));
+    assert_eq!(r2.direction(), &Vector::new(0.0, 3.0, 0.0));
 }

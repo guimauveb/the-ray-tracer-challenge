@@ -14,7 +14,7 @@ impl<'a> Intersections<'a> {
 
     /* If all intersections are positive, the iterator will stop at the first intersection in the list and return it,
      * so we don't have to check if all intersections are positive and then return the first element of the list.
-     * If there is no positive intersection, we return None. */
+     * Return None if there is no positive intersection. */
     pub fn hit(&self) -> Option<&Intersection<'a>> {
         self.0.iter().find(|&i| i.t() > 0.0)
     }

@@ -21,7 +21,7 @@ fn pixel_at_returns_expected_color() {
     let mut canvas = Canvas::new(16, 8);
     let red = Color::new(1.0, 0.0, 0.0);
     canvas.write_pixel(2, 3, red);
-    assert_eq!(canvas.pixel_at(2, 3), red);
+    assert_eq!(canvas.pixel_at(2, 3), &red);
 }
 
 #[test]

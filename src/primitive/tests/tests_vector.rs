@@ -115,13 +115,13 @@ fn can_normalize_unit_vector() {
 fn can_compute_vector_dot_product() {
     let vector_a = Vector::new(1.0, 2.0, 3.0);
     let vector_b = Vector::new(2.0, 3.0, 4.0);
-    assert_eq!(vector_a.dot(vector_b), 20.0)
+    assert_eq!(vector_a.dot(&vector_b), 20.0)
 }
 
 #[test]
 fn can_compute_vector_cross_product() {
     let vector_a = Vector::new(1.0, 2.0, 3.0);
     let vector_b = Vector::new(2.0, 3.0, 4.0);
-    assert_eq!(vector_a.cross(vector_b), Vector::new(-1.0, 2.0, -1.0));
-    assert_eq!(vector_b.cross(vector_a), Vector::new(1.0, -2.0, 1.0));
+    assert_eq!(vector_a.cross(&vector_b), Vector::new(-1.0, 2.0, -1.0));
+    assert_eq!(vector_b.cross(&vector_a), Vector::new(1.0, -2.0, 1.0));
 }

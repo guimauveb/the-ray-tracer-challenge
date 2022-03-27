@@ -41,9 +41,9 @@ impl Canvas {
         self.pixels[index] = color;
     }
 
-    pub fn pixel_at(&self, x: usize, y: usize) -> Color {
+    pub fn pixel_at(&self, x: usize, y: usize) -> &Color {
         let index = self.get_pixel_index(x, y);
-        self.pixels[index]
+        &self.pixels[index]
     }
 
     // Bonus

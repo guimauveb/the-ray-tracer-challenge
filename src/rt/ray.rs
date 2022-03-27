@@ -1,5 +1,7 @@
 use {
-    super::{intersect::Intersect, intersection::Intersection},
+    super::{
+        intersect::Intersect, intersection::Intersection, matrix::Matrix, transform::Transform,
+    },
     crate::{
         primitive::{point::Point, vector::Vector},
         rt::sphere::Sphere,
@@ -20,12 +22,12 @@ impl Ray {
         Ray { origin, direction }
     }
 
-    pub fn origin(&self) -> Point {
-        self.origin
+    pub fn origin(&self) -> &Point {
+        &self.origin
     }
 
-    pub fn direction(&self) -> Vector {
-        self.direction
+    pub fn direction(&self) -> &Vector {
+        &self.direction
     }
 }
 
@@ -66,10 +68,13 @@ impl Intersect<Sphere> for Ray {
                   b = 2D(O-C),
                   c = |O-C|^2 - R^2
         */
-        let sphere_to_ray = self.origin() - sphere.origin();
-        let a = self.direction().dot(self.direction());
-        let b = 2.0 * self.direction().dot(sphere_to_ray);
-        let c = sphere_to_ray.dot(sphere_to_ray) - 1.0;
+
+        // NOTE - Use a mutable reference to self instead?
+        let transformed_ray = self.transform(&sphere.transform().inverse().unwrap());
+        let sphere_to_ray = transformed_ray.origin() - sphere.origin();
+        let a = transformed_ray.direction().dot(transformed_ray.direction());
+        let b = 2.0 * transformed_ray.direction().dot(&sphere_to_ray);
+        let c = sphere_to_ray.dot(&sphere_to_ray) - 1.0;
 
         let discriminant = b.powi(2) - 4.0 * a * c;
 
@@ -90,6 +95,15 @@ impl Intersect<Sphere> for Ray {
                 Intersection::Sphere(t0, sphere),
                 Intersection::Sphere(t1, sphere),
             ])
+        }
+    }
+}
+
+impl Transform for Ray {
+    fn transform(&self, m: &Matrix<4_usize>) -> Self {
+        Self {
+            origin: m * self.origin,
+            direction: m * self.direction,
         }
     }
 }

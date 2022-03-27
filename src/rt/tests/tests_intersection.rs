@@ -12,16 +12,15 @@ use crate::{
 
 #[test]
 fn an_intersection_encapsulates_t_and_object() {
-    let sphere = Sphere::new();
+    let sphere = Sphere::default();
     let i = Intersection::Sphere(3.5, &sphere);
     assert_eq!(i.t(), 3.5);
     assert_eq!(i.object(), &sphere);
 }
 
-// NOTE - Not really testing something useful
 #[test]
 fn aggregating_intersections() {
-    let sphere = Sphere::new();
+    let sphere = Sphere::default();
     let i1 = Intersection::Sphere(1.0, &sphere);
     let i2 = Intersection::Sphere(2.0, &sphere);
     let xs = Intersections::new(vec![i1, i2]);
@@ -36,7 +35,7 @@ fn intersect_sets_the_object_on_the_intersection() {
     let origin = Point::new(0.0, 0.0, -5.0);
     let direction = Vector::new(0.0, 0.0, 1.0);
     let ray = Ray::new(origin, direction);
-    let sphere = Sphere::new();
+    let sphere = Sphere::default();
     let xs = ray.intersect(&sphere).expect("No intersection found!");
 
     assert_eq!(xs.len(), 2);
@@ -46,7 +45,7 @@ fn intersect_sets_the_object_on_the_intersection() {
 
 #[test]
 fn the_hit_when_all_intersections_have_positive_t() {
-    let sphere = Sphere::new();
+    let sphere = Sphere::default();
     let i1 = Intersection::Sphere(1.0, &sphere);
     let i2 = Intersection::Sphere(2.0, &sphere);
     let xs = Intersections::new(vec![i1, i2]);
@@ -57,7 +56,7 @@ fn the_hit_when_all_intersections_have_positive_t() {
 
 #[test]
 fn the_hit_when_some_intersections_have_negative_t() {
-    let sphere = Sphere::new();
+    let sphere = Sphere::default();
     let i1 = Intersection::Sphere(-1.0, &sphere);
     let i2 = Intersection::Sphere(1.0, &sphere);
     let xs = Intersections::new(vec![i1, i2]);
@@ -68,7 +67,7 @@ fn the_hit_when_some_intersections_have_negative_t() {
 
 #[test]
 fn the_hit_when_all_intersections_have_negative_t() {
-    let sphere = Sphere::new();
+    let sphere = Sphere::default();
     let i1 = Intersection::Sphere(-2.0, &sphere);
     let i2 = Intersection::Sphere(-1.0, &sphere);
     let xs = Intersections::new(vec![i1, i2]);
@@ -79,7 +78,7 @@ fn the_hit_when_all_intersections_have_negative_t() {
 
 #[test]
 fn the_hit_is_always_the_lowest_nonnegative_intersection() {
-    let sphere = Sphere::new();
+    let sphere = Sphere::default();
     let i1 = Intersection::Sphere(5.0, &sphere);
     let i2 = Intersection::Sphere(7.0, &sphere);
     let i3 = Intersection::Sphere(-3.0, &sphere);

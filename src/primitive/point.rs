@@ -80,8 +80,28 @@ impl Add<Vector> for Point {
     }
 }
 
+impl Add<Vector> for &Point {
+    type Output = Point;
+
+    fn add(self, rhs: Vector) -> Point {
+        Point {
+            x: self.x + rhs.x(),
+            y: self.y + rhs.y(),
+            z: self.z + rhs.z(),
+        }
+    }
+}
+
 // The resulting Vector is the Vector pointing from p2 to p1 (rhs to self).
 impl Sub for Point {
+    type Output = Vector;
+
+    fn sub(self, rhs: Self) -> Vector {
+        Vector::new(self.x - rhs.x(), self.y - rhs.y(), self.z - rhs.z())
+    }
+}
+
+impl Sub for &Point {
     type Output = Vector;
 
     fn sub(self, rhs: Self) -> Vector {
@@ -102,11 +122,35 @@ impl Sub<Vector> for Point {
     }
 }
 
+impl Sub<Vector> for &Point {
+    type Output = Point;
+
+    fn sub(self, rhs: Vector) -> Point {
+        Point {
+            x: self.x - rhs.x(),
+            y: self.y - rhs.y(),
+            z: self.z - rhs.z(),
+        }
+    }
+}
+
 impl Mul<f64> for Point {
     type Output = Self;
 
     fn mul(self, rhs: f64) -> Self {
         Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
+    }
+}
+
+impl Mul<f64> for &Point {
+    type Output = Point;
+
+    fn mul(self, rhs: f64) -> Point {
+        Point {
             x: self.x * rhs,
             y: self.y * rhs,
             z: self.z * rhs,
@@ -126,11 +170,35 @@ impl Mul<Point> for f64 {
     }
 }
 
+impl Mul<&Point> for f64 {
+    type Output = Point;
+
+    fn mul(self, rhs: &Point) -> Point {
+        Point {
+            x: self * rhs.x,
+            y: self * rhs.y,
+            z: self * rhs.z,
+        }
+    }
+}
+
 impl Div<f64> for Point {
     type Output = Self;
 
     fn div(self, rhs: f64) -> Self {
         Self {
+            x: self.x / rhs,
+            y: self.y / rhs,
+            z: self.z / rhs,
+        }
+    }
+}
+
+impl Div<f64> for &Point {
+    type Output = Point;
+
+    fn div(self, rhs: f64) -> Point {
+        Point {
             x: self.x / rhs,
             y: self.y / rhs,
             z: self.z / rhs,
