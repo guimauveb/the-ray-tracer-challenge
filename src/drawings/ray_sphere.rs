@@ -8,10 +8,11 @@ use crate::{
 pub fn ray_sphere_hit() -> Result<(), std::io::Error> {
     let mut canvas = Canvas::new(256, 256);
     let red = Color::new(1.0, 0.0, 0.0);
+
     // Unit sphere
     let sphere = Sphere::default();
-    let mut wall: Vec<Point> = vec![];
-    let mut rays: Vec<Ray> = vec![];
+    let mut wall: Vec<Point> = Vec::with_capacity(256_usize.pow(2));
+    let mut rays: Vec<Ray> = Vec::with_capacity(256_usize.pow(2));
 
     // Wall
     for y in -128..127 {
@@ -19,26 +20,25 @@ pub fn ray_sphere_hit() -> Result<(), std::io::Error> {
             wall.push(Point::new(f64::from(x), f64::from(y), 10.0));
         }
     }
+    assert_eq!(wall.capacity(), 256_usize.pow(2));
+
     // Rays
     for y in -128..127 {
         for x in -128..127 {
-            let origin = Point::new(0.0, 0.0, -1.1);
+            let origin = Point::new(0.0, 0.0, -1.005);
             let direction = Vector::new(f64::from(x), f64::from(y), 10.0);
             rays.push(Ray::new(origin, direction));
         }
     }
+    assert_eq!(rays.capacity(), 256_usize.pow(2));
 
     for r in rays {
         let xs = r.intersect(&sphere);
         if let Some(intersections) = xs {
-            //println!(
-            //    "Ray intersects sphere at {} and {}",
-            //    intersections[0].t(),
-            //    intersections[1].t()
-            //);
+            // TODO - Create a method to map a plane with origin at x = 0 and y = 0 to the canvas coordinates.
             canvas.write_pixel(
-                canvas.width() / 2 + r.direction().x() as usize,
-                canvas.height() / 2 + r.direction().y() as usize,
+                (canvas.width() as i64 / 2 as i64 + r.direction().x() as i64) as usize,
+                (canvas.height() as i64 / 2 as i64 + r.direction().y() as i64) as usize,
                 red,
             );
         }
