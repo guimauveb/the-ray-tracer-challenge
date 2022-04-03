@@ -135,9 +135,8 @@ impl Sub for &Vector {
     }
 }
 
-/* Used to get the opposite of a Vector.
- * Given a vector pointing from a surface toward a light source, we get the vector that points from the light source to the surface.
- */
+// Used to get the opposite of a Vector.
+// Given a vector pointing from a surface toward a light source, we get the vector that points from the light source to the surface.
 impl Neg for Vector {
     type Output = Self;
 
@@ -257,5 +256,11 @@ impl Vector {
             y: (self.z * rhs.x) - (self.x * rhs.z),
             z: (self.x * rhs.y) - (self.y * rhs.x),
         }
+    }
+
+    // NOTE - Should use value instead of borrow?
+    pub fn reflect(&self, normal: &Self) -> Self {
+        // Good explaination: https://www.youtube.com/watch?v=naaeH1qbjdQ
+        self - &(normal * 2.0 * self.dot(normal))
     }
 }

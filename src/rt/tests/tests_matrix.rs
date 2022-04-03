@@ -311,7 +311,7 @@ fn calculating_the_inverse_of_a_matrix() {
         [1.0, -3.0, 7.0, 4.0],
     ]);
 
-    let inverse = A.inverse().unwrap_or_else(|err| panic!("{}", err));
+    let inverse = A.inverse().expect("Matrix is not invertible!");
 
     assert_eq!(A.determinant(), 532.0);
     assert_eq!(A.cofactor([2, 3]), -160.0);
@@ -338,7 +338,7 @@ fn calculating_the_inverse_of_another_matrix() {
         [-3.0, 0.0, -9.0, -4.0],
     ]);
 
-    let inverse = A.inverse().unwrap_or_else(|err| panic!("{}", err));
+    let inverse = A.inverse().expect("Matrix is not invertible!");
 
     const EXPECTED_INVERSE: Matrix<4_usize> = Matrix::<4_usize>::new([
         [-0.15385, -0.15385, -0.28205, -0.53846],
@@ -359,7 +359,7 @@ fn calculating_the_inverse_of_a_third_matrix() {
         [-7.0, 6.0, 6.0, 2.0],
     ]);
 
-    let inverse = A.inverse().unwrap_or_else(|err| panic!("{}", err));
+    let inverse = A.inverse().expect("Matrix is not invertible!");
 
     const EXPECTED_INVERSE: Matrix<4_usize> = Matrix::<4_usize>::new([
         [-0.04074, -0.07778, 0.14444, -0.22222],
@@ -387,7 +387,7 @@ fn multiplying_a_product_by_its_inverse() {
     ]);
 
     let c = A * B;
-    let b_inverse = B.inverse().unwrap_or_else(|err| panic!("{}", err));
+    let b_inverse = B.inverse().expect("Matrix is not invertible!");
 
     assert_eq!(c * b_inverse, A);
 }
@@ -404,7 +404,7 @@ fn multiplying_by_a_translation_matrix() {
 #[test]
 fn multiplying_by_the_inverse_of_translation_matrix() {
     let transform = Matrix::<4_usize>::translation(5.0, -3.0, 2.0);
-    let inverse = transform.inverse().unwrap_or_else(|err| panic!("{}", err));
+    let inverse = transform.inverse().expect("Matrix is not invertible!");
     let point = Point::new(-3.0, 4.0, 5.0);
     let expected_point = Point::new(-8.0, 7.0, 3.0);
 
@@ -462,9 +462,7 @@ fn rotating_a_point_around_the_x_axis() {
 fn the_inverse_of_an_x_rotation_rotates_in_the_opposite_direciton() {
     let point = Point::new(0.0, 1.0, 0.0);
     let half_quarter = Matrix::<4_usize>::rotation_x(PI / 4.0);
-    let inverse = half_quarter
-        .inverse()
-        .unwrap_or_else(|err| panic!("{}", err));
+    let inverse = half_quarter.inverse().expect("Matrix is not invertible!");
 
     assert_eq!(
         inverse * point,

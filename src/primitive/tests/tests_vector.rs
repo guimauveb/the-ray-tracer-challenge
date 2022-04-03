@@ -125,3 +125,19 @@ fn can_compute_vector_cross_product() {
     assert_eq!(vector_a.cross(&vector_b), Vector::new(-1.0, 2.0, -1.0));
     assert_eq!(vector_b.cross(&vector_a), Vector::new(1.0, -2.0, 1.0));
 }
+
+#[test]
+fn reflecting_a_vector_approaching_at_45_deg() {
+    let v = Vector::new(1.0, -1.0, 0.0);
+    let normal = Vector::new(0.0, 1.0, 0.0);
+    let r = v.reflect(&normal);
+    assert_eq!(r, Vector::new(1.0, 1.0, 0.0));
+}
+
+#[test]
+fn reflecting_a_vector_off_a_slanted_surface() {
+    let v = Vector::new(0.0, -1.0, 0.0);
+    let normal = Vector::new(2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0, 0.0);
+    let r = v.reflect(&normal);
+    assert_eq!(r, Vector::new(1.0, 0.0, 0.0));
+}

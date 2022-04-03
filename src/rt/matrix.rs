@@ -310,6 +310,23 @@ impl Mul<Point> for &Matrix<4_usize> {
     }
 }
 
+impl Mul<&Point> for &Matrix<4_usize> {
+    type Output = Point;
+
+    fn mul(self, rhs: &Point) -> Point {
+        let mut point = Point::zero();
+        // Could map as well but the index (usize) is moved instead of being copied?
+        for row in 0..3_usize {
+            point[row] = (0..4_usize)
+                .map(|column| self[[row, column]] * if column < 3 { rhs[column] } else { 1.0 }) // rhs[3] is (self.w) is equal to 1.0 but not accessible from the Point type.
+                .collect::<Vec<f64>>()
+                .iter()
+                .sum();
+        }
+        point
+    }
+}
+
 impl Mul<Vector> for Matrix<4_usize> {
     type Output = Vector;
 

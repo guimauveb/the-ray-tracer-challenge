@@ -1,12 +1,16 @@
 #[cfg(test)]
-use crate::{
-    primitive::{point::Point, tuple::Tuple, vector::Vector},
-    rt::{
-        intersect::Intersect,
-        matrix::{Matrix, Scaling, Translation},
-        ray::Ray,
-        sphere::Sphere,
+use {
+    crate::{
+        primitive::{point::Point, tuple::Tuple, vector::Vector},
+        rt::{
+            intersect::Intersect,
+            matrix::{Matrix, Rotation, Scaling, Translation},
+            normal::Normal,
+            ray::Ray,
+            sphere::Sphere,
+        },
     },
+    std::f64::consts::PI,
 };
 
 #[test]
@@ -85,4 +89,64 @@ fn intersecting_a_scaled_sphere_with_a_ray() {
     assert_eq!(xs.len(), 2);
     assert_eq!(xs[0].t(), 3.0);
     assert_eq!(xs[1].t(), 7.0);
+}
+
+#[test]
+fn the_normal_on_a_sphere_at_a_point_on_the_x_axis() {
+    let s = Sphere::default();
+    let n = s.normal_at(&Point::new(1.0, 0.0, 0.0));
+    assert_eq!(n, Vector::new(1.0, 0.0, 0.0));
+}
+
+#[test]
+fn the_normal_on_a_sphere_at_a_point_on_the_y_axis() {
+    let s = Sphere::default();
+    let n = s.normal_at(&Point::new(0.0, 1.0, 0.0));
+    assert_eq!(n, Vector::new(0.0, 1.0, 0.0));
+}
+
+#[test]
+fn the_normal_on_a_sphere_at_a_point_on_the_z_axis() {
+    let s = Sphere::default();
+    let n = s.normal_at(&Point::new(0.0, 0.0, 1.0));
+    assert_eq!(n, Vector::new(0.0, 0.0, 1.0));
+}
+
+#[test]
+fn the_normal_on_a_sphere_at_a_nonaxial_point() {
+    let s = Sphere::default();
+    let n = s.normal_at(&Point::new(
+        3.0_f64.sqrt() / 3.0,
+        3.0_f64.sqrt() / 3.0,
+        3.0_f64.sqrt() / 3.0,
+    ));
+    assert_eq!(
+        n,
+        Vector::new(
+            3.0_f64.sqrt() / 3.0,
+            3.0_f64.sqrt() / 3.0,
+            3.0_f64.sqrt() / 3.0,
+        )
+    );
+}
+
+#[test]
+fn computing_the_normal_on_a_translated_sphere() {
+    let mut s = Sphere::default();
+    s.set_transform(Matrix::<4_usize>::translation(0.0, 1.0, 0.0));
+    let n = s.normal_at(&Point::new(0.0, 1.70711, -0.70711));
+    assert_eq!(n, Vector::new(0.0, 0.70711, -0.70711));
+}
+
+#[test]
+fn computing_the_normal_on_a_transformed_sphere() {
+    let mut s = Sphere::default();
+    let m = Matrix::<4_usize>::scaling(1.0, 0.5, 1.0) * Matrix::<4_usize>::rotation_z(PI / 5.0);
+    s.set_transform(m);
+    let n = s.normal_at(&Point::new(
+        0.0,
+        2.0_f64.sqrt() / 2.0,
+        -2.0_f64.sqrt() / 2.0,
+    ));
+    assert_eq!(n, Vector::new(0.0, 0.97014, -0.24254));
 }
