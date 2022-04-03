@@ -8,6 +8,7 @@
 
 #### ✅ Chapter 4 - Matrix transformations
 
-#### 👨🏼‍💻Chapter 5 - Ray-Sphere intersections
+#### ✅ Chapter 5 - Ray-Sphere intersections
 
+#### 👨🏼‍💻 Chapter 6 - Light and shading
 
