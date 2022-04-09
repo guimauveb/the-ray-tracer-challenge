@@ -1,5 +1,6 @@
 use {
     super::{
+        material::Material,
         matrix::{Matrix, Transpose},
         normal::Normal,
     },
@@ -12,15 +13,17 @@ pub struct Sphere {
     origin: Point,
     radii: f64, // TODO ?
     transform: Matrix<4_usize>,
+    material: Material,
 }
 
 impl Sphere {
-    pub fn new(origin: Point, transform: Matrix<4_usize>) -> Self {
+    pub fn new(origin: Point, transform: Matrix<4_usize>, material: Material) -> Self {
         Sphere {
             id: 1,
             origin,
             radii: 1.0,
             transform,
+            material,
         }
     }
 
@@ -35,6 +38,14 @@ impl Sphere {
     pub fn set_transform(&mut self, transform: Matrix<4_usize>) {
         self.transform = transform;
     }
+
+    pub fn material(&self) -> &Material {
+        &self.material
+    }
+
+    pub fn set_material(&mut self, material: Material) {
+        self.material = material
+    }
 }
 
 impl Default for Sphere {
@@ -44,6 +55,7 @@ impl Default for Sphere {
             origin: Point::new(0.0, 0.0, 0.0),
             radii: 1.0,
             transform: Matrix::<4_usize>::identity(),
+            material: Material::default(),
         }
     }
 }

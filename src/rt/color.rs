@@ -82,8 +82,20 @@ impl ops::Mul<f64> for Color {
         }
     }
 }
+
+impl ops::Mul<f64> for &Color {
+    type Output = Color;
+
+    fn mul(self, rhs: f64) -> Color {
+        Color {
+            red: self.red * rhs,
+            green: self.green * rhs,
+            blue: self.blue * rhs,
+        }
+    }
+}
 /*
-// Not implemented to avoid unnecessary call
+ * Not implemented to avoid unnecessary call
  * trait HadamardProduct<Rhs: Mul = Self> {
  *     fn hadamard_product(self, rhs: Rhs) -> Self;
  * }
@@ -99,6 +111,18 @@ impl ops::Mul for Color {
 
     fn mul(self, rhs: Self) -> Self {
         Self {
+            red: self.red * rhs.red,
+            green: self.green * rhs.green,
+            blue: self.blue * rhs.blue,
+        }
+    }
+}
+
+impl ops::Mul for &Color {
+    type Output = Color;
+
+    fn mul(self, rhs: Self) -> Color {
+        Color {
             red: self.red * rhs.red,
             green: self.green * rhs.green,
             blue: self.blue * rhs.blue,

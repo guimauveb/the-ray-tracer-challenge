@@ -12,6 +12,10 @@ impl<'a> Intersections<'a> {
         self.0.len()
     }
 
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
+
     /* If all intersections are positive, the iterator will stop at the first intersection in the list and return it,
      * so we don't have to check if all intersections are positive and then return the first element of the list.
      * Return None if there is no positive intersection. */

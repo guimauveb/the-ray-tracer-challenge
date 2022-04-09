@@ -4,6 +4,7 @@ use {
         primitive::{point::Point, tuple::Tuple, vector::Vector},
         rt::{
             intersect::Intersect,
+            material::Material,
             matrix::{Matrix, Rotation, Scaling, Translation},
             normal::Normal,
             ray::Ray,
@@ -149,4 +150,21 @@ fn computing_the_normal_on_a_transformed_sphere() {
         -2.0_f64.sqrt() / 2.0,
     ));
     assert_eq!(n, Vector::new(0.0, 0.97014, -0.24254));
+}
+
+#[test]
+fn a_sphere_has_a_default_material() {
+    let s = Sphere::default();
+    let m = s.material();
+    assert_eq!(m, &Material::default());
+}
+
+#[test]
+fn a_sphere_may_be_assigned_a_material() {
+    let mut s = Sphere::default();
+    let mut m = Material::default();
+    m.set_ambient(1.0);
+
+    s.set_material(m.clone());
+    assert_eq!(s.material(), &m);
 }

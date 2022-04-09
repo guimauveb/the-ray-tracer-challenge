@@ -1,12 +1,9 @@
-use {
-    crate::{
-        primitive::{point::Point, tuple::Tuple, vector::Vector},
-        rt::{
-            canvas::Canvas, color::Color, intersect::Intersect, matrix::*, ray::Ray,
-            sphere::Sphere, to_ppm::ToPPM,
-        },
+use crate::{
+    primitive::{point::Point, tuple::Tuple, vector::Vector},
+    rt::{
+        canvas::Canvas, color::Color, intersect::Intersect, /*matrix::*,*/ ray::Ray,
+        sphere::Sphere, to_ppm::ToPPM,
     },
-    std::f64::consts::PI,
 };
 
 pub fn ray_sphere_hit() -> Result<(), std::io::Error> {
@@ -53,11 +50,11 @@ pub fn ray_sphere_hit() -> Result<(), std::io::Error> {
 
     for r in rays {
         let xs = r.intersect(&sphere);
-        if let Some(intersections) = xs {
+        if let Some(_intersections) = xs {
             // TODO - Create a method to map a plane with origin at x = 0 and y = 0 to the canvas coordinates.
             canvas.write_pixel(
-                (canvas.width() as i64 / 2 as i64 + r.direction().x() as i64) as usize,
-                (canvas.height() as i64 / 2 as i64 + r.direction().y() as i64) as usize,
+                (canvas.width() as i64 / 2_i64 + r.direction().x() as i64) as usize,
+                (canvas.height() as i64 / 2_i64 + r.direction().y() as i64) as usize,
                 red,
             );
         }
