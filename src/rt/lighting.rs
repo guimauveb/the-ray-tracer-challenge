@@ -4,6 +4,5 @@ use {
 };
 
 pub trait Lighting {
-    fn lighting(&self, light: &PointLight, point: &Point, eyev: &Vector, normalv: &Vector)
-        -> Color;
+    fn lighting(&self, light: &PointLight, point: &Point, eye: &Vector, normal: &Vector) -> Color;
 }
