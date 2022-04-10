@@ -6,6 +6,7 @@ use crate::{
     },
 };
 
+// "Works" but the conversion from world space to canvas space is quite hacky.
 pub fn ray_sphere_hit() -> Result<(), std::io::Error> {
     let mut canvas = Canvas::new(256, 256);
     let red = Color::new(1.0, 0.0, 0.0);
