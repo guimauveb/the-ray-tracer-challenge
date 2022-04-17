@@ -38,14 +38,14 @@ impl Lighting for Material {
     fn lighting(&self, light: &PointLight, point: &Point, eye: &Vector, normal: &Vector) -> Color {
         // Combine the surface color with the light intensity
         let effective_color = &self.color * light.intensity();
-        // Find the direction of the light source (point -> light source)
-        let lightv = (light.position() - point).normalized();
+        // Find the direction to the light source (point -> light source)
+        let point_to_light = (light.position() - point).normalized();
         // Compute the ambient contribution
         let ambient = effective_color * self.ambient;
         /* light_dot_normal represents the cosine of the angle between the
          * light vector and the normal vector. A negative number means
          * the light is on the other side of the surface. */
-        let light_dot_normal = lightv.dot(normal);
+        let light_dot_normal = point_to_light.dot(normal);
         let (diffuse, specular) = if light_dot_normal < 0.0 {
             (Color::new(0.0, 0.0, 0.0), Color::new(0.0, 0.0, 0.0))
         } else {
@@ -54,7 +54,7 @@ impl Lighting for Material {
             /* reflect_dot_eye represents the cosine of the angle between the
              * reflection vector and the eye vector. A negative number means the
              * light reflects away from the eye. */
-            let reflect = -lightv.reflect(normal);
+            let reflect = -point_to_light.reflect(normal);
             let reflect_dot_eye = reflect.dot(eye);
             let specular = if reflect_dot_eye <= 0.0 {
                 Color::new(0.0, 0.0, 0.0)
