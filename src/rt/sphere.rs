@@ -11,7 +11,6 @@ use {
 pub struct Sphere {
     id: u32, // TODO ?
     origin: Point,
-    radii: f64, // TODO ?
     transform: Matrix<4_usize>,
     material: Material,
 }
@@ -21,9 +20,24 @@ impl Sphere {
         Sphere {
             id: 1,
             origin,
-            radii: 1.0,
             transform,
             material,
+        }
+    }
+
+    /// Creates a sphere with a given material. All other fields are set to default values.
+    pub fn with_material(material: Material) -> Self {
+        Self {
+            material,
+            ..Self::default()
+        }
+    }
+
+    /// Creates a sphere with a given transform. All other fields are set to default values.
+    pub fn with_transform(transform: Matrix<4_usize>) -> Self {
+        Self {
+            transform,
+            ..Self::default()
         }
     }
 
@@ -53,7 +67,6 @@ impl Default for Sphere {
         Self {
             id: 1,
             origin: Point::new(0.0, 0.0, 0.0),
-            radii: 1.0,
             transform: Matrix::<4_usize>::identity(),
             material: Material::default(),
         }
@@ -73,6 +86,6 @@ impl Normal for Sphere {
             .transpose()
             * object_normal;
 
-        world_normal.normalize()
+        world_normal.normalized()
     }
 }

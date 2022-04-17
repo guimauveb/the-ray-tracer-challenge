@@ -74,18 +74,16 @@ fn a_sphere_default_transform() {
 
 #[test]
 fn changing_a_sphere_transform() {
-    let mut s = Sphere::default();
     let t = Matrix::<4_usize>::translation(2.0, 3.0, 4.0);
-    s.set_transform(t.clone());
-
+    let s = Sphere::with_transform(t.clone());
     assert_eq!(s.transform(), &t);
 }
 
 #[test]
 fn intersecting_a_scaled_sphere_with_a_ray() {
     let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
-    let mut s = Sphere::default();
-    s.set_transform(Matrix::<4_usize>::scaling(2.0, 2.0, 2.0));
+    let t = Matrix::<4_usize>::scaling(2.0, 2.0, 2.0);
+    let s = Sphere::with_transform(t);
     let xs = r.intersect(&s).expect("No intersection found!");
     assert_eq!(xs.len(), 2);
     assert_eq!(xs[0].t(), 3.0);
@@ -133,17 +131,16 @@ fn the_normal_on_a_sphere_at_a_nonaxial_point() {
 
 #[test]
 fn computing_the_normal_on_a_translated_sphere() {
-    let mut s = Sphere::default();
-    s.set_transform(Matrix::<4_usize>::translation(0.0, 1.0, 0.0));
+    let t = Matrix::<4_usize>::translation(0.0, 1.0, 0.0);
+    let s = Sphere::with_transform(t);
     let n = s.normal_at(&Point::new(0.0, 1.70711, -0.70711));
     assert_eq!(n, Vector::new(0.0, 0.70711, -0.70711));
 }
 
 #[test]
 fn computing_the_normal_on_a_transformed_sphere() {
-    let mut s = Sphere::default();
     let m = Matrix::<4_usize>::scaling(1.0, 0.5, 1.0) * Matrix::<4_usize>::rotation_z(PI / 5.0);
-    s.set_transform(m);
+    let s = Sphere::with_transform(m);
     let n = s.normal_at(&Point::new(
         0.0,
         2.0_f64.sqrt() / 2.0,
@@ -161,10 +158,8 @@ fn a_sphere_has_a_default_material() {
 
 #[test]
 fn a_sphere_may_be_assigned_a_material() {
-    let mut s = Sphere::default();
     let mut m = Material::default();
     m.set_ambient(1.0);
-
-    s.set_material(m.clone());
+    let s = Sphere::with_material(m.clone());
     assert_eq!(s.material(), &m);
 }

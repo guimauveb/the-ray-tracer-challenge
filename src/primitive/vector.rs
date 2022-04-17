@@ -241,7 +241,7 @@ impl Vector {
         )
     }
 
-    pub fn normalize(&self) -> Self {
+    pub fn normalized(&self) -> Self {
         *self / self.magnitude()
     }
 

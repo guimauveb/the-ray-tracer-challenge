@@ -6,3 +6,4 @@ pub mod tests_material;
 pub mod tests_matrix;
 pub mod tests_ray;
 pub mod tests_sphere;
+pub mod tests_world;

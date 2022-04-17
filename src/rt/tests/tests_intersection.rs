@@ -3,7 +3,7 @@ use crate::{
     primitive::{point::Point, tuple::Tuple, vector::Vector},
     rt::{
         intersect::Intersect,
-        intersection::{Intersection, Object},
+        intersection::{Intersection, IntersectionObject},
         intersections::Intersections,
         ray::Ray,
         sphere::Sphere,

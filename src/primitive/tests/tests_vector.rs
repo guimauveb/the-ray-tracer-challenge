@@ -92,14 +92,14 @@ fn can_compute_vector_magnitude_4() {
 #[test]
 fn can_normalize_vector_1() {
     assert_eq!(
-        Vector::new(4.0, 0.0, 0.0).normalize(),
+        Vector::new(4.0, 0.0, 0.0).normalized(),
         Vector::new(1.0, 0.0, 0.0)
     );
 }
 #[test]
 fn can_normalize_vector_2() {
     assert_eq!(
-        Vector::new(1.0, 2.0, 3.0).normalize(),
+        Vector::new(1.0, 2.0, 3.0).normalized(),
         // Vector { 1.0/sqrt(14.0), 2.0/sqrt(14.0), 3.0/sqrt(14.0) }
         Vector::new(0.26726, 0.53452, 0.80178)
     );
@@ -107,7 +107,7 @@ fn can_normalize_vector_2() {
 #[test]
 fn can_normalize_unit_vector() {
     let vector = Vector::new(1.0, 2.0, 3.0);
-    let normalized = vector.normalize();
+    let normalized = vector.normalized();
     assert_eq!(normalized.magnitude(), 1.0)
 }
 

@@ -4,7 +4,7 @@ use crate::{
         canvas::Canvas,
         color::Color,
         intersect::Intersect,
-        intersection::Object,
+        intersection::IntersectionObject,
         lighting::Lighting,
         material::Material,
         normal::Normal,
@@ -28,11 +28,10 @@ pub fn ray_sphere_hit() -> Result<(), std::io::Error> {
 
     let mut canvas = Canvas::new(canvas_pixels, canvas_pixels);
 
-    // Unit sphere
-    let mut sphere = Sphere::default();
     let mut material = Material::default();
     material.set_color(Color::new(1.0, 0.2, 1.0));
-    sphere.set_material(material);
+    // Unit sphere
+    let sphere = Sphere::with_material(material);
 
     //// Shrink it along the y axis
     //sphere.set_transform(Matrix::<4_usize>::scaling(1.0, 0.5, 1.0));
@@ -61,8 +60,8 @@ pub fn ray_sphere_hit() -> Result<(), std::io::Error> {
             let world_x = -half + pixel_size * x as f64;
             // Point on the wall that the ray will target
             let position = Point::new(world_x, world_y, wall_z);
-            // If we don't normalize the direction, we get a rather strange result
-            let r = Ray::new(ray_origin, (position - ray_origin).normalize());
+            // If we don't normalized the direction, we get a rather strange result -> Why?
+            let r = Ray::new(ray_origin, (position - ray_origin).normalized());
             let intersections = r.intersect(&sphere);
             if let Some([hit, _]) = intersections {
                 let point = r.position(hit.t());

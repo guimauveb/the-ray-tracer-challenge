@@ -34,7 +34,7 @@ impl Environment {
 
 pub fn launch_projecticle() -> Result<(), std::io::Error> {
     let start = Point::new(0.0, 1.0, 0.0);
-    let velocity = Vector::new(1.0, 1.8, 0.0).normalize() * 11.25;
+    let velocity = Vector::new(1.0, 1.8, 0.0).normalized() * 11.25;
     let mut projectile = Projectile::new(start, velocity);
 
     let gravity = Vector::new(0.0, -0.1, 0.0);

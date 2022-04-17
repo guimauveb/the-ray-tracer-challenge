@@ -13,6 +13,16 @@ pub struct Material {
 }
 
 impl Default for Material {
+    /// Creates a Material with the following values:
+    /// ```
+    /// let material = Material {
+    ///     color: Color { 1.0, 1.0, 1.0 },
+    ///     ambient: 0.1,
+    ///     diffuse: 0.9,
+    ///     specular: 0.9,
+    ///     shininess: 200.0,
+    /// };
+    /// ```
     fn default() -> Self {
         Self {
             color: Color::new(1.0, 1.0, 1.0),
@@ -29,7 +39,7 @@ impl Lighting for Material {
         // Combine the surface color with the light intensity
         let effective_color = &self.color * light.intensity();
         // Find the direction of the light source (point -> light source)
-        let lightv = (light.position() - point).normalize();
+        let lightv = (light.position() - point).normalized();
         // Compute the ambient contribution
         let ambient = effective_color * self.ambient;
         /* light_dot_normal represents the cosine of the angle between the

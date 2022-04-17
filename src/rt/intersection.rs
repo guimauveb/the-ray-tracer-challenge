@@ -7,7 +7,7 @@ pub enum Intersection<'a> {
 }
 
 // To implement for each enum variant
-pub trait Object<T> {
+pub trait IntersectionObject<T> {
     fn object(&self) -> &T;
 }
 
@@ -22,7 +22,7 @@ impl<'a> Intersection<'a> {
 /* NOTE - Could use a dyn method here...
  *   fn object(&self) -> &dyn Shape
  * ...but to make the code as fast as possible I'd rather avoid the level of inderection brought by it. */
-impl<'a> Object<Sphere> for Intersection<'a> {
+impl<'a> IntersectionObject<Sphere> for Intersection<'a> {
     fn object(&self) -> &Sphere {
         let Self::Sphere(_, object) = self;
         object
