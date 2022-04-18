@@ -3,7 +3,7 @@ use crate::{
     primitive::{point::Point, tuple::Tuple, vector::Vector},
     rt::{
         intersect::Intersect,
-        intersection::{Intersection, IntersectionObject},
+        intersection::{Computation, Intersection, IntersectionObject},
         intersections::Intersections,
         ray::Ray,
         sphere::Sphere,
@@ -87,4 +87,20 @@ fn the_hit_is_always_the_lowest_nonnegative_intersection() {
     let xs = Intersections::new(vec![i1.clone(), i2.clone(), i3.clone(), i4.clone()]);
     let i = xs.hit();
     assert_eq!(i, Some(&i4));
+}
+
+#[test]
+fn precomputing_the_state_of_an_intersection() {
+    let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
+    let shape = Sphere::default();
+    let i = Intersection::Sphere(4.0, &shape);
+    let comps = i.prepare_computations(&r);
+    let expected_comps = Computation {
+        intersection: &i,
+        point: Point::new(0.0, 0.0, -1.0),
+        eye_vector: Vector::new(0.0, 0.0, -1.0),
+        normal_vector: Vector::new(0.0, 0.0, -1.0),
+    };
+
+    assert_eq!(comps, expected_comps);
 }

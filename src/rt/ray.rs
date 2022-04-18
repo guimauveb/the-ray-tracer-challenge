@@ -15,6 +15,7 @@ pub struct Ray {
 }
 
 pub trait Position {
+    /// Computes the point at the given distance along the ray.
     fn position(&self, distance: f64) -> Point;
 }
 
@@ -38,9 +39,9 @@ impl Position for Ray {
     }
 }
 
-impl<'a> Intersect<'a, Sphere> for Ray {
+impl<'object> Intersect<'object, Sphere> for Ray {
     // If the ray intersects the sphere at two points P and P', we return [P, P']. If it intersects the sphere at one point P, we return [P, P]. Else we return None.
-    fn intersect(&self, sphere: &'a Sphere) -> Option<Intersections<'a>> {
+    fn intersect(&self, sphere: &'object Sphere) -> Option<Intersections<'object>> {
         /* From https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-sphere-intersection:
          1. Geometric solution
             - Get OC-> by computing the difference between O (ray origin) and C (sphere center)
@@ -100,17 +101,20 @@ impl<'a> Intersect<'a, Sphere> for Ray {
     }
 }
 
-impl<'a> Intersect<'a, World> for Ray {
-    fn intersect(&self, world: &'a World) -> Option<Intersections<'a>> {
+impl<'objects> Intersect<'objects, World> for Ray {
+    fn intersect(&self, world: &'objects World) -> Option<Intersections<'objects>> {
         if let Some(objects) = world.objects() {
             // Reserve memory for at least (number of objects * 2), since each objects can at most be intersected at two points (at least for now).
-            let mut intersections: Intersections<'a> =
+            let mut intersections: Intersections<'objects> =
                 Intersections::with_capacity(objects.len() * 2);
+
             for object in objects {
+                // Object can only be a Sphere for now, but we'll add more variants later.
+                #[allow(irrefutable_let_patterns)]
                 if let Object::Sphere(sphere) = object {
                     let sphere_xs = self.intersect(sphere);
-                    if let Some(xs) = sphere_xs {
-                        intersections.extend(xs);
+                    if let Some(mut xs) = sphere_xs {
+                        intersections.append(&mut xs);
                     }
                 }
             }

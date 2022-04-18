@@ -63,6 +63,7 @@ impl Sphere {
 }
 
 impl Default for Sphere {
+    /// Create a sphere centered at the origin and with a radius of 1.0.
     fn default() -> Self {
         Self {
             id: 1,

@@ -1,4 +1,4 @@
-use super::{intersect::Intersect, intersection::Intersection, sphere::Sphere};
+use super::sphere::Sphere;
 
 /// Lists all objects used in the ray tracer (Sphere, etc).
 #[derive(PartialEq, Debug)]

@@ -22,13 +22,17 @@ impl<'objects> Intersections<'objects> {
     }
 
     // TODO - Use a generic (Self, IntoIterator<Item = Intersection>)?
-    pub fn extend(&mut self, intersections: Self) {
-        self.0.extend(intersections.0);
+    pub fn append(&mut self, intersections: &mut Self) {
+        self.0.append(&mut intersections.0);
         Self::sort(&mut self.0);
     }
 
     pub fn with_capacity(capacity: usize) -> Self {
         Self(Vec::with_capacity(capacity))
+    }
+
+    pub fn capacity(&self) -> usize {
+        self.0.capacity()
     }
 
     /* If all intersections are positive, the iterator will stop at the first intersection in the list and return it,
