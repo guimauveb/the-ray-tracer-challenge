@@ -33,6 +33,14 @@ impl Default for World {
 }
 
 impl World {
+    /// Creates an empty world.
+    pub fn empty() -> Self {
+        Self {
+            objects: None,
+            light: None,
+        }
+    }
+
     pub fn new() {}
 
     pub fn objects(&self) -> Option<&[Object]> {

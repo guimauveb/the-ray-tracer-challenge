@@ -1,6 +1,7 @@
 use {
     super::{
-        intersect::Intersect, intersection::Intersection, matrix::Matrix, transform::Transform,
+        intersect::Intersect, intersection::Intersection, intersections::Intersections,
+        matrix::Matrix, object::Object, transform::Transform, world::World,
     },
     crate::{
         primitive::{point::Point, vector::Vector},
@@ -37,9 +38,9 @@ impl Position for Ray {
     }
 }
 
-impl Intersect<Sphere> for Ray {
+impl<'a> Intersect<'a, Sphere> for Ray {
     // If the ray intersects the sphere at two points P and P', we return [P, P']. If it intersects the sphere at one point P, we return [P, P]. Else we return None.
-    fn intersect<'a>(&self, sphere: &'a Sphere) -> Option<[Intersection<'a>; 2]> {
+    fn intersect(&self, sphere: &'a Sphere) -> Option<Intersections<'a>> {
         /* From https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-sphere-intersection:
          1. Geometric solution
             - Get OC-> by computing the difference between O (ray origin) and C (sphere center)
@@ -82,19 +83,45 @@ impl Intersect<Sphere> for Ray {
             None
         } else if discriminant == 0.0 {
             let t0 = -b / (2.0 * a);
-            Some([
+            Some(Intersections::new(vec![
                 Intersection::Sphere(t0, sphere),
                 Intersection::Sphere(t0, sphere),
-            ])
+            ]))
         } else {
             let (t0, t1) = (
                 (-b - discriminant.sqrt()) / (2.0 * a),
                 (-b + discriminant.sqrt()) / (2.0 * a),
             );
-            Some([
+            Some(Intersections::new(vec![
                 Intersection::Sphere(t0, sphere),
                 Intersection::Sphere(t1, sphere),
-            ])
+            ]))
+        }
+    }
+}
+
+impl<'a> Intersect<'a, World> for Ray {
+    fn intersect(&self, world: &'a World) -> Option<Intersections<'a>> {
+        if let Some(objects) = world.objects() {
+            // Reserve memory for at least (number of objects * 2), since each objects can at most be intersected at two points (at least for now).
+            let mut intersections: Intersections<'a> =
+                Intersections::with_capacity(objects.len() * 2);
+            for object in objects {
+                if let Object::Sphere(sphere) = object {
+                    let sphere_xs = self.intersect(sphere);
+                    if let Some(xs) = sphere_xs {
+                        intersections.extend(xs);
+                    }
+                }
+            }
+
+            if !intersections.is_empty() {
+                Some(intersections)
+            } else {
+                None
+            }
+        } else {
+            None
         }
     }
 }

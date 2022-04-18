@@ -1,6 +1,6 @@
 use super::sphere::Sphere;
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Intersection<'a> {
     Sphere(f64, &'a Sphere),
     //...

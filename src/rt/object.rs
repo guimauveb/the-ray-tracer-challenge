@@ -1,7 +1,8 @@
-use super::sphere::Sphere;
+use super::{intersect::Intersect, intersection::Intersection, sphere::Sphere};
 
 /// Lists all objects used in the ray tracer (Sphere, etc).
 #[derive(PartialEq, Debug)]
+#[non_exhaustive]
 pub enum Object {
     Sphere(Sphere),
     //...

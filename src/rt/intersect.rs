@@ -1,5 +1,6 @@
-use super::intersection::Intersection;
+use super::intersections::Intersections;
 
-pub trait Intersect<T> {
-    fn intersect<'a>(&self, object: &'a T) -> Option<[Intersection<'a>; 2]>;
+/// Describes how two objects (e.g a ray and a sphere) intersects. NOTE - Self = Ray only?
+pub trait Intersect<'a, T> {
+    fn intersect(&self, object: &'a T) -> Option<Intersections<'a>>;
 }

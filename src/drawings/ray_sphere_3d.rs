@@ -63,7 +63,8 @@ pub fn ray_sphere_hit() -> Result<(), std::io::Error> {
             // If we don't normalized the direction, we get a rather strange result -> Why?
             let r = Ray::new(ray_origin, (position - ray_origin).normalized());
             let intersections = r.intersect(&sphere);
-            if let Some([hit, _]) = intersections {
+            if let Some(xs) = intersections {
+                let hit = &xs[0];
                 let point = r.position(hit.t());
                 let normal = hit.object().normal_at(&point);
                 let eye = -r.direction();

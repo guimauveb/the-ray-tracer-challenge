@@ -48,7 +48,7 @@ fn the_hit_when_all_intersections_have_positive_t() {
     let sphere = Sphere::default();
     let i1 = Intersection::Sphere(1.0, &sphere);
     let i2 = Intersection::Sphere(2.0, &sphere);
-    let xs = Intersections::new(vec![i1, i2]);
+    let xs = Intersections::new(vec![i1.clone(), i2.clone()]);
 
     let i = xs.hit();
     assert_eq!(i, Some(&i1));
@@ -59,7 +59,7 @@ fn the_hit_when_some_intersections_have_negative_t() {
     let sphere = Sphere::default();
     let i1 = Intersection::Sphere(-1.0, &sphere);
     let i2 = Intersection::Sphere(1.0, &sphere);
-    let xs = Intersections::new(vec![i1, i2]);
+    let xs = Intersections::new(vec![i1.clone(), i2.clone()]);
 
     let i = xs.hit();
     assert_eq!(i, Some(&i2));
@@ -84,7 +84,7 @@ fn the_hit_is_always_the_lowest_nonnegative_intersection() {
     let i3 = Intersection::Sphere(-3.0, &sphere);
     let i4 = Intersection::Sphere(2.0, &sphere);
 
-    let xs = Intersections::new(vec![i1, i2, i3, i4]);
+    let xs = Intersections::new(vec![i1.clone(), i2.clone(), i3.clone(), i4.clone()]);
     let i = xs.hit();
     assert_eq!(i, Some(&i4));
 }
