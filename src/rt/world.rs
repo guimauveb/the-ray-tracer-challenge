@@ -44,18 +44,10 @@ impl World {
     pub fn new() {}
 
     pub fn objects(&self) -> Option<&[Object]> {
-        if let Some(objects) = &self.objects {
-            Some(objects)
-        } else {
-            None
-        }
+        self.objects.as_deref()
     }
 
     pub fn light(&self) -> Option<&PointLight> {
-        if let Some(light) = &self.light {
-            Some(light)
-        } else {
-            None
-        }
+        self.light.as_ref()
     }
 }

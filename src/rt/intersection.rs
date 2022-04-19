@@ -48,11 +48,17 @@ impl<'object> Intersection<'object> {
 }
 
 /* NOTE - Could use a dyn method here...
- *   fn object(&self) -> &dyn Shape
- * ...but to make the code as fast as possible I'd rather avoid the level of inderection brought by it. */
+ *      fn object(&self) -> &dyn Shape
+ *  ...but to make the code as fast as possible I'd rather avoid the level of inderection brought by it.
+ */
 impl<'object> IntersectionObject<Sphere> for Intersection<'object> {
     fn object(&self) -> &Sphere {
-        let Self::Sphere(_, object) = self;
-        object
+        // Intersection can only be a Sphere variant for now, but we'll add more variants later.
+        #[allow(irrefutable_let_patterns)]
+        if let Self::Sphere(_, object) = self {
+            object
+        } else {
+            unreachable!()
+        }
     }
 }
