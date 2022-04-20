@@ -100,7 +100,30 @@ fn precomputing_the_state_of_an_intersection() {
         point: Point::new(0.0, 0.0, -1.0),
         eye_vector: Vector::new(0.0, 0.0, -1.0),
         normal_vector: Vector::new(0.0, 0.0, -1.0),
+        inside: false,
     };
 
     assert_eq!(comps, expected_comps);
+}
+
+#[test]
+fn the_hit_when_the_instersection_occurs_on_the_outside() {
+    let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
+    let shape = Sphere::default();
+    let i = Intersection::Sphere(4.0, &shape);
+    let comps = i.prepare_computations(&r);
+    assert_eq!(comps.inside(), false);
+}
+
+#[test]
+fn the_hit_when_the_instersection_occurs_on_the_inside() {
+    let r = Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 0.0, 1.0));
+    let shape = Sphere::default();
+    let i = Intersection::Sphere(1.0, &shape);
+    let comps = i.prepare_computations(&r);
+    assert_eq!(comps.point(), &Point::new(0.0, 0.0, 1.0));
+    assert_eq!(comps.eye_vector(), &Vector::new(0.0, 0.0, -1.0));
+    assert_eq!(comps.inside(), true);
+    // The normal is inverted to reflect the light properly.
+    assert_eq!(comps.normal_vector(), &Vector::new(0.0, 0.0, -1.0));
 }
