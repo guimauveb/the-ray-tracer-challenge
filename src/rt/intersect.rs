@@ -1,6 +1,6 @@
-use super::intersections::Intersections;
-
 /// Describes how a ray intersects with one or multiple objects.
-pub trait Intersect<'object, O> {
-    fn intersect(&self, object: &'object O) -> Option<Intersections<'object>>;
+/// `O` is the object (most likely an Object or a World (composed of many objects)) being intersected.
+/// `I` is the type of the intersection returned (could be of type `[f64; 2]` or `Intersections`)
+pub trait Intersect<'object, O, I> {
+    fn intersect(&self, object: &'object O) -> Option<I>;
 }

@@ -1,17 +1,9 @@
 use crate::{
     primitive::{point::Point, tuple::Tuple},
     rt::{
-        canvas::Canvas,
-        color::Color,
-        intersect::Intersect,
-        intersection::IntersectionObject,
-        lighting::Lighting,
-        material::Material,
-        normal::Normal,
-        point_light::PointLight,
-        /*matrix::*,*/ ray::{Position, Ray},
-        sphere::Sphere,
-        to_ppm::ToPPM,
+        canvas::Canvas, color::Color, intersect::Intersect, lighting::Lighting, material::Material,
+        normal::Normal, object::Object, point_light::PointLight, /*matrix::*,*/ ray::Ray,
+        sphere::Sphere, to_ppm::ToPPM,
     },
 };
 
@@ -31,20 +23,20 @@ pub fn ray_sphere_hit() -> Result<(), std::io::Error> {
     let mut material = Material::default();
     material.set_color(Color::new(1.0, 0.2, 1.0));
     // Unit sphere
-    let sphere = Sphere::with_material(material);
+    let sphere = Object::Sphere(Sphere::with_material(material));
 
     //// Shrink it along the y axis
-    //sphere.set_transform(Matrix::<4_usize>::scaling(1.0, 0.5, 1.0));
+    //sphere.set_transform(Matrix::<4>::scaling(1.0, 0.5, 1.0));
     //// Shrink it along the x axis
-    //sphere.set_transform(Matrix::<4_usize>::scaling(0.5, 1.0, 1.0));
+    //sphere.set_transform(Matrix::<4>::scaling(0.5, 1.0, 1.0));
     //// Shrink it and rotate it
     //sphere.set_transform(
-    //    Matrix::<4_usize>::rotation_z(PI / 4.0) * Matrix::<4_usize>::scaling(0.5, 1.0, 1.0),
+    //    Matrix::<4>::rotation_z(PI / 4.0) * Matrix::<4>::scaling(0.5, 1.0, 1.0),
     //);
     //// Shrink it and skew it
     //sphere.set_transform(
-    //    Matrix::<4_usize>::shearing(1.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    //        * Matrix::<4_usize>::scaling(0.5, 1.0, 1.0),
+    //    Matrix::<4>::shearing(1.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    //        * Matrix::<4>::scaling(0.5, 1.0, 1.0),
     //);
 
     // Light source

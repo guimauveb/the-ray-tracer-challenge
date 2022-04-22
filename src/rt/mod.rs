@@ -1,5 +1,6 @@
 pub mod canvas;
 pub mod color;
+pub mod computation;
 pub mod intersect;
 pub mod intersection;
 pub mod intersections;

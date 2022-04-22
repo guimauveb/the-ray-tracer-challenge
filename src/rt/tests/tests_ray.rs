@@ -3,7 +3,7 @@ use crate::{
     primitive::{point::Point, tuple::Tuple, vector::Vector},
     rt::{
         matrix::{Matrix, Scaling, Translation},
-        ray::{Position, Ray},
+        ray::Ray,
         transform::Transform,
     },
 };
@@ -35,7 +35,7 @@ fn translating_a_ray() {
     let origin = Point::new(1.0, 2.0, 3.0);
     let direction = Vector::new(0.0, 1.0, 0.0);
     let ray = Ray::new(origin, direction);
-    let m = Matrix::<4_usize>::translation(3.0, 4.0, 5.0);
+    let m = Matrix::<4>::translation(3.0, 4.0, 5.0);
 
     let r2 = ray.transform(&m);
     assert_eq!(r2.origin(), &Point::new(4.0, 6.0, 8.0));
@@ -47,7 +47,7 @@ fn scaling_a_ray() {
     let origin = Point::new(1.0, 2.0, 3.0);
     let direction = Vector::new(0.0, 1.0, 0.0);
     let ray = Ray::new(origin, direction);
-    let m = Matrix::<4_usize>::scaling(2.0, 3.0, 4.0);
+    let m = Matrix::<4>::scaling(2.0, 3.0, 4.0);
 
     let r2 = ray.transform(&m);
     assert_eq!(r2.origin(), &Point::new(2.0, 6.0, 12.0));

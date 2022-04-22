@@ -1,9 +1,38 @@
-use super::sphere::Sphere;
+use {
+    super::{
+        matrix::Matrix,
+        sphere::Sphere,
+        {material::Material, normal::Normal},
+    },
+    crate::primitive::{point::Point, vector::Vector},
+};
 
-/// Any object used in the ray tracer (Sphere, Cube, etc).
+/// Wrapper around an object used in the ray tracer (Sphere, Cube, etc).
 #[derive(PartialEq, Debug)]
 #[non_exhaustive]
 pub enum Object {
     Sphere(Sphere),
     //...
+}
+
+impl Normal for Object {
+    fn normal_at(&self, point: &Point) -> Vector {
+        match self {
+            Self::Sphere(sphere) => sphere.normal_at(point),
+        }
+    }
+}
+
+impl Object {
+    pub fn material(&self) -> &Material {
+        match self {
+            Self::Sphere(sphere) => sphere.material(),
+        }
+    }
+
+    pub fn transform(&self) -> &Matrix<4> {
+        match self {
+            Self::Sphere(sphere) => sphere.transform(),
+        }
+    }
 }

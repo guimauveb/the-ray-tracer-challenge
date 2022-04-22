@@ -1,7 +1,29 @@
-use {super::intersection::Intersection, std::ops::Index};
+use {
+    super::{intersection::Intersection, object::Object},
+    std::ops::Index,
+};
 
 /// Wrapper around a `Vec<Intersection<'objects>>` that keeps intersections always sorted.
 pub struct Intersections<'objects>(Vec<Intersection<'objects>>);
+
+impl<'object> From<([f64; 2], &'object Object)> for Intersections<'object> {
+    /// Used to transform intersections computed from an Object variant to intersections refering the Object enum.
+    fn from((intersections, object): ([f64; 2], &'object Object)) -> Intersections<'object> {
+        Self::new(vec![
+            Intersection::new(intersections[0], object),
+            Intersection::new(intersections[1], object),
+        ])
+    }
+}
+
+type Idx = usize;
+
+impl<'objects> Index<Idx> for Intersections<'objects> {
+    type Output = Intersection<'objects>;
+    fn index(&self, idx: Idx) -> &Self::Output {
+        &self.0[idx]
+    }
+}
 
 impl<'objects> Intersections<'objects> {
     fn sort(intersections: &mut [Intersection<'objects>]) {
@@ -21,7 +43,7 @@ impl<'objects> Intersections<'objects> {
         self.0.is_empty()
     }
 
-    // TODO - Use a generic (Self, IntoIterator<Item = Intersection>)?
+    // NOTE - Use a generic (Self, IntoIterator<Item = Intersection>)?
     pub fn append(&mut self, intersections: &mut Self) {
         self.0.append(&mut intersections.0);
         Self::sort(&mut self.0);
@@ -40,14 +62,5 @@ impl<'objects> Intersections<'objects> {
      * Return None if there is no positive intersection. */
     pub fn hit(&self) -> Option<&Intersection<'objects>> {
         self.0.iter().find(|&i| i.t() > 0.0)
-    }
-}
-
-type Idx = usize;
-
-impl<'objects> Index<Idx> for Intersections<'objects> {
-    type Output = Intersection<'objects>;
-    fn index(&self, idx: Idx) -> &Self::Output {
-        &self.0[idx]
     }
 }

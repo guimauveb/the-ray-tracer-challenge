@@ -9,16 +9,16 @@ use {
 
 #[derive(PartialEq, Debug)]
 pub struct Sphere {
-    id: u32, // TODO ?
+    //id: u32, // TODO ?
     origin: Point,
-    transform: Matrix<4_usize>,
+    transform: Matrix<4>,
     material: Material,
 }
 
 impl Sphere {
-    pub fn new(origin: Point, transform: Matrix<4_usize>, material: Material) -> Self {
+    pub fn new(origin: Point, transform: Matrix<4>, material: Material) -> Self {
         Sphere {
-            id: 1,
+            //id: 1,
             origin,
             transform,
             material,
@@ -34,7 +34,7 @@ impl Sphere {
     }
 
     /// Creates a sphere with a given transform. All other fields are set to default values.
-    pub fn with_transform(transform: Matrix<4_usize>) -> Self {
+    pub fn with_transform(transform: Matrix<4>) -> Self {
         Self {
             transform,
             ..Self::default()
@@ -45,11 +45,11 @@ impl Sphere {
         &self.origin
     }
 
-    pub fn transform(&self) -> &Matrix<4_usize> {
+    pub fn transform(&self) -> &Matrix<4> {
         &self.transform
     }
 
-    pub fn set_transform(&mut self, transform: Matrix<4_usize>) {
+    pub fn set_transform(&mut self, transform: Matrix<4>) {
         self.transform = transform;
     }
 
@@ -66,9 +66,9 @@ impl Default for Sphere {
     /// Create a sphere centered at the origin and with a radius of 1.0.
     fn default() -> Self {
         Self {
-            id: 1,
+            //id: 1,
             origin: Point::new(0.0, 0.0, 0.0),
-            transform: Matrix::<4_usize>::identity(),
+            transform: Matrix::<4>::identity(),
             material: Material::default(),
         }
     }

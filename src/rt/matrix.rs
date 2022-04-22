@@ -166,7 +166,7 @@ impl Minor for Matrix<3_usize> {
     }
 }
 
-impl Minor for Matrix<4_usize> {
+impl Minor for Matrix<4> {
     fn minor(&self, index: Idx) -> f64 {
         let submatrix = self.submatrix(index);
         submatrix.determinant()
@@ -185,7 +185,7 @@ impl Cofactor for Matrix<3_usize> {
     }
 }
 
-impl Cofactor for Matrix<4_usize> {
+impl Cofactor for Matrix<4> {
     fn cofactor(&self, index: Idx) -> f64 {
         let minor = self.minor(index);
 
@@ -211,17 +211,15 @@ impl Determinant for Matrix<3_usize> {
     }
 }
 
-impl Determinant for Matrix<4_usize> {
+impl Determinant for Matrix<4> {
     fn determinant(&self) -> f64 {
-        (0..4_usize)
-            .map(|x| self[[0, x]] * self.cofactor([0, x]))
-            .sum()
+        (0..4).map(|x| self[[0, x]] * self.cofactor([0, x])).sum()
     }
 }
 
-impl Matrix<4_usize> {
+impl Matrix<4> {
     pub const fn identity() -> Self {
-        Matrix::<4_usize>([
+        Matrix::<4>([
             [1.0, 0.0, 0.0, 0.0],
             [0.0, 1.0, 0.0, 0.0],
             [0.0, 0.0, 1.0, 0.0],
@@ -238,13 +236,13 @@ impl Matrix<4_usize> {
      *      - Divide each cofactor by the determinant of the matrix
      *      - Return the resulting matrix
      */
-    pub fn inverse(&self) -> Result<Self, MatrixError<4_usize>> {
+    pub fn inverse(&self) -> Result<Self, MatrixError<4>> {
         if !(self.is_invertible()) {
             Err(MatrixError::NotInvertible(self))
         } else {
-            let mut inverse_matrix = Matrix::<4_usize>([[0.0; 4_usize]; 4_usize]);
-            for row in 0..4_usize {
-                for column in 0..4_usize {
+            let mut inverse_matrix = Matrix::<4>([[0.0; 4]; 4]);
+            for row in 0..4 {
+                for column in 0..4 {
                     inverse_matrix[[column, row]] =
                         self.cofactor([row, column]) / self.determinant();
                 }
@@ -254,9 +252,9 @@ impl Matrix<4_usize> {
     }
 }
 
-impl Translation for Matrix<4_usize> {
+impl Translation for Matrix<4> {
     fn translation(x: f64, y: f64, z: f64) -> Self {
-        Matrix::<4_usize>([
+        Matrix::<4>([
             [1.0, 0.0, 0.0, x],
             [0.0, 1.0, 0.0, y],
             [0.0, 0.0, 1.0, z],
@@ -265,9 +263,9 @@ impl Translation for Matrix<4_usize> {
     }
 }
 
-impl Scaling for Matrix<4_usize> {
+impl Scaling for Matrix<4> {
     fn scaling(x: f64, y: f64, z: f64) -> Self {
-        Matrix::<4_usize>([
+        Matrix::<4>([
             [x, 0.0, 0.0, 0.0],
             [0.0, y, 0.0, 0.0],
             [0.0, 0.0, z, 0.0],
@@ -276,14 +274,14 @@ impl Scaling for Matrix<4_usize> {
     }
 }
 
-impl Mul<Point> for Matrix<4_usize> {
+impl Mul<Point> for Matrix<4> {
     type Output = Point;
 
     fn mul(self, rhs: Point) -> Point {
         let mut point = Point::zero();
         // Could map as well but the index (usize) is moved instead of being copied?
         for row in 0..3_usize {
-            point[row] = (0..4_usize)
+            point[row] = (0..4)
                 .map(|column| self[[row, column]] * if column < 3 { rhs[column] } else { 1.0 }) // rhs[3] is (self.w) is equal to 1.0 but not accessible from the Point type.
                 .collect::<Vec<f64>>()
                 .iter()
@@ -293,14 +291,14 @@ impl Mul<Point> for Matrix<4_usize> {
     }
 }
 
-impl Mul<Point> for &Matrix<4_usize> {
+impl Mul<Point> for &Matrix<4> {
     type Output = Point;
 
     fn mul(self, rhs: Point) -> Point {
         let mut point = Point::zero();
         // Could map as well but the index (usize) is moved instead of being copied?
         for row in 0..3_usize {
-            point[row] = (0..4_usize)
+            point[row] = (0..4)
                 .map(|column| self[[row, column]] * if column < 3 { rhs[column] } else { 1.0 }) // rhs[3] is (self.w) is equal to 1.0 but not accessible from the Point type.
                 .collect::<Vec<f64>>()
                 .iter()
@@ -310,14 +308,14 @@ impl Mul<Point> for &Matrix<4_usize> {
     }
 }
 
-impl Mul<&Point> for &Matrix<4_usize> {
+impl Mul<&Point> for &Matrix<4> {
     type Output = Point;
 
     fn mul(self, rhs: &Point) -> Point {
         let mut point = Point::zero();
         // Could map as well but the index (usize) is moved instead of being copied?
         for row in 0..3_usize {
-            point[row] = (0..4_usize)
+            point[row] = (0..4)
                 .map(|column| self[[row, column]] * if column < 3 { rhs[column] } else { 1.0 }) // rhs[3] is (self.w) is equal to 1.0 but not accessible from the Point type.
                 .collect::<Vec<f64>>()
                 .iter()
@@ -327,14 +325,14 @@ impl Mul<&Point> for &Matrix<4_usize> {
     }
 }
 
-impl Mul<Vector> for Matrix<4_usize> {
+impl Mul<Vector> for Matrix<4> {
     type Output = Vector;
 
     fn mul(self, rhs: Vector) -> Vector {
         let mut vec = Vector::zero();
         // Could map as well but the index (usize) is moved instead of being copied?
         for row in 0..3_usize {
-            vec[row] = (0..4_usize)
+            vec[row] = (0..4)
                 .map(|column| self[[row, column]] * if column < 3 { rhs[column] } else { 0.0 }) // rhs[3] (self.w) is equal to 0.0 but not accessible from the Vector type.
                 .collect::<Vec<f64>>()
                 .iter()
@@ -344,14 +342,14 @@ impl Mul<Vector> for Matrix<4_usize> {
     }
 }
 
-impl Mul<Vector> for &Matrix<4_usize> {
+impl Mul<Vector> for &Matrix<4> {
     type Output = Vector;
 
     fn mul(self, rhs: Vector) -> Vector {
         let mut vec = Vector::zero();
         // Could map as well but the index (usize) is moved instead of being copied?
         for row in 0..3_usize {
-            vec[row] = (0..4_usize)
+            vec[row] = (0..4)
                 .map(|column| self[[row, column]] * if column < 3 { rhs[column] } else { 0.0 }) // rhs[3] (self.w) is equal to 0.0 but not accessible from the Vector type.
                 .collect::<Vec<f64>>()
                 .iter()
@@ -361,9 +359,9 @@ impl Mul<Vector> for &Matrix<4_usize> {
     }
 }
 
-impl Rotation for Matrix<4_usize> {
+impl Rotation for Matrix<4> {
     fn rotation_x(radians: f64) -> Self {
-        Matrix::<4_usize>([
+        Matrix::<4>([
             [1.0, 0.0, 0.0, 0.0],
             [0.0, radians.cos(), -radians.sin(), 0.0],
             [0.0, radians.sin(), radians.cos(), 0.0],
@@ -371,7 +369,7 @@ impl Rotation for Matrix<4_usize> {
         ])
     }
     fn rotation_y(radians: f64) -> Self {
-        Matrix::<4_usize>([
+        Matrix::<4>([
             [radians.cos(), 0.0, radians.sin(), 0.0],
             [0.0, 1.0, 0.0, 0.0],
             [-radians.sin(), 0.0, radians.cos(), 0.0],
@@ -379,7 +377,7 @@ impl Rotation for Matrix<4_usize> {
         ])
     }
     fn rotation_z(radians: f64) -> Self {
-        Matrix::<4_usize>([
+        Matrix::<4>([
             [radians.cos(), -radians.sin(), 0.0, 0.0],
             [radians.sin(), radians.cos(), 0.0, 0.0],
             [0.0, 0.0, 1.0, 0.0],
@@ -388,9 +386,9 @@ impl Rotation for Matrix<4_usize> {
     }
 }
 
-impl Shearing for Matrix<4_usize> {
+impl Shearing for Matrix<4> {
     fn shearing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Self {
-        Matrix::<4_usize>([
+        Matrix::<4>([
             [1.0, xy, xz, 0.0],
             [yx, 1.0, yz, 0.0],
             [zx, zy, 1.0, 0.0],

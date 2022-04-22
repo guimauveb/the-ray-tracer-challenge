@@ -1,8 +1,8 @@
 use crate::{
     primitive::{point::Point, tuple::Tuple, vector::Vector},
     rt::{
-        canvas::Canvas, color::Color, intersect::Intersect, /*matrix::*,*/ ray::Ray,
-        sphere::Sphere, to_ppm::ToPPM,
+        canvas::Canvas, color::Color, intersect::Intersect, object::Object,
+        /*matrix::*,*/ ray::Ray, sphere::Sphere, to_ppm::ToPPM,
     },
 };
 
@@ -12,20 +12,20 @@ pub fn ray_sphere_hit() -> Result<(), std::io::Error> {
     let red = Color::new(1.0, 0.0, 0.0);
 
     // Unit sphere
-    let sphere = Sphere::default();
+    let sphere = Object::Sphere(Sphere::default());
 
     //// Shrink it along the y axis
-    //sphere.set_transform(Matrix::<4_usize>::scaling(1.0, 0.5, 1.0));
+    //sphere.set_transform(Matrix::<4>::scaling(1.0, 0.5, 1.0));
     //// Shrink it along the x axis
-    //sphere.set_transform(Matrix::<4_usize>::scaling(0.5, 1.0, 1.0));
+    //sphere.set_transform(Matrix::<4>::scaling(0.5, 1.0, 1.0));
     //// Shrink it and rotate it
     //sphere.set_transform(
-    //    Matrix::<4_usize>::rotation_z(PI / 4.0) * Matrix::<4_usize>::scaling(0.5, 1.0, 1.0),
+    //    Matrix::<4>::rotation_z(PI / 4.0) * Matrix::<4>::scaling(0.5, 1.0, 1.0),
     //);
     //// Shrink it and skew it
     //sphere.set_transform(
-    //    Matrix::<4_usize>::shearing(1.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    //        * Matrix::<4_usize>::scaling(0.5, 1.0, 1.0),
+    //    Matrix::<4>::shearing(1.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    //        * Matrix::<4>::scaling(0.5, 1.0, 1.0),
     //);
 
     let mut wall: Vec<Point> = Vec::with_capacity(256_usize.pow(2));
