@@ -1,18 +1,18 @@
 use crate::{
-    primitive::{point::Point, tuple::Tuple, vector::Vector},
+    primitive::{point::Point, vector::Vector},
     rt::{canvas::Canvas, color::Color, to_ppm::ToPPM},
 };
 
 #[derive(Debug)]
 pub struct Projectile {
-    pub position: Point,
-    pub velocity: Vector,
+    position: Point,
+    velocity: Vector,
 }
 
 #[derive(Debug)]
 pub struct Environment {
-    pub gravity: Vector,
-    pub wind: Vector,
+    gravity: Vector,
+    wind: Vector,
 }
 
 impl Projectile {

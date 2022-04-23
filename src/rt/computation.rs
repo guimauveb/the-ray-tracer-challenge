@@ -7,15 +7,15 @@ use {
 pub struct Computation<'object> {
     /// In the book, Computation is implemented with the fields `t` and `object` which refer to the Intersection fields.
     /// I find it cleaner to reference the intersection itself and access those fields from it.
-    pub intersection: &'object Intersection<'object>,
-    pub point: Point,
-    pub eye_vector: Vector,
-    pub normal_vector: Vector,
-    pub inside: bool,
+    intersection: &'object Intersection<'object>,
+    point: Point,
+    eye_vector: Vector,
+    normal_vector: Vector,
+    inside: bool,
 }
 
 impl<'object> Computation<'object> {
-    pub fn new(
+    pub const fn new(
         intersection: &'object Intersection<'object>,
         point: Point,
         eye_vector: Vector,
@@ -31,19 +31,23 @@ impl<'object> Computation<'object> {
         }
     }
 
-    pub fn inside(&self) -> bool {
+    pub const fn intersection(&self) -> &Intersection {
+        &self.intersection
+    }
+
+    pub const fn inside(&self) -> bool {
         self.inside
     }
 
-    pub fn eye_vector(&self) -> &Vector {
+    pub const fn eye_vector(&self) -> &Vector {
         &self.eye_vector
     }
 
-    pub fn point(&self) -> &Point {
+    pub const fn point(&self) -> &Point {
         &self.point
     }
 
-    pub fn normal_vector(&self) -> &Vector {
+    pub const fn normal_vector(&self) -> &Vector {
         &self.normal_vector
     }
 }

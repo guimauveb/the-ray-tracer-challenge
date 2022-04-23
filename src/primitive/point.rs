@@ -1,5 +1,5 @@
 use {
-    super::{tuple::Tuple, vector::Vector},
+    super::vector::Vector,
     crate::approx_eq::ApproxEq,
     std::ops::{Add, Div, Index, IndexMut, Mul, Sub},
 };
@@ -9,33 +9,6 @@ pub struct Point {
     x: f64,
     y: f64,
     z: f64,
-}
-
-impl Tuple for Point {
-    fn new(x: f64, y: f64, z: f64) -> Self {
-        Self { x, y, z }
-    }
-
-    fn zero() -> Self {
-        Self {
-            x: 0.0,
-            y: 0.0,
-            z: 0.0,
-        }
-    }
-
-    fn x(&self) -> f64 {
-        self.x
-    }
-    fn y(&self) -> f64 {
-        self.y
-    }
-    fn z(&self) -> f64 {
-        self.z
-    }
-    fn w(&self) -> f64 {
-        1.0
-    }
 }
 
 impl Index<usize> for Point {
@@ -203,5 +176,32 @@ impl Div<f64> for &Point {
             y: self.y / rhs,
             z: self.z / rhs,
         }
+    }
+}
+
+impl Point {
+    pub const fn new(x: f64, y: f64, z: f64) -> Self {
+        Self { x, y, z }
+    }
+
+    pub const fn zero() -> Self {
+        Self {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+        }
+    }
+
+    pub const fn x(&self) -> f64 {
+        self.x
+    }
+    pub const fn y(&self) -> f64 {
+        self.y
+    }
+    pub const fn z(&self) -> f64 {
+        self.z
+    }
+    pub const fn w(&self) -> f64 {
+        1.0
     }
 }

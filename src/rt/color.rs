@@ -12,6 +12,14 @@ impl Color {
         Self { red, green, blue }
     }
 
+    /// Returns the black color.
+    /// ```
+    ///    Self {
+    ///        red: 0.0,
+    ///        green: 0.0,
+    ///        blue: 0.0,
+    ///    }
+    /// ```
     pub const fn black() -> Self {
         Self {
             red: 0.0,
@@ -20,6 +28,14 @@ impl Color {
         }
     }
 
+    /// Returns the white color.
+    /// ```
+    ///    Self {
+    ///        red: 1.0,
+    ///        green: 1.0,
+    ///        blue: 1.0,
+    ///    }
+    /// ```
     pub const fn white() -> Self {
         Self {
             red: 1.0,
@@ -28,12 +44,17 @@ impl Color {
         }
     }
 
+    /// Returns the red component.
     pub const fn red(&self) -> f64 {
         self.red
     }
+
+    /// Returns the green component.
     pub const fn green(&self) -> f64 {
         self.green
     }
+
+    /// Returns the blue component.
     pub const fn blue(&self) -> f64 {
         self.blue
     }

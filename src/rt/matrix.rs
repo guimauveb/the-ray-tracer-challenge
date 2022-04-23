@@ -1,7 +1,7 @@
 use {
     crate::{
         approx_eq::ApproxEq,
-        primitive::{point::Point, tuple::Tuple, vector::Vector},
+        primitive::{point::Point, vector::Vector},
     },
     std::{
         fmt::{Display, Formatter},
@@ -67,7 +67,7 @@ pub trait Shearing {
 
 impl<const N: usize> Matrix<N> {
     pub const fn new(matrix: [[f64; N]; N]) -> Self {
-        Matrix::<N>(matrix)
+        Self(matrix)
     }
 }
 
@@ -105,6 +105,7 @@ impl<const N: usize> Display for Matrix<N> {
 impl<const N: usize> Mul for Matrix<N> {
     type Output = Self;
 
+    // NOTE - Use a mul_add?
     fn mul(self, rhs: Self) -> Self {
         let mut result = Self([[0.0; N]; N]);
         for row in 0..N {
@@ -219,7 +220,7 @@ impl Determinant for Matrix<4> {
 
 impl Matrix<4> {
     pub const fn identity() -> Self {
-        Matrix::<4>([
+        Self([
             [1.0, 0.0, 0.0, 0.0],
             [0.0, 1.0, 0.0, 0.0],
             [0.0, 0.0, 1.0, 0.0],
@@ -240,7 +241,7 @@ impl Matrix<4> {
         if !(self.is_invertible()) {
             Err(MatrixError::NotInvertible(self))
         } else {
-            let mut inverse_matrix = Matrix::<4>([[0.0; 4]; 4]);
+            let mut inverse_matrix = Self([[0.0; 4]; 4]);
             for row in 0..4 {
                 for column in 0..4 {
                     inverse_matrix[[column, row]] =
@@ -254,7 +255,7 @@ impl Matrix<4> {
 
 impl Translation for Matrix<4> {
     fn translation(x: f64, y: f64, z: f64) -> Self {
-        Matrix::<4>([
+        Self([
             [1.0, 0.0, 0.0, x],
             [0.0, 1.0, 0.0, y],
             [0.0, 0.0, 1.0, z],
@@ -265,7 +266,7 @@ impl Translation for Matrix<4> {
 
 impl Scaling for Matrix<4> {
     fn scaling(x: f64, y: f64, z: f64) -> Self {
-        Matrix::<4>([
+        Self([
             [x, 0.0, 0.0, 0.0],
             [0.0, y, 0.0, 0.0],
             [0.0, 0.0, z, 0.0],
@@ -361,7 +362,7 @@ impl Mul<Vector> for &Matrix<4> {
 
 impl Rotation for Matrix<4> {
     fn rotation_x(radians: f64) -> Self {
-        Matrix::<4>([
+        Self([
             [1.0, 0.0, 0.0, 0.0],
             [0.0, radians.cos(), -radians.sin(), 0.0],
             [0.0, radians.sin(), radians.cos(), 0.0],
@@ -369,7 +370,7 @@ impl Rotation for Matrix<4> {
         ])
     }
     fn rotation_y(radians: f64) -> Self {
-        Matrix::<4>([
+        Self([
             [radians.cos(), 0.0, radians.sin(), 0.0],
             [0.0, 1.0, 0.0, 0.0],
             [-radians.sin(), 0.0, radians.cos(), 0.0],
@@ -377,7 +378,7 @@ impl Rotation for Matrix<4> {
         ])
     }
     fn rotation_z(radians: f64) -> Self {
-        Matrix::<4>([
+        Self([
             [radians.cos(), -radians.sin(), 0.0, 0.0],
             [radians.sin(), radians.cos(), 0.0, 0.0],
             [0.0, 0.0, 1.0, 0.0],
@@ -388,7 +389,7 @@ impl Rotation for Matrix<4> {
 
 impl Shearing for Matrix<4> {
     fn shearing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Self {
-        Matrix::<4>([
+        Self([
             [1.0, xy, xz, 0.0],
             [yx, 1.0, yz, 0.0],
             [zx, zy, 1.0, 0.0],

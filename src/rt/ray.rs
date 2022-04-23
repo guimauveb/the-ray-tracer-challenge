@@ -119,7 +119,7 @@ impl<'objects> Intersect<'objects, World, Intersections<'objects>> for Ray {
                 objects
                     .iter()
                     .filter_map(|object| self.intersect(object))
-                    .flat_map(|intersections| intersections)
+                    .flatten()
                     .collect(),
             )
         })

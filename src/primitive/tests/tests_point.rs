@@ -1,5 +1,5 @@
 #[cfg(test)]
-use crate::primitive::{point::Point, tuple::Tuple, vector::Vector};
+use crate::primitive::{point::Point, vector::Vector};
 
 #[test]
 fn can_create_a_point() {

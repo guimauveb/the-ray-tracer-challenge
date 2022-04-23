@@ -4,7 +4,7 @@ use {
         matrix::{Matrix, Transpose},
         normal::Normal,
     },
-    crate::primitive::{point::Point, tuple::Tuple, vector::Vector},
+    crate::primitive::{point::Point, vector::Vector},
 };
 
 #[derive(PartialEq, Debug)]
@@ -16,8 +16,8 @@ pub struct Sphere {
 }
 
 impl Sphere {
-    pub fn new(origin: Point, transform: Matrix<4>, material: Material) -> Self {
-        Sphere {
+    pub const fn new(origin: Point, transform: Matrix<4>, material: Material) -> Self {
+        Self {
             //id: 1,
             origin,
             transform,
@@ -25,7 +25,7 @@ impl Sphere {
         }
     }
 
-    /// Creates a sphere with a given material. All other fields are set to default values.
+    /// Createss a sphere with a given material. All other fields are set to default values.
     pub fn with_material(material: Material) -> Self {
         Self {
             material,
@@ -33,7 +33,7 @@ impl Sphere {
         }
     }
 
-    /// Creates a sphere with a given transform. All other fields are set to default values.
+    /// Createss a sphere with a given transform. All other fields are set to default values.
     pub fn with_transform(transform: Matrix<4>) -> Self {
         Self {
             transform,
@@ -41,29 +41,29 @@ impl Sphere {
         }
     }
 
-    pub fn origin(&self) -> &Point {
+    pub const fn origin(&self) -> &Point {
         &self.origin
     }
 
-    pub fn transform(&self) -> &Matrix<4> {
+    pub const fn transform(&self) -> &Matrix<4> {
         &self.transform
+    }
+
+    pub const fn material(&self) -> &Material {
+        &self.material
     }
 
     pub fn set_transform(&mut self, transform: Matrix<4>) {
         self.transform = transform;
     }
 
-    pub fn material(&self) -> &Material {
-        &self.material
-    }
-
     pub fn set_material(&mut self, material: Material) {
-        self.material = material
+        self.material = material;
     }
 }
 
 impl Default for Sphere {
-    /// Create a sphere centered at the origin and with a radius of 1.0.
+    /// Creates a sphere centered at the origin and with a radius of 1.0.
     fn default() -> Self {
         Self {
             //id: 1,
@@ -75,6 +75,7 @@ impl Default for Sphere {
 }
 
 impl Normal for Sphere {
+    /// Returns the normal vector at a specified point.
     fn normal_at(&self, point: &Point) -> Vector {
         // Convert the point from world space to object space
         let object_point = &self.transform.inverse().expect("Matrix is not invertible!") * point;

@@ -7,18 +7,18 @@ pub struct PointLight {
 }
 
 impl PointLight {
-    pub fn new(position: Point, intensity: Color) -> Self {
+    pub const fn new(position: Point, intensity: Color) -> Self {
         Self {
             position,
             intensity,
         }
     }
 
-    pub fn position(&self) -> &Point {
+    pub const fn position(&self) -> &Point {
         &self.position
     }
 
-    pub fn intensity(&self) -> &Color {
+    pub const fn intensity(&self) -> &Color {
         &self.intensity
     }
 }

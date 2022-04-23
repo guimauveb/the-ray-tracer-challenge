@@ -1,6 +1,6 @@
 use {
     crate::{
-        primitive::{point::Point, tuple::Tuple},
+        primitive::point::Point,
         rt::{
             canvas::Canvas,
             color::Color,

@@ -12,14 +12,14 @@ fn can_create_color() {
 #[test]
 fn can_create_black_color() {
     let black = Color::black();
-    let expected = Color::new(0.0, 0.0, 0.0);
+    let expected = Color::black();
     assert_eq!(black, expected);
 }
 
 #[test]
 fn can_create_white_color() {
     let white = Color::white();
-    let expected = Color::new(1.0, 1.0, 1.0);
+    let expected = Color::white();
     assert_eq!(white, expected);
 }
 

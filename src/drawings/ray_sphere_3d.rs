@@ -1,9 +1,8 @@
 use crate::{
-    primitive::{point::Point, tuple::Tuple},
+    primitive::point::Point,
     rt::{
         canvas::Canvas,
         color::Color,
-        lighting::Lighting,
         material::Material,
         normal::Normal,
         object::Object,
@@ -48,7 +47,7 @@ pub fn ray_sphere_hit() -> Result<(), std::io::Error> {
 
     // Light source
     let light_position = Point::new(-10.0, 10.0, -10.0);
-    let light_color = Color::new(1.0, 1.0, 1.0);
+    let light_color = Color::white();
     let light = PointLight::new(light_position, light_color);
 
     for y in 0..canvas.height() {
@@ -56,7 +55,7 @@ pub fn ray_sphere_hit() -> Result<(), std::io::Error> {
         let world_y = half - pixel_size * y as f64;
         for x in 0..canvas.width() {
             // left = -half, right = half
-            let world_x = -half + pixel_size * x as f64;
+            let world_x = pixel_size.mul_add(x as f64, -half);
             // Point on the wall that the ray will target
             let position = Point::new(world_x, world_y, wall_z);
             // If we don't normalized the direction, we get a rather strange result -> Why?

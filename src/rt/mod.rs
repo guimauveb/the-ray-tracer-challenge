@@ -3,7 +3,6 @@ pub mod color;
 pub mod computation;
 pub mod intersection;
 pub mod intersections;
-pub mod lighting;
 pub mod material;
 pub mod matrix;
 pub mod normal;

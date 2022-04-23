@@ -1,5 +1,5 @@
 use {
-    super::{point::Point, tuple::Tuple},
+    super::point::Point,
     crate::approx_eq::ApproxEq,
     std::ops::{Add, Div, Index, IndexMut, Mul, Neg, Sub},
 };
@@ -9,33 +9,6 @@ pub struct Vector {
     x: f64,
     y: f64,
     z: f64,
-}
-
-impl Tuple for Vector {
-    fn new(x: f64, y: f64, z: f64) -> Self {
-        Self { x, y, z }
-    }
-
-    fn zero() -> Self {
-        Self {
-            x: 0.0,
-            y: 0.0,
-            z: 0.0,
-        }
-    }
-
-    fn x(&self) -> f64 {
-        self.x
-    }
-    fn y(&self) -> f64 {
-        self.y
-    }
-    fn z(&self) -> f64 {
-        self.z
-    }
-    fn w(&self) -> f64 {
-        0.0
-    }
 }
 
 type Idx = usize;
@@ -234,6 +207,34 @@ impl Div<f64> for &Vector {
 }
 
 impl Vector {
+    pub const fn new(x: f64, y: f64, z: f64) -> Self {
+        Self { x, y, z }
+    }
+
+    pub const fn zero() -> Self {
+        Self {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+        }
+    }
+
+    pub const fn x(&self) -> f64 {
+        self.x
+    }
+
+    pub const fn y(&self) -> f64 {
+        self.y
+    }
+
+    pub const fn z(&self) -> f64 {
+        self.z
+    }
+
+    pub const fn w(&self) -> f64 {
+        0.0
+    }
+
     pub fn magnitude(&self) -> f64 {
         f64::sqrt(
             self.z

@@ -1,5 +1,5 @@
+#![allow(incomplete_features)]
 #![feature(generic_const_exprs)]
-#![feature(const_for)]
 
 pub mod approx_eq;
 pub mod drawings;
@@ -7,7 +7,7 @@ pub mod float;
 pub mod primitive;
 pub mod rt;
 
-use drawings::{clock, projectile, ray_sphere, ray_sphere_3d};
+use drawings::{ray_sphere, ray_sphere_3d};
 
 fn main() {
     //if let Err(e) = projectile::launch_projecticle() {

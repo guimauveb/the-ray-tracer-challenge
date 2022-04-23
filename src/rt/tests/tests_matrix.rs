@@ -1,7 +1,7 @@
 #[cfg(test)]
 use {
     crate::{
-        primitive::{point::Point, tuple::Tuple, vector::Vector},
+        primitive::{point::Point, vector::Vector},
         rt::matrix::{
             Cofactor, Determinant, Matrix, Minor, Rotation, Scaling, Shearing, Submatrix,
             Translation, Transpose,

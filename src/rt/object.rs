@@ -24,13 +24,13 @@ impl Normal for Object {
 }
 
 impl Object {
-    pub fn material(&self) -> &Material {
+    pub const fn material(&self) -> &Material {
         match self {
             Self::Sphere(sphere) => sphere.material(),
         }
     }
 
-    pub fn transform(&self) -> &Matrix<4> {
+    pub const fn transform(&self) -> &Matrix<4> {
         match self {
             Self::Sphere(sphere) => sphere.transform(),
         }

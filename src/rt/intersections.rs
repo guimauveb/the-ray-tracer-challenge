@@ -66,8 +66,8 @@ impl<'objects> Intersections<'objects> {
     }
 
     /* If all intersections are positive, the iterator will stop at the first intersection in the list and return it,
-     * so we don't have to check if all intersections are positive and then return the first element of the list.
-     * Return None if there is no positive intersection. */
+     * so we don't have to check if all intersections are positive and then return the first element of the list.*/
+    /// Returns the first positive intersection or `None` if there is none.
     pub fn hit(&self) -> Option<&Intersection<'objects>> {
         self.0.iter().find(|&i| i.t() > 0.0)
     }

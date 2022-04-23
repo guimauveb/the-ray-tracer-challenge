@@ -1,6 +1,6 @@
 #[cfg(test)]
 use crate::{
-    primitive::{point::Point, tuple::Tuple, vector::Vector},
+    primitive::{point::Point, vector::Vector},
     rt::{
         computation::Computation,
         intersection::Intersection,
@@ -96,13 +96,13 @@ fn precomputing_the_state_of_an_intersection() {
     let shape = Object::Sphere(Sphere::default());
     let i = Intersection::new(4.0, &shape);
     let comps = i.prepare_computations(&r);
-    let expected_comps = Computation {
-        intersection: &i,
-        point: Point::new(0.0, 0.0, -1.0),
-        eye_vector: Vector::new(0.0, 0.0, -1.0),
-        normal_vector: Vector::new(0.0, 0.0, -1.0),
-        inside: false,
-    };
+    let expected_comps = Computation::new(
+        &i,
+        Point::new(0.0, 0.0, -1.0),
+        Vector::new(0.0, 0.0, -1.0),
+        Vector::new(0.0, 0.0, -1.0),
+        false,
+    );
 
     assert_eq!(comps, expected_comps);
 }
