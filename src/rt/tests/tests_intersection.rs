@@ -2,8 +2,12 @@
 use crate::{
     primitive::{point::Point, tuple::Tuple, vector::Vector},
     rt::{
-        computation::Computation, intersect::Intersect, intersection::Intersection,
-        intersections::Intersections, object::Object, ray::Ray, sphere::Sphere,
+        computation::Computation,
+        intersection::Intersection,
+        intersections::Intersections,
+        object::Object,
+        ray::{Intersect, Ray},
+        sphere::Sphere,
     },
 };
 

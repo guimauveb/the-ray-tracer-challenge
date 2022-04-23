@@ -1,9 +1,16 @@
 use crate::{
     primitive::{point::Point, tuple::Tuple},
     rt::{
-        canvas::Canvas, color::Color, intersect::Intersect, lighting::Lighting, material::Material,
-        normal::Normal, object::Object, point_light::PointLight, /*matrix::*,*/ ray::Ray,
-        sphere::Sphere, to_ppm::ToPPM,
+        canvas::Canvas,
+        color::Color,
+        lighting::Lighting,
+        material::Material,
+        normal::Normal,
+        object::Object,
+        point_light::PointLight,
+        /*matrix::*,*/ ray::{Intersect, Ray},
+        sphere::Sphere,
+        to_ppm::ToPPM,
     },
 };
 

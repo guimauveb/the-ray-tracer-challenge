@@ -3,7 +3,7 @@ use {
     std::ops::Index,
 };
 
-/// Wrapper around a `Vec<Intersection<'objects>>` that keeps intersections always sorted.
+/// Wrapper around a `Vec<Intersection<'objects>>` that keeps intersections sorted.
 pub struct Intersections<'objects>(Vec<Intersection<'objects>>);
 
 impl<'object> From<([f64; 2], &'object Object)> for Intersections<'object> {
@@ -22,6 +22,14 @@ impl<'objects> Index<Idx> for Intersections<'objects> {
     type Output = Intersection<'objects>;
     fn index(&self, idx: Idx) -> &Self::Output {
         &self.0[idx]
+    }
+}
+
+impl<'object> IntoIterator for Intersections<'object> {
+    type Item = Intersection<'object>;
+    type IntoIter = std::vec::IntoIter<Self::Item>;
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.into_iter()
     }
 }
 

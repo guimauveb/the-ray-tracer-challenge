@@ -3,13 +3,12 @@ use crate::{
     primitive::{point::Point, tuple::Tuple, vector::Vector},
     rt::{
         color::Color,
-        intersect::Intersect,
         intersection::Intersection,
         material::Material,
         matrix::{Matrix, Scaling},
         object::Object,
         point_light::PointLight,
-        ray::Ray,
+        ray::{Intersect, Ray},
         sphere::Sphere,
         world::World,
     },
@@ -52,13 +51,13 @@ fn intersect_a_world_with_a_ray() {
     assert_eq!(xs[3].t(), 6.0);
 }
 
+// TODO
 #[test]
 fn shading_an_intersection() {
     let w = World::default();
     let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
     let shape = &w.objects().unwrap()[0]; // The first object in the world
     let i = Intersection::new(4.0, &shape);
-    println!("{:#?}", &i);
 
     //let comps = i.prepare_computations(&r);
     //let c = w.shade_hit(&comps);
@@ -66,6 +65,7 @@ fn shading_an_intersection() {
     //assert_eq!(c, expected_c);
 }
 
+// TODO
 #[test]
 fn shading_an_intersection_from_the_inside() {
     let mut w = World::default();

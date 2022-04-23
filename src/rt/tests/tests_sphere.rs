@@ -3,12 +3,11 @@ use {
     crate::{
         primitive::{point::Point, tuple::Tuple, vector::Vector},
         rt::{
-            intersect::Intersect,
             material::Material,
             matrix::{Matrix, Rotation, Scaling, Translation},
             normal::Normal,
             object::Object,
-            ray::Ray,
+            ray::{Intersect, Ray},
             sphere::Sphere,
         },
     },

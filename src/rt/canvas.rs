@@ -28,7 +28,7 @@ impl Canvas {
         self.height
     }
 
-    pub const fn pixels(&self) -> &Vec<Color> {
+    pub fn pixels(&self) -> &[Color] {
         &self.pixels
     }
 

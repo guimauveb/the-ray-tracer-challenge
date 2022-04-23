@@ -1,7 +1,7 @@
 use {
     super::{
-        intersect::Intersect, intersections::Intersections, matrix::Matrix, object::Object,
-        transform::Transform, world::World,
+        intersections::Intersections, matrix::Matrix, object::Object, transform::Transform,
+        world::World,
     },
     crate::{
         primitive::{point::Point, vector::Vector},
@@ -15,15 +15,15 @@ pub struct Ray {
 }
 
 impl Ray {
-    pub fn new(origin: Point, direction: Vector) -> Self {
-        Ray { origin, direction }
+    pub const fn new(origin: Point, direction: Vector) -> Self {
+        Self { origin, direction }
     }
 
-    pub fn origin(&self) -> &Point {
+    pub const fn origin(&self) -> &Point {
         &self.origin
     }
 
-    pub fn direction(&self) -> &Vector {
+    pub const fn direction(&self) -> &Vector {
         &self.direction
     }
 
@@ -33,9 +33,25 @@ impl Ray {
     }
 }
 
+impl Transform for Ray {
+    fn transform(&self, m: &Matrix<4>) -> Self {
+        Self {
+            origin: m * self.origin,
+            direction: m * self.direction,
+        }
+    }
+}
+
+/// Describes how a ray intersects with one or multiple objects.
+/// `O` is the object (most likely an Object or a World (composed of many objects)) being intersected.
+/// `I` is the type of the intersection returned (could be of type `[f64; 2]` or `Intersections` for instance).
+pub trait Intersect<'object, O, I> {
+    fn intersect(&self, object: &'object O) -> Option<I>;
+}
+
 impl<'object> Intersect<'object, Sphere, [f64; 2]> for Ray {
     /// If the ray intersects the sphere at two points P and P', we return [P, P']. If it intersects the sphere at one point P, we return [P, P]. Else we return None.
-    ///  From https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-sphere-intersection:
+    ///  From <https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-sphere-intersection>:
     ///  1. Geometric solution
     ///     - Get OC-> by computing the difference between O (ray origin) and C (sphere center)
     ///     - Compute the dot product of 'D' (the direction of 'O') and 'L' ('O' -> 'C' (sphere center))
@@ -98,34 +114,14 @@ impl<'object> Intersect<'object, Object, Intersections<'object>> for Ray {
 impl<'objects> Intersect<'objects, World, Intersections<'objects>> for Ray {
     /// Returns a list of intersections with the objects composing the world.
     fn intersect(&self, world: &'objects World) -> Option<Intersections<'objects>> {
-        if let Some(objects) = world.objects() {
-            // Reserve memory for at least (number of objects * 2), since each objects can at most be intersected at two points (at least for now).
-            let mut intersections: Intersections<'objects> =
-                Intersections::with_capacity(objects.len() * 2);
-
-            for object in objects {
-                let xs = self.intersect(object);
-                if let Some(mut xs) = xs {
-                    intersections.append(&mut xs);
-                }
-            }
-
-            if !intersections.is_empty() {
-                Some(intersections)
-            } else {
-                None
-            }
-        } else {
-            None
-        }
-    }
-}
-
-impl Transform for Ray {
-    fn transform(&self, m: &Matrix<4>) -> Self {
-        Self {
-            origin: m * self.origin,
-            direction: m * self.direction,
-        }
+        world.objects().map(|objects| {
+            Intersections::new(
+                objects
+                    .iter()
+                    .filter_map(|object| self.intersect(object))
+                    .flat_map(|intersections| intersections)
+                    .collect(),
+            )
+        })
     }
 }

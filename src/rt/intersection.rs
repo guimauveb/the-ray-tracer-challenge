@@ -12,15 +12,15 @@ pub struct Intersection<'object> {
 }
 
 impl<'object> Intersection<'object> {
-    pub fn new(t: f64, object: &'object Object) -> Self {
+    pub const fn new(t: f64, object: &'object Object) -> Self {
         Self { t, object }
     }
 
-    pub fn t(&self) -> f64 {
+    pub const fn t(&self) -> f64 {
         self.t
     }
 
-    pub fn object(&self) -> &'object Object {
+    pub const fn object(&self) -> &'object Object {
         self.object
     }
 

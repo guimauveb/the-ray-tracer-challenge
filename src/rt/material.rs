@@ -103,22 +103,22 @@ impl Material {
     }
 
     pub fn set_color(&mut self, color: Color) {
-        self.color = color
+        self.color = color;
     }
 
     pub fn set_ambient(&mut self, ambient: f64) {
-        self.ambient = ambient
+        self.ambient = ambient;
     }
 
     pub fn set_diffuse(&mut self, diffuse: f64) {
-        self.diffuse = diffuse
+        self.diffuse = diffuse;
     }
 
     pub fn set_specular(&mut self, specular: f64) {
-        self.specular = specular
+        self.specular = specular;
     }
 
     pub fn set_shininess(&mut self, shininess: f64) {
-        self.shininess = shininess
+        self.shininess = shininess;
     }
 }
