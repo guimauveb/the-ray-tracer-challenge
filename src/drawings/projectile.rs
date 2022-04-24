@@ -21,8 +21,8 @@ impl Projectile {
     }
 
     pub fn tick(&mut self, environment: &Environment) {
-        self.position = self.position + self.velocity;
-        self.velocity = self.velocity + environment.gravity + environment.wind;
+        self.position = &self.position + &self.velocity;
+        self.velocity = &self.velocity + &environment.gravity + &environment.wind;
     }
 }
 
@@ -48,7 +48,7 @@ pub fn launch_projecticle() -> Result<(), std::io::Error> {
         canvas.write_pixel(
             projectile.position.x() as usize,
             canvas.height() - (projectile.position.y() as usize),
-            projectile_color,
+            projectile_color.clone(),
         );
         projectile.tick(&environment);
     }

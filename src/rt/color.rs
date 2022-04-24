@@ -1,6 +1,9 @@
-use {crate::approx_eq::ApproxEq, std::ops};
+use {
+    crate::approx_eq::ApproxEq,
+    std::ops::{Add, Mul, Sub},
+};
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct Color {
     red: f64,
     green: f64,
@@ -68,10 +71,10 @@ impl PartialEq for Color {
     }
 }
 
-impl ops::Add for Color {
+impl Add for Color {
     type Output = Self;
 
-    fn add(self, rhs: Self) -> Self {
+    fn add(self, rhs: Self) -> Self::Output {
         Self {
             red: self.red + rhs.red,
             green: self.green + rhs.green,
@@ -80,10 +83,10 @@ impl ops::Add for Color {
     }
 }
 
-impl ops::Sub for Color {
+impl Sub for Color {
     type Output = Self;
 
-    fn sub(self, rhs: Self) -> Self {
+    fn sub(self, rhs: Self) -> Self::Output {
         Self {
             red: self.red - rhs.red,
             green: self.green - rhs.green,
@@ -92,10 +95,10 @@ impl ops::Sub for Color {
     }
 }
 
-impl ops::Mul<f64> for Color {
+impl Mul<f64> for Color {
     type Output = Self;
 
-    fn mul(self, rhs: f64) -> Self {
+    fn mul(self, rhs: f64) -> Self::Output {
         Self {
             red: self.red * rhs,
             green: self.green * rhs,
@@ -104,10 +107,10 @@ impl ops::Mul<f64> for Color {
     }
 }
 
-impl ops::Mul<f64> for &Color {
+impl Mul<f64> for &Color {
     type Output = Color;
 
-    fn mul(self, rhs: f64) -> Color {
+    fn mul(self, rhs: f64) -> Self::Output {
         Color {
             red: self.red * rhs,
             green: self.green * rhs,
@@ -115,22 +118,12 @@ impl ops::Mul<f64> for &Color {
         }
     }
 }
-/*
- * Not implemented to avoid unnecessary call
- * trait HadamardProduct<Rhs: Mul = Self> {
- *     fn hadamard_product(self, rhs: Rhs) -> Self;
- * }
- *
- * impl HadamardProduct for Color {
- *     fn hadamard_product(self, rhs: Self) -> Self {
- *         self.mul(rhs)
- *     }
- * }
-*/
-impl ops::Mul for Color {
+
+impl Mul for Color {
     type Output = Self;
 
-    fn mul(self, rhs: Self) -> Self {
+    /// Computes the Hadamard product.
+    fn mul(self, rhs: Self) -> Self::Output {
         Self {
             red: self.red * rhs.red,
             green: self.green * rhs.green,
@@ -139,10 +132,11 @@ impl ops::Mul for Color {
     }
 }
 
-impl ops::Mul for &Color {
+impl Mul for &Color {
     type Output = Color;
 
-    fn mul(self, rhs: Self) -> Color {
+    /// Computes the Hadamard product.
+    fn mul(self, rhs: Self) -> Self::Output {
         Color {
             red: self.red * rhs.red,
             green: self.green * rhs.green,

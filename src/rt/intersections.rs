@@ -17,7 +17,6 @@ impl<'object> From<([f64; 2], &'object Object)> for Intersections<'object> {
 }
 
 type Idx = usize;
-
 impl<'objects> Index<Idx> for Intersections<'objects> {
     type Output = Intersection<'objects>;
     fn index(&self, idx: Idx) -> &Self::Output {

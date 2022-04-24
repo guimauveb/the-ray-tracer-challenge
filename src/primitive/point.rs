@@ -4,7 +4,7 @@ use {
     std::ops::{Add, Div, Index, IndexMut, Mul, Sub},
 };
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct Point {
     x: f64,
     y: f64,
@@ -44,7 +44,7 @@ impl PartialEq for Point {
 impl Add<Vector> for Point {
     type Output = Self;
 
-    fn add(self, rhs: Vector) -> Self {
+    fn add(self, rhs: Vector) -> Self::Output {
         Self {
             x: self.x + rhs.x(),
             y: self.y + rhs.y(),
@@ -56,7 +56,31 @@ impl Add<Vector> for Point {
 impl Add<Vector> for &Point {
     type Output = Point;
 
-    fn add(self, rhs: Vector) -> Point {
+    fn add(self, rhs: Vector) -> Self::Output {
+        Point {
+            x: self.x + rhs.x(),
+            y: self.y + rhs.y(),
+            z: self.z + rhs.z(),
+        }
+    }
+}
+
+impl Add<&Vector> for Point {
+    type Output = Self;
+
+    fn add(self, rhs: &Vector) -> Self::Output {
+        Self {
+            x: self.x + rhs.x(),
+            y: self.y + rhs.y(),
+            z: self.z + rhs.z(),
+        }
+    }
+}
+
+impl Add<&Vector> for &Point {
+    type Output = Point;
+
+    fn add(self, rhs: &Vector) -> Self::Output {
         Point {
             x: self.x + rhs.x(),
             y: self.y + rhs.y(),
@@ -69,7 +93,7 @@ impl Add<Vector> for &Point {
 impl Sub for Point {
     type Output = Vector;
 
-    fn sub(self, rhs: Self) -> Vector {
+    fn sub(self, rhs: Self) -> Self::Output {
         Vector::new(self.x - rhs.x(), self.y - rhs.y(), self.z - rhs.z())
     }
 }
@@ -77,7 +101,7 @@ impl Sub for Point {
 impl Sub for &Point {
     type Output = Vector;
 
-    fn sub(self, rhs: Self) -> Vector {
+    fn sub(self, rhs: Self) -> Self::Output {
         Vector::new(self.x - rhs.x(), self.y - rhs.y(), self.z - rhs.z())
     }
 }
@@ -86,7 +110,7 @@ impl Sub for &Point {
 impl Sub<Vector> for Point {
     type Output = Self;
 
-    fn sub(self, rhs: Vector) -> Self {
+    fn sub(self, rhs: Vector) -> Self::Output {
         Self {
             x: self.x - rhs.x(),
             y: self.y - rhs.y(),
@@ -98,7 +122,7 @@ impl Sub<Vector> for Point {
 impl Sub<Vector> for &Point {
     type Output = Point;
 
-    fn sub(self, rhs: Vector) -> Point {
+    fn sub(self, rhs: Vector) -> Self::Output {
         Point {
             x: self.x - rhs.x(),
             y: self.y - rhs.y(),
@@ -110,7 +134,7 @@ impl Sub<Vector> for &Point {
 impl Mul<f64> for Point {
     type Output = Self;
 
-    fn mul(self, rhs: f64) -> Self {
+    fn mul(self, rhs: f64) -> Self::Output {
         Self {
             x: self.x * rhs,
             y: self.y * rhs,
@@ -122,7 +146,7 @@ impl Mul<f64> for Point {
 impl Mul<f64> for &Point {
     type Output = Point;
 
-    fn mul(self, rhs: f64) -> Point {
+    fn mul(self, rhs: f64) -> Self::Output {
         Point {
             x: self.x * rhs,
             y: self.y * rhs,
@@ -134,7 +158,7 @@ impl Mul<f64> for &Point {
 impl Mul<Point> for f64 {
     type Output = Point;
 
-    fn mul(self, rhs: Point) -> Point {
+    fn mul(self, rhs: Point) -> Self::Output {
         Point {
             x: self * rhs.x,
             y: self * rhs.y,
@@ -146,7 +170,7 @@ impl Mul<Point> for f64 {
 impl Mul<&Point> for f64 {
     type Output = Point;
 
-    fn mul(self, rhs: &Point) -> Point {
+    fn mul(self, rhs: &Point) -> Self::Output {
         Point {
             x: self * rhs.x,
             y: self * rhs.y,
@@ -158,7 +182,7 @@ impl Mul<&Point> for f64 {
 impl Div<f64> for Point {
     type Output = Self;
 
-    fn div(self, rhs: f64) -> Self {
+    fn div(self, rhs: f64) -> Self::Output {
         Self {
             x: self.x / rhs,
             y: self.y / rhs,
@@ -170,7 +194,7 @@ impl Div<f64> for Point {
 impl Div<f64> for &Point {
     type Output = Point;
 
-    fn div(self, rhs: f64) -> Point {
+    fn div(self, rhs: f64) -> Self::Output {
         Point {
             x: self.x / rhs,
             y: self.y / rhs,

@@ -22,11 +22,11 @@ pub fn draw_clock() -> Result<(), std::io::Error> {
     for i in 0..12 {
         // 30° == (PI/6.0)
         let rotation = Matrix::<4>::rotation_z(f64::from(i) * PI / 6.0);
-        let rotated_point = rotation * point;
+        let rotated_point = &rotation * &point;
         canvas.write_pixel(
             (origin.x() + rotated_point.x()) as usize,
             canvas.height() - (origin.y() + rotated_point.y()) as usize,
-            white,
+            white.clone(),
         );
     }
 

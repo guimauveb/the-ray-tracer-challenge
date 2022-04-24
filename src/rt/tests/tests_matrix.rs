@@ -158,10 +158,10 @@ fn can_multiply_matrix_by_the_identity_matrix() {
 #[test]
 fn can_multiply_tuples_by_identity_matrix() {
     let point = Point::new(1.0, 2.0, 3.0);
-    assert_eq!(Matrix::<4>::identity() * point, point);
+    assert_eq!(&Matrix::<4>::identity() * &point, point);
 
     let vector = Vector::new(1.0, 2.0, 3.0);
-    assert_eq!(Matrix::<4>::identity() * vector, vector);
+    assert_eq!(&Matrix::<4>::identity() * &vector, vector);
 }
 
 #[test]
@@ -415,7 +415,7 @@ fn multiplying_by_the_inverse_of_translation_matrix() {
 fn translation_does_not_affect_vectors() {
     let transform = Matrix::<4>::translation(5.0, -3.0, 2.0);
     let vector = Vector::new(-3.0, 4.0, 5.0);
-    assert_eq!(transform * vector, vector);
+    assert_eq!(&transform * &vector, vector);
 }
 
 #[test]
@@ -452,10 +452,10 @@ fn rotating_a_point_around_the_x_axis() {
     let full_quarter = Matrix::<4>::rotation_x(PI / 2.0);
 
     assert_eq!(
-        half_quarter * point,
+        half_quarter * &point,
         Point::new(0.0, 2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0)
     );
-    assert_eq!(full_quarter * point, Point::new(0.0, 0.0, 1.0));
+    assert_eq!(full_quarter * &point, Point::new(0.0, 0.0, 1.0));
 }
 
 #[test]
@@ -477,7 +477,7 @@ fn rotating_a_point_around_the_y_axis() {
     let full_quarter = Matrix::<4>::rotation_y(PI / 2.0);
 
     assert_eq!(
-        half_quarter * point,
+        half_quarter * &point,
         Point::new(2.0_f64.sqrt() / 2.0, 0.0, 2.0_f64.sqrt() / 2.0)
     );
     assert_eq!(full_quarter * point, Point::new(1.0, 0.0, 0.0));
@@ -490,10 +490,10 @@ fn rotating_a_point_around_the_z_axis() {
     let full_quarter = Matrix::<4>::rotation_z(PI / 2.0);
 
     assert_eq!(
-        half_quarter * point,
+        half_quarter * &point,
         Point::new(-2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0, 0.0)
     );
-    assert_eq!(full_quarter * point, Point::new(-1.0, 0.0, 0.0));
+    assert_eq!(full_quarter * &point, Point::new(-1.0, 0.0, 0.0));
 }
 
 #[test]
@@ -556,4 +556,49 @@ fn individual_transformations_are_applied_in_sequance() {
     // Then apply translation
     let p4 = c * p3;
     assert_eq!(p4, Point::new(15.0, 0.0, 7.0));
+}
+
+#[test]
+fn the_transformation_matrix_for_the_default_orientation() {
+    let from = Point::new(0.0, 0.0, 0.0);
+    let to = Point::new(0.0, 0.0, -1.0);
+    let up = Vector::new(0.0, 1.0, 0.0);
+    let t = Matrix::<4>::view_transform(from, to, up);
+    let expected_t = Matrix::<4>::identity();
+    assert_eq!(t, expected_t);
+}
+
+#[test]
+fn a_view_transformation_matrix_looking_in_positive_z_direction() {
+    let from = Point::new(0.0, 0.0, 0.0);
+    let to = Point::new(0.0, 0.0, 1.0);
+    let up = Vector::new(0.0, 1.0, 0.0);
+    let t = Matrix::<4>::view_transform(from, to, up);
+    let expected_t = Matrix::<4>::scaling(-1.0, 1.0, -1.0);
+    assert_eq!(t, expected_t);
+}
+
+#[test]
+fn the_view_transformation_moves_the_world() {
+    let from = Point::new(0.0, 0.0, 8.0);
+    let to = Point::new(0.0, 0.0, 0.0);
+    let up = Vector::new(0.0, 1.0, 0.0);
+    let t = Matrix::<4>::view_transform(from, to, up);
+    let expected_t = Matrix::<4>::translation(0.0, 0.0, -8.0);
+    assert_eq!(t, expected_t);
+}
+
+#[test]
+fn an_arbitrary_view_transformation() {
+    let from = Point::new(1.0, 3.0, 2.0);
+    let to = Point::new(4.0, -2.0, 8.0);
+    let up = Vector::new(1.0, 1.0, 0.0);
+    let t = Matrix::<4>::view_transform(from, to, up);
+    let expected_t = Matrix::<4>::new([
+        [-0.50709, 0.50709, 0.67612, -2.36643],
+        [0.76772, 0.60609, 0.12122, -2.82843],
+        [-0.35857, 0.59761, -0.71714, 0.0000],
+        [0.00000, 0.00000, 0.00000, 1.00000],
+    ]);
+    assert_eq!(t, expected_t);
 }

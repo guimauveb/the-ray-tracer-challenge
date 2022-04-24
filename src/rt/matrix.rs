@@ -4,7 +4,7 @@ use {
         primitive::{point::Point, vector::Vector},
     },
     std::{
-        fmt::{Display, Formatter},
+        fmt::{Display, Formatter, Result as FmtResult},
         ops::{Index, IndexMut, Mul},
     },
 };
@@ -18,7 +18,7 @@ pub enum MatrixError<'a, const N: usize> {
 }
 
 impl<'a, const N: usize> Display for MatrixError<'a, N> {
-    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter) -> FmtResult {
         match *self {
             MatrixError::NotInvertible(matrix) => write!(f, "{} is not invertible", matrix),
         }
@@ -162,15 +162,13 @@ impl<const N: usize> Submatrix<Matrix<{ N - 1 }>> for Matrix<N> {
 
 impl Minor for Matrix<3_usize> {
     fn minor(&self, index: Idx) -> f64 {
-        let submatrix = self.submatrix(index);
-        submatrix.determinant()
+        self.submatrix(index).determinant()
     }
 }
 
 impl Minor for Matrix<4> {
     fn minor(&self, index: Idx) -> f64 {
-        let submatrix = self.submatrix(index);
-        submatrix.determinant()
+        self.submatrix(index).determinant()
     }
 }
 
@@ -232,11 +230,11 @@ impl Matrix<4> {
         !(self.determinant() == 0.0)
     }
 
-    /* If the matrix is invertible, we compute the inverse matrix like the following:
-     *      - Compute the cofactor of every element of the matrix
-     *      - Divide each cofactor by the determinant of the matrix
-     *      - Return the resulting matrix
-     */
+    /// If the matrix is invertible, we compute the inverse matrix like the following.
+    /// For each element of the matrix:
+    ///     1. Compute the cofactor
+    ///     2. Divide each cofactor by the determinant of the matrix
+    ///     3. Return the resulting matrix
     pub fn inverse(&self) -> Result<Self, MatrixError<4>> {
         if !(self.is_invertible()) {
             Err(MatrixError::NotInvertible(self))
@@ -250,6 +248,35 @@ impl Matrix<4> {
             }
             Ok(inverse_matrix)
         }
+    }
+
+    /// Given 3 inputs, `from`, `to` and `up`:
+    ///     1. Compute the `forward` vector by subtracting `from` from `to`.
+    ///     2. Compute the `left` vector by taking the cross product of `forward` and the normalized `up` vector.
+    ///     3. Compute the `true_up` vector by taking the cross product of `left` and `forward`.
+    ///     4. With `left`, `true_up` and `forward`, we can now construct a matrix that represents the orientation transformation:
+    /// ```
+    /// let orientation = Self([
+    ///     [left.x, left.y, left.z, 0.0],
+    ///     [true_up.x, true_up.y, true_up.z, 0.0],
+    ///     [-forward.x, -forward.y, -forward.z, 0.0],
+    ///     [0.0, 0.0, 0.0, 1.0],
+    /// ]);
+    /// ```
+    pub fn view_transform(from: Point, to: Point, up: Vector) -> Self {
+        let forward = (&to - &from).normalized();
+        let normalized_up = up.normalized();
+        let left = forward.cross(&normalized_up);
+        let true_up = left.cross(&forward);
+
+        let orientation = Self([
+            [left.x(), left.y(), left.z(), 0.0],
+            [true_up.x(), true_up.y(), true_up.z(), 0.0],
+            [-forward.x(), -forward.y(), -forward.z(), 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ]);
+
+        orientation * Self::translation(-from.x(), -from.y(), -from.z())
     }
 }
 
@@ -309,6 +336,23 @@ impl Mul<Point> for &Matrix<4> {
     }
 }
 
+impl Mul<&Point> for Matrix<4> {
+    type Output = Point;
+
+    fn mul(self, rhs: &Point) -> Point {
+        let mut point = Point::zero();
+        // Could map as well but the index (usize) is moved instead of being copied?
+        for row in 0..3_usize {
+            point[row] = (0..4)
+                .map(|column| self[[row, column]] * if column < 3 { rhs[column] } else { 1.0 }) // rhs[3] is (self.w) is equal to 1.0 but not accessible from the Point type.
+                .collect::<Vec<f64>>()
+                .iter()
+                .sum();
+        }
+        point
+    }
+}
+
 impl Mul<&Point> for &Matrix<4> {
     type Output = Point;
 
@@ -347,6 +391,40 @@ impl Mul<Vector> for &Matrix<4> {
     type Output = Vector;
 
     fn mul(self, rhs: Vector) -> Vector {
+        let mut vec = Vector::zero();
+        // Could map as well but the index (usize) is moved instead of being copied?
+        for row in 0..3_usize {
+            vec[row] = (0..4)
+                .map(|column| self[[row, column]] * if column < 3 { rhs[column] } else { 0.0 }) // rhs[3] (self.w) is equal to 0.0 but not accessible from the Vector type.
+                .collect::<Vec<f64>>()
+                .iter()
+                .sum();
+        }
+        vec
+    }
+}
+
+impl Mul<&Vector> for &Matrix<4> {
+    type Output = Vector;
+
+    fn mul(self, rhs: &Vector) -> Vector {
+        let mut vec = Vector::zero();
+        // Could map as well but the index (usize) is moved instead of being copied?
+        for row in 0..3_usize {
+            vec[row] = (0..4)
+                .map(|column| self[[row, column]] * if column < 3 { rhs[column] } else { 0.0 }) // rhs[3] (self.w) is equal to 0.0 but not accessible from the Vector type.
+                .collect::<Vec<f64>>()
+                .iter()
+                .sum();
+        }
+        vec
+    }
+}
+
+impl Mul<&Vector> for Matrix<4> {
+    type Output = Vector;
+
+    fn mul(self, rhs: &Vector) -> Vector {
         let mut vec = Vector::zero();
         // Could map as well but the index (usize) is moved instead of being copied?
         for row in 0..3_usize {

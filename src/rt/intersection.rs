@@ -24,8 +24,8 @@ impl<'object> Intersection<'object> {
         self.object
     }
 
-    fn is_inside(eye_vector: &Vector, &normal: &Vector) -> bool {
-        eye_vector.dot(&normal) < 0.0
+    fn is_inside(eye_vector: &Vector, normal: &Vector) -> bool {
+        eye_vector.dot(normal) < 0.0
     }
 
     pub fn prepare_computations(&'object self, ray: &Ray) -> Computation<'object> {

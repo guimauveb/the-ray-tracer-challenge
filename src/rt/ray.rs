@@ -29,15 +29,15 @@ impl Ray {
 
     /// Computes the point at the given distance along the ray.
     pub fn position(&self, distance: f64) -> Point {
-        self.origin + self.direction * distance
+        &self.origin + &self.direction * distance
     }
 }
 
 impl Transform for Ray {
     fn transform(&self, m: &Matrix<4>) -> Self {
         Self {
-            origin: m * self.origin,
-            direction: m * self.direction,
+            origin: m * &self.origin,
+            direction: m * &self.direction,
         }
     }
 }
@@ -78,7 +78,7 @@ impl<'object> Intersect<'object, Sphere, [f64; 2]> for Ray {
     ///           a = D^2,
     ///           b = 2D(O-C),
     ///           c = |O-C|^2 - R^2
-    fn intersect(&self, sphere: &'object Sphere) -> Option<[f64; 2]> {
+    fn intersect(&self, sphere: &Sphere) -> Option<[f64; 2]> {
         let transformed_ray = self.transform(&sphere.transform().inverse().unwrap());
         let sphere_to_ray = transformed_ray.origin() - sphere.origin();
         let a = transformed_ray.direction().dot(transformed_ray.direction());

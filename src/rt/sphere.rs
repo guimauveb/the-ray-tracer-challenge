@@ -79,7 +79,7 @@ impl Normal for Sphere {
     fn normal_at(&self, point: &Point) -> Vector {
         // Convert the point from world space to object space
         let object_point = &self.transform.inverse().expect("Matrix is not invertible!") * point;
-        let object_normal = object_point - self.origin;
+        let object_normal = &object_point - &self.origin;
         // To keep the normal perpendicular to their surface, we multiply the object normal by the inverted then transposed object transform (matrix).
         let world_normal = self
             .transform

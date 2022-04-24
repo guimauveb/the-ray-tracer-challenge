@@ -11,8 +11,8 @@ fn canvas_is_of_correct_size() {
 fn canvas_pixels_are_black_by_default() {
     let canvas = Canvas::new(16, 8);
     let black = Color::black();
-    for &pixel in canvas.pixels() {
-        assert_eq!(pixel, black);
+    for pixel in canvas.pixels() {
+        assert_eq!(pixel, &black);
     }
 }
 
@@ -20,7 +20,7 @@ fn canvas_pixels_are_black_by_default() {
 fn pixel_at_returns_expected_color() {
     let mut canvas = Canvas::new(16, 8);
     let red = Color::new(1.0, 0.0, 0.0);
-    canvas.write_pixel(2, 3, red);
+    canvas.write_pixel(2, 3, red.clone());
     assert_eq!(canvas.pixel_at(2, 3), &red);
 }
 

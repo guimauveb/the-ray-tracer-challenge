@@ -54,12 +54,13 @@ pub fn ray_sphere_hit() -> Result<(), std::io::Error> {
         // top = half, bottom = -half
         let world_y = half - pixel_size * y as f64;
         for x in 0..canvas.width() {
+            let ray_origin = ray_origin.clone();
             // left = -half, right = half
             let world_x = pixel_size.mul_add(x as f64, -half);
             // Point on the wall that the ray will target
             let position = Point::new(world_x, world_y, wall_z);
             // If we don't normalized the direction, we get a rather strange result -> Why?
-            let r = Ray::new(ray_origin, (position - ray_origin).normalized());
+            let r = Ray::new(ray_origin.clone(), (position - ray_origin).normalized());
             let intersections = r.intersect(&sphere);
             if let Some(xs) = intersections {
                 let hit = &xs[0];

@@ -103,7 +103,7 @@ impl Material {
         // Find the direction to the light source (point -> light source)
         let point_to_light = (light.position() - point).normalized();
         // Compute the ambient contribution
-        let ambient = effective_color * self.ambient;
+        let ambient = &effective_color * self.ambient;
         /* light_dot_normal represents the cosine of the angle between the
          * light vector and the normal vector. A negative number means
          * the light is on the other side of the surface. */

@@ -52,6 +52,14 @@ impl World {
         }
     }
 
+    pub fn objects(&self) -> Option<&[Object]> {
+        self.objects.as_deref()
+    }
+
+    pub const fn light(&self) -> Option<&PointLight> {
+        self.light.as_ref()
+    }
+
     pub fn set_light(&mut self, light: PointLight) {
         self.light = Some(light);
     }
@@ -62,14 +70,6 @@ impl World {
         } else {
             self.objects = Some(vec![object]);
         }
-    }
-
-    pub fn objects(&self) -> Option<&[Object]> {
-        self.objects.as_deref()
-    }
-
-    pub const fn light(&self) -> Option<&PointLight> {
-        self.light.as_ref()
     }
 
     pub fn shade_hit(&self, computations: &Computation) -> Color {

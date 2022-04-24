@@ -32,7 +32,7 @@ impl<'object> Computation<'object> {
     }
 
     pub const fn intersection(&self) -> &Intersection {
-        &self.intersection
+        self.intersection
     }
 
     pub const fn inside(&self) -> bool {
