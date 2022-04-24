@@ -9,6 +9,7 @@ pub struct Point {
     x: f64,
     y: f64,
     z: f64,
+    w: f64,
 }
 
 impl Index<usize> for Point {
@@ -19,6 +20,7 @@ impl Index<usize> for Point {
             0 => &self.x,
             1 => &self.y,
             2 => &self.z,
+            3 => &self.w,
             _ => panic!("Index out of bound!"),
         }
     }
@@ -30,6 +32,7 @@ impl IndexMut<usize> for Point {
             0 => &mut self.x,
             1 => &mut self.y,
             2 => &mut self.z,
+            3 => &mut self.w,
             _ => panic!("Index out of bound!"),
         }
     }
@@ -49,6 +52,7 @@ impl Add<Vector> for Point {
             x: self.x + rhs.x(),
             y: self.y + rhs.y(),
             z: self.z + rhs.z(),
+            w: 1.0,
         }
     }
 }
@@ -61,6 +65,7 @@ impl Add<Vector> for &Point {
             x: self.x + rhs.x(),
             y: self.y + rhs.y(),
             z: self.z + rhs.z(),
+            w: 1.0,
         }
     }
 }
@@ -73,6 +78,7 @@ impl Add<&Vector> for Point {
             x: self.x + rhs.x(),
             y: self.y + rhs.y(),
             z: self.z + rhs.z(),
+            w: 1.0,
         }
     }
 }
@@ -85,6 +91,7 @@ impl Add<&Vector> for &Point {
             x: self.x + rhs.x(),
             y: self.y + rhs.y(),
             z: self.z + rhs.z(),
+            w: 1.0,
         }
     }
 }
@@ -115,6 +122,7 @@ impl Sub<Vector> for Point {
             x: self.x - rhs.x(),
             y: self.y - rhs.y(),
             z: self.z - rhs.z(),
+            w: 1.0,
         }
     }
 }
@@ -127,6 +135,7 @@ impl Sub<Vector> for &Point {
             x: self.x - rhs.x(),
             y: self.y - rhs.y(),
             z: self.z - rhs.z(),
+            w: 1.0,
         }
     }
 }
@@ -139,6 +148,7 @@ impl Mul<f64> for Point {
             x: self.x * rhs,
             y: self.y * rhs,
             z: self.z * rhs,
+            w: 1.0,
         }
     }
 }
@@ -151,6 +161,7 @@ impl Mul<f64> for &Point {
             x: self.x * rhs,
             y: self.y * rhs,
             z: self.z * rhs,
+            w: 1.0,
         }
     }
 }
@@ -163,6 +174,7 @@ impl Mul<Point> for f64 {
             x: self * rhs.x,
             y: self * rhs.y,
             z: self * rhs.z,
+            w: 1.0,
         }
     }
 }
@@ -175,6 +187,7 @@ impl Mul<&Point> for f64 {
             x: self * rhs.x,
             y: self * rhs.y,
             z: self * rhs.z,
+            w: 1.0,
         }
     }
 }
@@ -187,6 +200,7 @@ impl Div<f64> for Point {
             x: self.x / rhs,
             y: self.y / rhs,
             z: self.z / rhs,
+            w: 1.0,
         }
     }
 }
@@ -199,13 +213,14 @@ impl Div<f64> for &Point {
             x: self.x / rhs,
             y: self.y / rhs,
             z: self.z / rhs,
+            w: 1.0,
         }
     }
 }
 
 impl Point {
     pub const fn new(x: f64, y: f64, z: f64) -> Self {
-        Self { x, y, z }
+        Self { x, y, z, w: 1.0 }
     }
 
     pub const fn zero() -> Self {
@@ -213,6 +228,7 @@ impl Point {
             x: 0.0,
             y: 0.0,
             z: 0.0,
+            w: 1.0,
         }
     }
 

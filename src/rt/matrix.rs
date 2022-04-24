@@ -19,7 +19,7 @@ pub enum MatrixError<'a, const N: usize> {
 
 impl<'a, const N: usize> Display for MatrixError<'a, N> {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
-        match *self {
+        match self {
             MatrixError::NotInvertible(matrix) => write!(f, "{} is not invertible", matrix),
         }
     }
@@ -97,27 +97,137 @@ impl<const N: usize> PartialEq for Matrix<N> {
 }
 
 impl<const N: usize> Display for Matrix<N> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         write!(f, "{:#?}", self)
     }
 }
 
-impl<const N: usize> Mul for Matrix<N> {
+impl Mul for Matrix<4> {
     type Output = Self;
 
-    // NOTE - Use a mul_add?
     fn mul(self, rhs: Self) -> Self {
-        let mut result = Self([[0.0; N]; N]);
-        for row in 0..N {
-            for column in 0..N {
-                result[[row, column]] = (0..N)
-                    .map(|n| self[[row, n]] * rhs[[n, column]])
-                    .collect::<Vec<f64>>()
-                    .iter()
-                    .sum();
-            }
-        }
-        result
+        Self([
+            [
+                self[[0, 0]].mul_add(
+                    rhs[[0, 0]],
+                    self[[0, 1]].mul_add(
+                        rhs[[1, 0]],
+                        self[[0, 2]].mul_add(rhs[[2, 0]], self[[0, 3]] * rhs[[3, 0]]),
+                    ),
+                ),
+                self[[0, 0]].mul_add(
+                    rhs[[0, 1]],
+                    self[[0, 1]].mul_add(
+                        rhs[[1, 1]],
+                        self[[0, 2]].mul_add(rhs[[2, 1]], self[[0, 3]] * rhs[[3, 1]]),
+                    ),
+                ),
+                self[[0, 0]].mul_add(
+                    rhs[[0, 2]],
+                    self[[0, 1]].mul_add(
+                        rhs[[1, 2]],
+                        self[[0, 2]].mul_add(rhs[[2, 2]], self[[0, 3]] * rhs[[3, 2]]),
+                    ),
+                ),
+                self[[0, 0]].mul_add(
+                    rhs[[0, 3]],
+                    self[[0, 1]].mul_add(
+                        rhs[[1, 3]],
+                        self[[0, 2]].mul_add(rhs[[2, 3]], self[[0, 3]] * rhs[[3, 3]]),
+                    ),
+                ),
+            ],
+            [
+                self[[1, 0]].mul_add(
+                    rhs[[0, 0]],
+                    self[[1, 1]].mul_add(
+                        rhs[[1, 0]],
+                        self[[1, 2]].mul_add(rhs[[2, 0]], self[[1, 3]] * rhs[[3, 0]]),
+                    ),
+                ),
+                self[[1, 0]].mul_add(
+                    rhs[[0, 1]],
+                    self[[1, 1]].mul_add(
+                        rhs[[1, 1]],
+                        self[[1, 2]].mul_add(rhs[[2, 1]], self[[1, 3]] * rhs[[3, 1]]),
+                    ),
+                ),
+                self[[1, 0]].mul_add(
+                    rhs[[0, 2]],
+                    self[[1, 1]].mul_add(
+                        rhs[[1, 2]],
+                        self[[1, 2]].mul_add(rhs[[2, 2]], self[[1, 3]] * rhs[[3, 2]]),
+                    ),
+                ),
+                self[[1, 0]].mul_add(
+                    rhs[[0, 3]],
+                    self[[1, 1]].mul_add(
+                        rhs[[1, 3]],
+                        self[[1, 2]].mul_add(rhs[[2, 3]], self[[1, 3]] * rhs[[3, 3]]),
+                    ),
+                ),
+            ],
+            [
+                self[[2, 0]].mul_add(
+                    rhs[[0, 0]],
+                    self[[2, 1]].mul_add(
+                        rhs[[1, 0]],
+                        self[[2, 2]].mul_add(rhs[[2, 0]], self[[2, 3]] * rhs[[3, 0]]),
+                    ),
+                ),
+                self[[2, 0]].mul_add(
+                    rhs[[0, 1]],
+                    self[[2, 1]].mul_add(
+                        rhs[[1, 1]],
+                        self[[2, 2]].mul_add(rhs[[2, 1]], self[[2, 3]] * rhs[[3, 1]]),
+                    ),
+                ),
+                self[[2, 0]].mul_add(
+                    rhs[[0, 2]],
+                    self[[2, 1]].mul_add(
+                        rhs[[1, 2]],
+                        self[[2, 2]].mul_add(rhs[[2, 2]], self[[2, 3]] * rhs[[3, 2]]),
+                    ),
+                ),
+                self[[2, 0]].mul_add(
+                    rhs[[0, 3]],
+                    self[[2, 1]].mul_add(
+                        rhs[[1, 3]],
+                        self[[2, 2]].mul_add(rhs[[2, 3]], self[[2, 3]] * rhs[[3, 3]]),
+                    ),
+                ),
+            ],
+            [
+                self[[3, 0]].mul_add(
+                    rhs[[0, 0]],
+                    self[[3, 1]].mul_add(
+                        rhs[[1, 0]],
+                        self[[3, 2]].mul_add(rhs[[2, 0]], self[[3, 3]] * rhs[[3, 0]]),
+                    ),
+                ),
+                self[[3, 0]].mul_add(
+                    rhs[[0, 1]],
+                    self[[3, 1]].mul_add(
+                        rhs[[1, 1]],
+                        self[[3, 2]].mul_add(rhs[[2, 1]], self[[3, 3]] * rhs[[3, 1]]),
+                    ),
+                ),
+                self[[3, 0]].mul_add(
+                    rhs[[0, 2]],
+                    self[[3, 1]].mul_add(
+                        rhs[[1, 2]],
+                        self[[3, 2]].mul_add(rhs[[2, 2]], self[[3, 3]] * rhs[[3, 2]]),
+                    ),
+                ),
+                self[[3, 0]].mul_add(
+                    rhs[[0, 3]],
+                    self[[3, 1]].mul_add(
+                        rhs[[1, 3]],
+                        self[[3, 2]].mul_add(rhs[[2, 3]], self[[3, 3]] * rhs[[3, 3]]),
+                    ),
+                ),
+            ],
+        ])
     }
 }
 
@@ -136,7 +246,7 @@ impl<const N: usize> Transpose for Matrix<N> {
 impl<const N: usize> Submatrix<Matrix<{ N - 1 }>> for Matrix<N> {
     fn submatrix(&self, index: Idx) -> Matrix<{ N - 1 }> {
         let mut submatrix = Matrix::<{ N - 1 }>([[0.0; N - 1]; N - 1]);
-        let (mut i, mut j) = (0_usize, 0_usize);
+        let (mut i, mut j) = (0, 0);
 
         for row in 0..N {
             // Skip excluded row
@@ -160,7 +270,7 @@ impl<const N: usize> Submatrix<Matrix<{ N - 1 }>> for Matrix<N> {
     }
 }
 
-impl Minor for Matrix<3_usize> {
+impl Minor for Matrix<3> {
     fn minor(&self, index: Idx) -> f64 {
         self.submatrix(index).determinant()
     }
@@ -172,7 +282,7 @@ impl Minor for Matrix<4> {
     }
 }
 
-impl Cofactor for Matrix<3_usize> {
+impl Cofactor for Matrix<3> {
     fn cofactor(&self, index: Idx) -> f64 {
         let minor = self.minor(index);
 
@@ -196,17 +306,15 @@ impl Cofactor for Matrix<4> {
     }
 }
 
-impl Determinant for Matrix<2_usize> {
+impl Determinant for Matrix<2> {
     fn determinant(&self) -> f64 {
         self[[0, 0]] * self[[1, 1]] - self[[0, 1]] * self[[1, 0]]
     }
 }
 
-impl Determinant for Matrix<3_usize> {
+impl Determinant for Matrix<3> {
     fn determinant(&self) -> f64 {
-        (0..3_usize)
-            .map(|x| self[[0, x]] * self.cofactor([0, x]))
-            .sum()
+        (0..3).map(|x| self[[0, x]] * self.cofactor([0, x])).sum()
     }
 }
 
@@ -306,16 +414,20 @@ impl Mul<Point> for Matrix<4> {
     type Output = Point;
 
     fn mul(self, rhs: Point) -> Point {
-        let mut point = Point::zero();
-        // Could map as well but the index (usize) is moved instead of being copied?
-        for row in 0..3_usize {
-            point[row] = (0..4)
-                .map(|column| self[[row, column]] * if column < 3 { rhs[column] } else { 1.0 }) // rhs[3] is (self.w) is equal to 1.0 but not accessible from the Point type.
-                .collect::<Vec<f64>>()
-                .iter()
-                .sum();
-        }
-        point
+        Point::new(
+            self[[0, 0]].mul_add(
+                rhs[0],
+                self[[0, 1]].mul_add(rhs[1], self[[0, 2]].mul_add(rhs[2], self[[0, 3]] * rhs[3])),
+            ),
+            self[[1, 0]].mul_add(
+                rhs[0],
+                self[[1, 1]].mul_add(rhs[1], self[[1, 2]].mul_add(rhs[2], self[[1, 3]] * rhs[3])),
+            ),
+            self[[2, 0]].mul_add(
+                rhs[0],
+                self[[2, 1]].mul_add(rhs[1], self[[2, 2]].mul_add(rhs[2], self[[2, 3]] * rhs[3])),
+            ),
+        )
     }
 }
 
@@ -323,16 +435,20 @@ impl Mul<Point> for &Matrix<4> {
     type Output = Point;
 
     fn mul(self, rhs: Point) -> Point {
-        let mut point = Point::zero();
-        // Could map as well but the index (usize) is moved instead of being copied?
-        for row in 0..3_usize {
-            point[row] = (0..4)
-                .map(|column| self[[row, column]] * if column < 3 { rhs[column] } else { 1.0 }) // rhs[3] is (self.w) is equal to 1.0 but not accessible from the Point type.
-                .collect::<Vec<f64>>()
-                .iter()
-                .sum();
-        }
-        point
+        Point::new(
+            self[[0, 0]].mul_add(
+                rhs[0],
+                self[[0, 1]].mul_add(rhs[1], self[[0, 2]].mul_add(rhs[2], self[[0, 3]] * rhs[3])),
+            ),
+            self[[1, 0]].mul_add(
+                rhs[0],
+                self[[1, 1]].mul_add(rhs[1], self[[1, 2]].mul_add(rhs[2], self[[1, 3]] * rhs[3])),
+            ),
+            self[[2, 0]].mul_add(
+                rhs[0],
+                self[[2, 1]].mul_add(rhs[1], self[[2, 2]].mul_add(rhs[2], self[[2, 3]] * rhs[3])),
+            ),
+        )
     }
 }
 
@@ -340,16 +456,20 @@ impl Mul<&Point> for Matrix<4> {
     type Output = Point;
 
     fn mul(self, rhs: &Point) -> Point {
-        let mut point = Point::zero();
-        // Could map as well but the index (usize) is moved instead of being copied?
-        for row in 0..3_usize {
-            point[row] = (0..4)
-                .map(|column| self[[row, column]] * if column < 3 { rhs[column] } else { 1.0 }) // rhs[3] is (self.w) is equal to 1.0 but not accessible from the Point type.
-                .collect::<Vec<f64>>()
-                .iter()
-                .sum();
-        }
-        point
+        Point::new(
+            self[[0, 0]].mul_add(
+                rhs[0],
+                self[[0, 1]].mul_add(rhs[1], self[[0, 2]].mul_add(rhs[2], self[[0, 3]] * rhs[3])),
+            ),
+            self[[1, 0]].mul_add(
+                rhs[0],
+                self[[1, 1]].mul_add(rhs[1], self[[1, 2]].mul_add(rhs[2], self[[1, 3]] * rhs[3])),
+            ),
+            self[[2, 0]].mul_add(
+                rhs[0],
+                self[[2, 1]].mul_add(rhs[1], self[[2, 2]].mul_add(rhs[2], self[[2, 3]] * rhs[3])),
+            ),
+        )
     }
 }
 
@@ -357,16 +477,20 @@ impl Mul<&Point> for &Matrix<4> {
     type Output = Point;
 
     fn mul(self, rhs: &Point) -> Point {
-        let mut point = Point::zero();
-        // Could map as well but the index (usize) is moved instead of being copied?
-        for row in 0..3_usize {
-            point[row] = (0..4)
-                .map(|column| self[[row, column]] * if column < 3 { rhs[column] } else { 1.0 }) // rhs[3] is (self.w) is equal to 1.0 but not accessible from the Point type.
-                .collect::<Vec<f64>>()
-                .iter()
-                .sum();
-        }
-        point
+        Point::new(
+            self[[0, 0]].mul_add(
+                rhs[0],
+                self[[0, 1]].mul_add(rhs[1], self[[0, 2]].mul_add(rhs[2], self[[0, 3]] * rhs[3])),
+            ),
+            self[[1, 0]].mul_add(
+                rhs[0],
+                self[[1, 1]].mul_add(rhs[1], self[[1, 2]].mul_add(rhs[2], self[[1, 3]] * rhs[3])),
+            ),
+            self[[2, 0]].mul_add(
+                rhs[0],
+                self[[2, 1]].mul_add(rhs[1], self[[2, 2]].mul_add(rhs[2], self[[2, 3]] * rhs[3])),
+            ),
+        )
     }
 }
 
@@ -374,16 +498,20 @@ impl Mul<Vector> for Matrix<4> {
     type Output = Vector;
 
     fn mul(self, rhs: Vector) -> Vector {
-        let mut vec = Vector::zero();
-        // Could map as well but the index (usize) is moved instead of being copied?
-        for row in 0..3_usize {
-            vec[row] = (0..4)
-                .map(|column| self[[row, column]] * if column < 3 { rhs[column] } else { 0.0 }) // rhs[3] (self.w) is equal to 0.0 but not accessible from the Vector type.
-                .collect::<Vec<f64>>()
-                .iter()
-                .sum();
-        }
-        vec
+        Vector::new(
+            self[[0, 0]].mul_add(
+                rhs[0],
+                self[[0, 1]].mul_add(rhs[1], self[[0, 2]].mul_add(rhs[2], self[[0, 3]] * rhs[3])),
+            ),
+            self[[1, 0]].mul_add(
+                rhs[0],
+                self[[1, 1]].mul_add(rhs[1], self[[1, 2]].mul_add(rhs[2], self[[1, 3]] * rhs[3])),
+            ),
+            self[[2, 0]].mul_add(
+                rhs[0],
+                self[[2, 1]].mul_add(rhs[1], self[[2, 2]].mul_add(rhs[2], self[[2, 3]] * rhs[3])),
+            ),
+        )
     }
 }
 
@@ -391,16 +519,20 @@ impl Mul<Vector> for &Matrix<4> {
     type Output = Vector;
 
     fn mul(self, rhs: Vector) -> Vector {
-        let mut vec = Vector::zero();
-        // Could map as well but the index (usize) is moved instead of being copied?
-        for row in 0..3_usize {
-            vec[row] = (0..4)
-                .map(|column| self[[row, column]] * if column < 3 { rhs[column] } else { 0.0 }) // rhs[3] (self.w) is equal to 0.0 but not accessible from the Vector type.
-                .collect::<Vec<f64>>()
-                .iter()
-                .sum();
-        }
-        vec
+        Vector::new(
+            self[[0, 0]].mul_add(
+                rhs[0],
+                self[[0, 1]].mul_add(rhs[1], self[[0, 2]].mul_add(rhs[2], self[[0, 3]] * rhs[3])),
+            ),
+            self[[1, 0]].mul_add(
+                rhs[0],
+                self[[1, 1]].mul_add(rhs[1], self[[1, 2]].mul_add(rhs[2], self[[1, 3]] * rhs[3])),
+            ),
+            self[[2, 0]].mul_add(
+                rhs[0],
+                self[[2, 1]].mul_add(rhs[1], self[[2, 2]].mul_add(rhs[2], self[[2, 3]] * rhs[3])),
+            ),
+        )
     }
 }
 
@@ -408,16 +540,20 @@ impl Mul<&Vector> for &Matrix<4> {
     type Output = Vector;
 
     fn mul(self, rhs: &Vector) -> Vector {
-        let mut vec = Vector::zero();
-        // Could map as well but the index (usize) is moved instead of being copied?
-        for row in 0..3_usize {
-            vec[row] = (0..4)
-                .map(|column| self[[row, column]] * if column < 3 { rhs[column] } else { 0.0 }) // rhs[3] (self.w) is equal to 0.0 but not accessible from the Vector type.
-                .collect::<Vec<f64>>()
-                .iter()
-                .sum();
-        }
-        vec
+        Vector::new(
+            self[[0, 0]].mul_add(
+                rhs[0],
+                self[[0, 1]].mul_add(rhs[1], self[[0, 2]].mul_add(rhs[2], self[[0, 3]] * rhs[3])),
+            ),
+            self[[1, 0]].mul_add(
+                rhs[0],
+                self[[1, 1]].mul_add(rhs[1], self[[1, 2]].mul_add(rhs[2], self[[1, 3]] * rhs[3])),
+            ),
+            self[[2, 0]].mul_add(
+                rhs[0],
+                self[[2, 1]].mul_add(rhs[1], self[[2, 2]].mul_add(rhs[2], self[[2, 3]] * rhs[3])),
+            ),
+        )
     }
 }
 
@@ -425,16 +561,20 @@ impl Mul<&Vector> for Matrix<4> {
     type Output = Vector;
 
     fn mul(self, rhs: &Vector) -> Vector {
-        let mut vec = Vector::zero();
-        // Could map as well but the index (usize) is moved instead of being copied?
-        for row in 0..3_usize {
-            vec[row] = (0..4)
-                .map(|column| self[[row, column]] * if column < 3 { rhs[column] } else { 0.0 }) // rhs[3] (self.w) is equal to 0.0 but not accessible from the Vector type.
-                .collect::<Vec<f64>>()
-                .iter()
-                .sum();
-        }
-        vec
+        Vector::new(
+            self[[0, 0]].mul_add(
+                rhs[0],
+                self[[0, 1]].mul_add(rhs[1], self[[0, 2]].mul_add(rhs[2], self[[0, 3]] * rhs[3])),
+            ),
+            self[[1, 0]].mul_add(
+                rhs[0],
+                self[[1, 1]].mul_add(rhs[1], self[[1, 2]].mul_add(rhs[2], self[[1, 3]] * rhs[3])),
+            ),
+            self[[2, 0]].mul_add(
+                rhs[0],
+                self[[2, 1]].mul_add(rhs[1], self[[2, 2]].mul_add(rhs[2], self[[2, 3]] * rhs[3])),
+            ),
+        )
     }
 }
 

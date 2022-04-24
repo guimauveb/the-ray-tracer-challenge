@@ -29,8 +29,7 @@ fn can_create_4x4_matrix() {
 
 #[test]
 fn can_create_3x3_matrix() {
-    const M: Matrix<3_usize> =
-        Matrix::<3_usize>::new([[-3.0, 5.0, 0.0], [1.0, -2.0, -7.0], [0.0, 1.0, 1.0]]);
+    const M: Matrix<3> = Matrix::<3>::new([[-3.0, 5.0, 0.0], [1.0, -2.0, -7.0], [0.0, 1.0, 1.0]]);
 
     assert_eq!(M[[0, 0]], -3.0);
     assert_eq!(M[[1, 1]], -2.0);
@@ -39,7 +38,7 @@ fn can_create_3x3_matrix() {
 
 #[test]
 fn can_create_2x2_matrix() {
-    const M: Matrix<2_usize> = Matrix::<2_usize>::new([[-3.0, 5.0], [1.0, -2.0]]);
+    const M: Matrix<2> = Matrix::<2>::new([[-3.0, 5.0], [1.0, -2.0]]);
 
     assert_eq!(M[[0, 0]], -3.0);
     assert_eq!(M[[0, 1]], 5.0);
@@ -195,7 +194,7 @@ fn can_transpose_identity_matrix() {
 
 #[test]
 fn can_compute_determinant() {
-    const A: Matrix<2_usize> = Matrix::<2_usize>::new([[1.0, 5.0], [-3.0, 2.0]]);
+    const A: Matrix<2> = Matrix::<2>::new([[1.0, 5.0], [-3.0, 2.0]]);
     let determinant = A.determinant();
     let expected_determinant = 17.0;
 
@@ -204,10 +203,9 @@ fn can_compute_determinant() {
 
 #[test]
 fn a_submatrix_of_a_3x3_matrix_is_a_2x2_matrix() {
-    const A: Matrix<3_usize> =
-        Matrix::<3_usize>::new([[1.0, 5.0, 0.0], [-3.0, 2.0, 7.0], [0.0, 6.0, -3.0]]);
+    const A: Matrix<3> = Matrix::<3>::new([[1.0, 5.0, 0.0], [-3.0, 2.0, 7.0], [0.0, 6.0, -3.0]]);
     let submatrix = A.submatrix([0, 2]);
-    const EXPECTED_SUBMATRIX: Matrix<2_usize> = Matrix::<2_usize>::new([[-3.0, 2.0], [0.0, 6.0]]);
+    const EXPECTED_SUBMATRIX: Matrix<2> = Matrix::<2>::new([[-3.0, 2.0], [0.0, 6.0]]);
 
     assert_eq!(submatrix, EXPECTED_SUBMATRIX);
 }
@@ -221,16 +219,15 @@ fn a_submatrix_of_a_4x4_matrix_is_a_3x3_matrix() {
         [-7.0, 1.0, -1.0, 1.0],
     ]);
     let submatrix = A.submatrix([2, 1]);
-    const EXPECTED_SUBMATRIX: Matrix<3_usize> =
-        Matrix::<3_usize>::new([[-6.0, 1.0, 6.0], [-8.0, 8.0, 6.0], [-7.0, -1.0, 1.0]]);
+    const EXPECTED_SUBMATRIX: Matrix<3> =
+        Matrix::<3>::new([[-6.0, 1.0, 6.0], [-8.0, 8.0, 6.0], [-7.0, -1.0, 1.0]]);
 
     assert_eq!(submatrix, EXPECTED_SUBMATRIX);
 }
 
 #[test]
 fn calculating_a_minor_of_a_3x3_matrix() {
-    const A: Matrix<3_usize> =
-        Matrix::<3_usize>::new([[3.0, 5.0, 0.0], [2.0, -1.0, -7.0], [6.0, -1.0, 5.0]]);
+    const A: Matrix<3> = Matrix::<3>::new([[3.0, 5.0, 0.0], [2.0, -1.0, -7.0], [6.0, -1.0, 5.0]]);
     let minor = A.minor([1, 0]);
     let expected_minor = 25.0;
 
@@ -239,8 +236,7 @@ fn calculating_a_minor_of_a_3x3_matrix() {
 
 #[test]
 fn calculating_a_cofactor_of_a_3x3_matrix() {
-    const A: Matrix<3_usize> =
-        Matrix::<3_usize>::new([[3.0, 5.0, 0.0], [2.0, -1.0, -7.0], [6.0, -1.0, 5.0]]);
+    const A: Matrix<3> = Matrix::<3>::new([[3.0, 5.0, 0.0], [2.0, -1.0, -7.0], [6.0, -1.0, 5.0]]);
     let cofactor_at_0_0 = A.cofactor([0, 0]);
     let expected_cofactor_at_0_0 = -12.0;
 
@@ -254,8 +250,7 @@ fn calculating_a_cofactor_of_a_3x3_matrix() {
 
 #[test]
 fn calculating_the_determinant_of_3x3_matrix() {
-    const A: Matrix<3_usize> =
-        Matrix::<3_usize>::new([[1.0, 2.0, 6.0], [-5.0, 8.0, -4.0], [2.0, 6.0, 4.0]]);
+    const A: Matrix<3> = Matrix::<3>::new([[1.0, 2.0, 6.0], [-5.0, 8.0, -4.0], [2.0, 6.0, 4.0]]);
 
     assert_eq!(A.cofactor([0, 0]), 56.0);
     assert_eq!(A.cofactor([0, 1]), 12.0);

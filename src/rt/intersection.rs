@@ -20,7 +20,7 @@ impl<'object> Intersection<'object> {
         self.t
     }
 
-    pub const fn object(&self) -> &'object Object {
+    pub const fn object(&self) -> &Object {
         self.object
     }
 

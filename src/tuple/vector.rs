@@ -9,6 +9,7 @@ pub struct Vector {
     x: f64,
     y: f64,
     z: f64,
+    w: f64,
 }
 
 type Idx = usize;
@@ -20,6 +21,7 @@ impl Index<Idx> for Vector {
             0 => &self.x,
             1 => &self.y,
             2 => &self.z,
+            3 => &self.w,
             _ => panic!("Index out of bound!"),
         }
     }
@@ -31,6 +33,7 @@ impl IndexMut<Idx> for Vector {
             0 => &mut self.x,
             1 => &mut self.y,
             2 => &mut self.z,
+            3 => &mut self.w,
             _ => panic!("Index out of bound!"),
         }
     }
@@ -50,6 +53,7 @@ impl Add for Vector {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
             z: self.z + rhs.z,
+            w: 0.0,
         }
     }
 }
@@ -62,6 +66,7 @@ impl Add for &Vector {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
             z: self.z + rhs.z,
+            w: 0.0,
         }
     }
 }
@@ -74,6 +79,7 @@ impl Add<Vector> for &Vector {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
             z: self.z + rhs.z,
+            w: 0.0,
         }
     }
 }
@@ -86,6 +92,7 @@ impl Add<&Self> for Vector {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
             z: self.z + rhs.z,
+            w: 0.0,
         }
     }
 }
@@ -123,6 +130,7 @@ impl Sub for Vector {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
             z: self.z - rhs.z,
+            w: 0.0,
         }
     }
 }
@@ -135,6 +143,7 @@ impl Sub for &Vector {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
             z: self.z - rhs.z,
+            w: 0.0,
         }
     }
 }
@@ -149,6 +158,7 @@ impl Neg for Vector {
             x: -self.x,
             y: -self.y,
             z: -self.z,
+            w: 0.0,
         }
     }
 }
@@ -163,6 +173,7 @@ impl Neg for &Vector {
             x: -self.x,
             y: -self.y,
             z: -self.z,
+            w: 0.0,
         }
     }
 }
@@ -175,6 +186,7 @@ impl Mul<f64> for Vector {
             x: self.x * rhs,
             y: self.y * rhs,
             z: self.z * rhs,
+            w: 0.0,
         }
     }
 }
@@ -187,6 +199,7 @@ impl Mul<f64> for &Vector {
             x: self.x * rhs,
             y: self.y * rhs,
             z: self.z * rhs,
+            w: 0.0,
         }
     }
 }
@@ -199,6 +212,7 @@ impl Mul<Vector> for f64 {
             x: self * rhs.x,
             y: self * rhs.y,
             z: self * rhs.z,
+            w: 0.0,
         }
     }
 }
@@ -211,6 +225,7 @@ impl Mul<&Vector> for f64 {
             x: self * rhs.x,
             y: self * rhs.y,
             z: self * rhs.z,
+            w: 0.0,
         }
     }
 }
@@ -223,6 +238,7 @@ impl Div<f64> for Vector {
             x: self.x / rhs,
             y: self.y / rhs,
             z: self.z / rhs,
+            w: 0.0,
         }
     }
 }
@@ -235,13 +251,14 @@ impl Div<f64> for &Vector {
             x: self.x / rhs,
             y: self.y / rhs,
             z: self.z / rhs,
+            w: 0.0,
         }
     }
 }
 
 impl Vector {
     pub const fn new(x: f64, y: f64, z: f64) -> Self {
-        Self { x, y, z }
+        Self { x, y, z, w: 0.0 }
     }
 
     pub const fn zero() -> Self {
@@ -249,6 +266,7 @@ impl Vector {
             x: 0.0,
             y: 0.0,
             z: 0.0,
+            w: 0.0,
         }
     }
 
@@ -293,6 +311,7 @@ impl Vector {
             x: (self.y * rhs.z) - (self.z * rhs.y),
             y: (self.z * rhs.x) - (self.x * rhs.z),
             z: (self.x * rhs.y) - (self.y * rhs.x),
+            w: 0.0,
         }
     }
 
