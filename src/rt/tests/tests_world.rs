@@ -1,6 +1,5 @@
 #[cfg(test)]
 use crate::{
-    primitive::{point::Point, vector::Vector},
     rt::{
         color::Color,
         intersection::Intersection,
@@ -12,6 +11,7 @@ use crate::{
         sphere::Sphere,
         world::World,
     },
+    tuple::{point::Point, vector::Vector},
 };
 
 #[test]

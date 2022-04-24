@@ -1,6 +1,6 @@
 use {
     super::intersection::Intersection,
-    crate::primitive::{point::Point, vector::Vector},
+    crate::tuple::{point::Point, vector::Vector},
 };
 
 #[derive(Debug, PartialEq)]

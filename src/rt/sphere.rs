@@ -4,7 +4,7 @@ use {
         matrix::{Matrix, Transpose},
         normal::Normal,
     },
-    crate::primitive::{point::Point, vector::Vector},
+    crate::tuple::{point::Point, vector::Vector},
 };
 
 #[derive(PartialEq, Debug)]

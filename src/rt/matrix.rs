@@ -1,7 +1,7 @@
 use {
     crate::{
         approx_eq::ApproxEq,
-        primitive::{point::Point, vector::Vector},
+        tuple::{point::Point, vector::Vector},
     },
     std::{
         fmt::{Display, Formatter, Result as FmtResult},

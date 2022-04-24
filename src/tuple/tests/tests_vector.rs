@@ -1,5 +1,5 @@
 #[cfg(test)]
-use crate::primitive::vector::Vector;
+use crate::tuple::vector::Vector;
 
 #[test]
 fn can_create_a_vector() {

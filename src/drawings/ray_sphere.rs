@@ -1,5 +1,4 @@
 use crate::{
-    primitive::{point::Point, vector::Vector},
     rt::{
         canvas::Canvas,
         color::Color,
@@ -8,6 +7,7 @@ use crate::{
         sphere::Sphere,
         to_ppm::ToPPM,
     },
+    tuple::{point::Point, vector::Vector},
 };
 
 // "Works" but the conversion from world space to canvas space is quite hacky.

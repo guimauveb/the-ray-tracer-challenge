@@ -1,5 +1,4 @@
 use crate::{
-    primitive::point::Point,
     rt::{
         color::Color,
         computation::Computation,
@@ -10,6 +9,7 @@ use crate::{
         ray::{Intersect, Ray},
         sphere::Sphere,
     },
+    tuple::point::Point,
 };
 
 #[derive(PartialEq, Debug)]

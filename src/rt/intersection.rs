@@ -1,6 +1,6 @@
 use {
     super::{computation::Computation, normal::Normal, object::Object, ray::Ray},
-    crate::primitive::vector::Vector,
+    crate::tuple::vector::Vector,
 };
 
 #[derive(Debug, PartialEq, Clone)]

@@ -1,11 +1,11 @@
 #[cfg(test)]
 use {
     crate::{
-        primitive::{point::Point, vector::Vector},
         rt::matrix::{
             Cofactor, Determinant, Matrix, Minor, Rotation, Scaling, Shearing, Submatrix,
             Translation, Transpose,
         },
+        tuple::{point::Point, vector::Vector},
     },
     std::f64::consts::PI,
 };

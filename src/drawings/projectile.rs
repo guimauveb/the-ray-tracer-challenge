@@ -1,6 +1,6 @@
 use crate::{
-    primitive::{point::Point, vector::Vector},
     rt::{canvas::Canvas, color::Color, to_ppm::ToPPM},
+    tuple::{point::Point, vector::Vector},
 };
 
 #[derive(Debug)]

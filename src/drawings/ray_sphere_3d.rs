@@ -1,5 +1,4 @@
 use crate::{
-    primitive::point::Point,
     rt::{
         canvas::Canvas,
         color::Color,
@@ -11,6 +10,7 @@ use crate::{
         sphere::Sphere,
         to_ppm::ToPPM,
     },
+    tuple::point::Point,
 };
 
 pub fn ray_sphere_hit() -> Result<(), std::io::Error> {

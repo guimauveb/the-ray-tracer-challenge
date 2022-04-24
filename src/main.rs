@@ -4,8 +4,8 @@
 pub mod approx_eq;
 pub mod drawings;
 pub mod float;
-pub mod primitive;
 pub mod rt;
+pub mod tuple;
 
 use drawings::{ray_sphere, ray_sphere_3d};
 

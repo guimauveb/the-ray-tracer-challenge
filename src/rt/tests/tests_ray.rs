@@ -1,11 +1,11 @@
 #[cfg(test)]
 use crate::{
-    primitive::{point::Point, vector::Vector},
     rt::{
         matrix::{Matrix, Scaling, Translation},
         ray::Ray,
         transform::Transform,
     },
+    tuple::{point::Point, vector::Vector},
 };
 
 #[test]

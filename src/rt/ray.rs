@@ -4,8 +4,8 @@ use {
         world::World,
     },
     crate::{
-        primitive::{point::Point, vector::Vector},
         rt::sphere::Sphere,
+        tuple::{point::Point, vector::Vector},
     },
 };
 

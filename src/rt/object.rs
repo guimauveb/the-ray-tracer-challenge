@@ -4,7 +4,7 @@ use {
         sphere::Sphere,
         {material::Material, normal::Normal},
     },
-    crate::primitive::{point::Point, vector::Vector},
+    crate::tuple::{point::Point, vector::Vector},
 };
 
 /// Wrapper around an object used in the ray tracer (Sphere, Cube, etc).

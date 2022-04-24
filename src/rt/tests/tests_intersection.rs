@@ -1,6 +1,5 @@
 #[cfg(test)]
 use crate::{
-    primitive::{point::Point, vector::Vector},
     rt::{
         computation::Computation,
         intersection::Intersection,
@@ -9,6 +8,7 @@ use crate::{
         ray::{Intersect, Ray},
         sphere::Sphere,
     },
+    tuple::{point::Point, vector::Vector},
 };
 
 #[test]

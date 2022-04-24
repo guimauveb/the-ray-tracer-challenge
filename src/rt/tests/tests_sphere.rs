@@ -1,7 +1,6 @@
 #[cfg(test)]
 use {
     crate::{
-        primitive::{point::Point, vector::Vector},
         rt::{
             material::Material,
             matrix::{Matrix, Rotation, Scaling, Translation},
@@ -10,6 +9,7 @@ use {
             ray::{Intersect, Ray},
             sphere::Sphere,
         },
+        tuple::{point::Point, vector::Vector},
     },
     std::f64::consts::PI,
 };

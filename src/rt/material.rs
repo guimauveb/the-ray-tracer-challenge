@@ -1,6 +1,6 @@
 use {
     super::{color::Color, point_light::PointLight},
-    crate::primitive::{point::Point, vector::Vector},
+    crate::tuple::{point::Point, vector::Vector},
 };
 
 #[derive(PartialEq, Debug, Clone)]

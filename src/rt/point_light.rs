@@ -1,4 +1,4 @@
-use {super::color::Color, crate::primitive::point::Point};
+use {super::color::Color, crate::tuple::point::Point};
 
 #[derive(PartialEq, Debug)]
 pub struct PointLight {
