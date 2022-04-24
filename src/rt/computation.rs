@@ -10,6 +10,7 @@ pub struct Computation<'object> {
     intersection: &'object Intersection<'object>,
     point: Point,
     eye_vector: Vector,
+    /// If the intersection hit occurs inside the shape, we inverse the normal to get the reflection on the "inside" material.
     normal_vector: Vector,
     inside: bool,
 }
