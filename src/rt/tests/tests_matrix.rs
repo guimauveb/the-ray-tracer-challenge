@@ -1,10 +1,7 @@
 #[cfg(test)]
 use {
     crate::{
-        rt::matrix::{
-            Cofactor, Determinant, Matrix, Minor, Rotation, Scaling, Shearing, Submatrix,
-            Translation, Transpose,
-        },
+        rt::matrix::{Cofactor, Determinant, Matrix, Minor, Submatrix},
         tuple::{point::Point, vector::Vector},
     },
     std::f64::consts::PI,

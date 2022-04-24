@@ -1,11 +1,6 @@
 use {
     crate::{
-        rt::{
-            canvas::Canvas,
-            color::Color,
-            matrix::{Matrix, Rotation},
-            to_ppm::ToPPM,
-        },
+        rt::{canvas::Canvas, color::Color, matrix::Matrix, to_ppm::ToPPM},
         tuple::point::Point,
     },
     std::f64::consts::PI,

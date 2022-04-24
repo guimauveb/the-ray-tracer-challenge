@@ -1,10 +1,6 @@
 #[cfg(test)]
 use crate::{
-    rt::{
-        matrix::{Matrix, Scaling, Translation},
-        ray::Ray,
-        transform::Transform,
-    },
+    rt::{matrix::Matrix, ray::Ray, transform::Transform},
     tuple::{point::Point, vector::Vector},
 };
 

@@ -96,10 +96,10 @@ impl Add<&Vector> for &Point {
     }
 }
 
-// The resulting Vector is the Vector pointing from p2 to p1 (rhs to self).
 impl Sub for Point {
     type Output = Vector;
 
+    /// The resulting Vector is the Vector pointing from p2 to p1 (`rhs` to `self`).
     fn sub(self, rhs: Self) -> Self::Output {
         Vector::new(self.x - rhs.x(), self.y - rhs.y(), self.z - rhs.z())
     }
@@ -108,15 +108,16 @@ impl Sub for Point {
 impl Sub for &Point {
     type Output = Vector;
 
+    /// The resulting Vector is the Vector pointing from p2 to p1 (`rhs` to `self`).
     fn sub(self, rhs: Self) -> Self::Output {
         Vector::new(self.x - rhs.x(), self.y - rhs.y(), self.z - rhs.z())
     }
 }
 
-// Conceptually, it's 'moving backwards' by the given Vector.
 impl Sub<Vector> for Point {
     type Output = Self;
 
+    /// Conceptually, it's "moving backwards" by the given Vector.
     fn sub(self, rhs: Vector) -> Self::Output {
         Self {
             x: self.x - rhs.x(),
@@ -130,6 +131,7 @@ impl Sub<Vector> for Point {
 impl Sub<Vector> for &Point {
     type Output = Point;
 
+    /// Conceptually, it's "moving backwards" by the given Vector.
     fn sub(self, rhs: Vector) -> Self::Output {
         Point {
             x: self.x - rhs.x(),

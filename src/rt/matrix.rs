@@ -25,10 +25,6 @@ impl<'a, const N: usize> Display for MatrixError<'a, N> {
     }
 }
 
-pub trait Transpose {
-    fn transpose(&self) -> Self;
-}
-
 // Submatrix can only be a Matrix<N> where N >= 2
 pub trait Submatrix<T> {
     fn submatrix(&self, index: Idx) -> T;
@@ -45,24 +41,6 @@ pub trait Cofactor {
 
 pub trait Determinant {
     fn determinant(&self) -> f64;
-}
-
-pub trait Translation {
-    fn translation(x: f64, y: f64, z: f64) -> Self;
-}
-
-pub trait Scaling {
-    fn scaling(x: f64, y: f64, z: f64) -> Self;
-}
-
-pub trait Rotation {
-    fn rotation_x(radians: f64) -> Self;
-    fn rotation_y(radians: f64) -> Self;
-    fn rotation_z(radians: f64) -> Self;
-}
-
-pub trait Shearing {
-    fn shearing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Self;
 }
 
 impl<const N: usize> Matrix<N> {
@@ -231,18 +209,6 @@ impl Mul for Matrix<4> {
     }
 }
 
-impl<const N: usize> Transpose for Matrix<N> {
-    fn transpose(&self) -> Self {
-        let mut result = Self([[0.0; N]; N]);
-        for row in 0..N {
-            for column in 0..N {
-                result[[row, column]] = self[[column, row]];
-            }
-        }
-        result
-    }
-}
-
 impl<const N: usize> Submatrix<Matrix<{ N - 1 }>> for Matrix<N> {
     fn submatrix(&self, index: Idx) -> Matrix<{ N - 1 }> {
         let mut submatrix = Matrix::<{ N - 1 }>([[0.0; N - 1]; N - 1]);
@@ -347,15 +313,96 @@ impl Matrix<4> {
         if !(self.is_invertible()) {
             Err(MatrixError::NotInvertible(self))
         } else {
-            let mut inverse_matrix = Self([[0.0; 4]; 4]);
-            for row in 0..4 {
-                for column in 0..4 {
-                    inverse_matrix[[column, row]] =
-                        self.cofactor([row, column]) / self.determinant();
-                }
-            }
-            Ok(inverse_matrix)
+            Ok(Self([
+                [
+                    self.cofactor([0, 0]) / self.determinant(),
+                    self.cofactor([1, 0]) / self.determinant(),
+                    self.cofactor([2, 0]) / self.determinant(),
+                    self.cofactor([3, 0]) / self.determinant(),
+                ],
+                [
+                    self.cofactor([0, 1]) / self.determinant(),
+                    self.cofactor([1, 1]) / self.determinant(),
+                    self.cofactor([2, 1]) / self.determinant(),
+                    self.cofactor([3, 1]) / self.determinant(),
+                ],
+                [
+                    self.cofactor([0, 2]) / self.determinant(),
+                    self.cofactor([1, 2]) / self.determinant(),
+                    self.cofactor([2, 2]) / self.determinant(),
+                    self.cofactor([3, 2]) / self.determinant(),
+                ],
+                [
+                    self.cofactor([0, 3]) / self.determinant(),
+                    self.cofactor([1, 3]) / self.determinant(),
+                    self.cofactor([2, 3]) / self.determinant(),
+                    self.cofactor([3, 3]) / self.determinant(),
+                ],
+            ]))
         }
+    }
+
+    pub fn translation(x: f64, y: f64, z: f64) -> Self {
+        Self([
+            [1.0, 0.0, 0.0, x],
+            [0.0, 1.0, 0.0, y],
+            [0.0, 0.0, 1.0, z],
+            [0.0, 0.0, 0.0, 1.0],
+        ])
+    }
+
+    pub fn scaling(x: f64, y: f64, z: f64) -> Self {
+        Self([
+            [x, 0.0, 0.0, 0.0],
+            [0.0, y, 0.0, 0.0],
+            [0.0, 0.0, z, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ])
+    }
+
+    pub fn rotation_x(radians: f64) -> Self {
+        Self([
+            [1.0, 0.0, 0.0, 0.0],
+            [0.0, radians.cos(), -radians.sin(), 0.0],
+            [0.0, radians.sin(), radians.cos(), 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ])
+    }
+
+    pub fn rotation_y(radians: f64) -> Self {
+        Self([
+            [radians.cos(), 0.0, radians.sin(), 0.0],
+            [0.0, 1.0, 0.0, 0.0],
+            [-radians.sin(), 0.0, radians.cos(), 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ])
+    }
+
+    pub fn rotation_z(radians: f64) -> Self {
+        Self([
+            [radians.cos(), -radians.sin(), 0.0, 0.0],
+            [radians.sin(), radians.cos(), 0.0, 0.0],
+            [0.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ])
+    }
+
+    pub fn shearing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Self {
+        Self([
+            [1.0, xy, xz, 0.0],
+            [yx, 1.0, yz, 0.0],
+            [zx, zy, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0],
+        ])
+    }
+
+    pub fn transpose(&self) -> Self {
+        Self([
+            [self[[0, 0]], self[[1, 0]], self[[2, 0]], self[[3, 0]]],
+            [self[[0, 1]], self[[1, 1]], self[[2, 1]], self[[3, 1]]],
+            [self[[0, 2]], self[[1, 2]], self[[2, 2]], self[[3, 2]]],
+            [self[[0, 3]], self[[1, 3]], self[[2, 3]], self[[3, 3]]],
+        ])
     }
 
     /// Given 3 inputs, `from`, `to` and `up`:
@@ -385,28 +432,6 @@ impl Matrix<4> {
         ]);
 
         orientation * Self::translation(-from.x(), -from.y(), -from.z())
-    }
-}
-
-impl Translation for Matrix<4> {
-    fn translation(x: f64, y: f64, z: f64) -> Self {
-        Self([
-            [1.0, 0.0, 0.0, x],
-            [0.0, 1.0, 0.0, y],
-            [0.0, 0.0, 1.0, z],
-            [0.0, 0.0, 0.0, 1.0],
-        ])
-    }
-}
-
-impl Scaling for Matrix<4> {
-    fn scaling(x: f64, y: f64, z: f64) -> Self {
-        Self([
-            [x, 0.0, 0.0, 0.0],
-            [0.0, y, 0.0, 0.0],
-            [0.0, 0.0, z, 0.0],
-            [0.0, 0.0, 0.0, 1.0],
-        ])
     }
 }
 
@@ -575,43 +600,5 @@ impl Mul<&Vector> for Matrix<4> {
                 self[[2, 1]].mul_add(rhs[1], self[[2, 2]].mul_add(rhs[2], self[[2, 3]] * rhs[3])),
             ),
         )
-    }
-}
-
-impl Rotation for Matrix<4> {
-    fn rotation_x(radians: f64) -> Self {
-        Self([
-            [1.0, 0.0, 0.0, 0.0],
-            [0.0, radians.cos(), -radians.sin(), 0.0],
-            [0.0, radians.sin(), radians.cos(), 0.0],
-            [0.0, 0.0, 0.0, 1.0],
-        ])
-    }
-    fn rotation_y(radians: f64) -> Self {
-        Self([
-            [radians.cos(), 0.0, radians.sin(), 0.0],
-            [0.0, 1.0, 0.0, 0.0],
-            [-radians.sin(), 0.0, radians.cos(), 0.0],
-            [0.0, 0.0, 0.0, 1.0],
-        ])
-    }
-    fn rotation_z(radians: f64) -> Self {
-        Self([
-            [radians.cos(), -radians.sin(), 0.0, 0.0],
-            [radians.sin(), radians.cos(), 0.0, 0.0],
-            [0.0, 0.0, 1.0, 0.0],
-            [0.0, 0.0, 0.0, 1.0],
-        ])
-    }
-}
-
-impl Shearing for Matrix<4> {
-    fn shearing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Self {
-        Self([
-            [1.0, xy, xz, 0.0],
-            [yx, 1.0, yz, 0.0],
-            [zx, zy, 1.0, 0.0],
-            [0.0, 0.0, 0.0, 1.0],
-        ])
     }
 }

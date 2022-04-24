@@ -3,7 +3,7 @@ use {
     crate::{
         rt::{
             material::Material,
-            matrix::{Matrix, Rotation, Scaling, Translation},
+            matrix::Matrix,
             normal::Normal,
             object::Object,
             ray::{Intersect, Ray},

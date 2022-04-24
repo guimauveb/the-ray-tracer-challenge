@@ -1,9 +1,5 @@
 use {
-    super::{
-        material::Material,
-        matrix::{Matrix, Transpose},
-        normal::Normal,
-    },
+    super::{material::Material, matrix::Matrix, normal::Normal},
     crate::tuple::{point::Point, vector::Vector},
 };
 

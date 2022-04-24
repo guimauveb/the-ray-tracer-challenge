@@ -4,7 +4,7 @@ use crate::{
         color::Color,
         intersection::Intersection,
         material::Material,
-        matrix::{Matrix, Scaling},
+        matrix::Matrix,
         object::Object,
         point_light::PointLight,
         ray::{Intersect, Ray},

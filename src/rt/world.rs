@@ -3,7 +3,7 @@ use crate::{
         color::Color,
         computation::Computation,
         material::Material,
-        matrix::{Matrix, Scaling},
+        matrix::Matrix,
         object::Object,
         point_light::PointLight,
         ray::{Intersect, Ray},
