@@ -86,12 +86,9 @@ impl World {
         if let Some(intersections) = ray.intersect(self) {
             if let Some(hit) = intersections.hit() {
                 return self.shade_hit(&hit.prepare_computations(ray));
-            } else {
-                Color::black()
             }
-        } else {
-            Color::black()
         }
+        Color::black()
     }
 }
 

@@ -61,7 +61,7 @@ fn construct_ppm_pixel_data_lines_too_long_are_split() {
     let mut canvas = Canvas::new(10, 2);
     let color = Color::new(1.0, 0.8, 0.6);
 
-    canvas.set_all_pixels_to_color(color);
+    canvas.set_all_pixels_to_color(&color);
 
     let ppm = canvas.to_ppm();
     let pixel_data_lines: Vec<&str> = ppm.pixel_data().split("\n").collect();

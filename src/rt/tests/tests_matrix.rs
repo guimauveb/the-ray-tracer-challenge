@@ -555,7 +555,7 @@ fn the_transformation_matrix_for_the_default_orientation() {
     let from = Point::new(0.0, 0.0, 0.0);
     let to = Point::new(0.0, 0.0, -1.0);
     let up = Vector::new(0.0, 1.0, 0.0);
-    let t = Matrix::<4>::view_transform(from, to, up);
+    let t = Matrix::<4>::view_transform(&from, &to, &up);
     let expected_t = Matrix::<4>::identity();
     assert_eq!(t, expected_t);
 }
@@ -565,7 +565,7 @@ fn a_view_transformation_matrix_looking_in_positive_z_direction() {
     let from = Point::new(0.0, 0.0, 0.0);
     let to = Point::new(0.0, 0.0, 1.0);
     let up = Vector::new(0.0, 1.0, 0.0);
-    let t = Matrix::<4>::view_transform(from, to, up);
+    let t = Matrix::<4>::view_transform(&from, &to, &up);
     let expected_t = Matrix::<4>::scaling(-1.0, 1.0, -1.0);
     assert_eq!(t, expected_t);
 }
@@ -575,7 +575,7 @@ fn the_view_transformation_moves_the_world() {
     let from = Point::new(0.0, 0.0, 8.0);
     let to = Point::new(0.0, 0.0, 0.0);
     let up = Vector::new(0.0, 1.0, 0.0);
-    let t = Matrix::<4>::view_transform(from, to, up);
+    let t = Matrix::<4>::view_transform(&from, &to, &up);
     let expected_t = Matrix::<4>::translation(0.0, 0.0, -8.0);
     assert_eq!(t, expected_t);
 }
@@ -585,7 +585,7 @@ fn an_arbitrary_view_transformation() {
     let from = Point::new(1.0, 3.0, 2.0);
     let to = Point::new(4.0, -2.0, 8.0);
     let up = Vector::new(1.0, 1.0, 0.0);
-    let t = Matrix::<4>::view_transform(from, to, up);
+    let t = Matrix::<4>::view_transform(&from, &to, &up);
     let expected_t = Matrix::<4>::new([
         [-0.50709, 0.50709, 0.67612, -2.36643],
         [0.76772, 0.60609, 0.12122, -2.82843],

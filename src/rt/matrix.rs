@@ -17,7 +17,7 @@ pub enum MatrixError<'a, const N: usize> {
     NotInvertible(&'a Matrix<N>),
 }
 
-impl<'a, const N: usize> Display for MatrixError<'a, N> {
+impl<const N: usize> Display for MatrixError<'_, N> {
     fn fmt(&self, f: &mut Formatter) -> FmtResult {
         match self {
             MatrixError::NotInvertible(matrix) => write!(f, "{} is not invertible", matrix),
@@ -49,16 +49,17 @@ impl<const N: usize> Matrix<N> {
     }
 }
 
-// Index Matrix like this: M[[0, 1]]
 type Idx = [usize; 2];
 impl<const N: usize> Index<Idx> for Matrix<{ N }> {
     type Output = f64;
-    fn index(&self, index: Idx) -> &f64 {
+    /// Indexes Matrix like this: `matrix[[0, 1]]`
+    fn index(&self, index: Idx) -> &Self::Output {
         &self.0[index[0]][index[1]]
     }
 }
 
 impl<const N: usize> IndexMut<Idx> for Matrix<{ N }> {
+    /// Indexes Matrix like this: `matrix[[0, 1]]`
     fn index_mut(&mut self, index: Idx) -> &mut f64 {
         &mut self.0[index[0]][index[1]]
     }
@@ -418,8 +419,8 @@ impl Matrix<4> {
     ///     [0.0, 0.0, 0.0, 1.0],
     /// ]);
     /// ```
-    pub fn view_transform(from: Point, to: Point, up: Vector) -> Self {
-        let forward = (&to - &from).normalized();
+    pub fn view_transform(from: &Point, to: &Point, up: &Vector) -> Self {
+        let forward = (to - from).normalized();
         let normalized_up = up.normalized();
         let left = forward.cross(&normalized_up);
         let true_up = left.cross(&forward);

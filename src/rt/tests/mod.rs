@@ -1,3 +1,4 @@
+pub mod tests_camera;
 pub mod tests_canvas;
 pub mod tests_color;
 pub mod tests_intersection;
