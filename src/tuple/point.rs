@@ -244,6 +244,6 @@ impl Point {
         self.z
     }
     pub const fn w(&self) -> f64 {
-        1.0
+        self.w
     }
 }

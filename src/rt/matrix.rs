@@ -343,7 +343,7 @@ impl Matrix<4> {
         }
     }
 
-    pub fn translation(x: f64, y: f64, z: f64) -> Self {
+    pub const fn translation(x: f64, y: f64, z: f64) -> Self {
         Self([
             [1.0, 0.0, 0.0, x],
             [0.0, 1.0, 0.0, y],
@@ -352,7 +352,7 @@ impl Matrix<4> {
         ])
     }
 
-    pub fn scaling(x: f64, y: f64, z: f64) -> Self {
+    pub const fn scaling(x: f64, y: f64, z: f64) -> Self {
         Self([
             [x, 0.0, 0.0, 0.0],
             [0.0, y, 0.0, 0.0],
@@ -388,7 +388,7 @@ impl Matrix<4> {
         ])
     }
 
-    pub fn shearing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Self {
+    pub const fn shearing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Self {
         Self([
             [1.0, xy, xz, 0.0],
             [yx, 1.0, yz, 0.0],

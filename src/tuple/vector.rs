@@ -283,7 +283,7 @@ impl Vector {
     }
 
     pub const fn w(&self) -> f64 {
-        0.0
+        self.w
     }
 
     pub fn magnitude(&self) -> f64 {
