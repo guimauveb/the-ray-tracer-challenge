@@ -1,4 +1,7 @@
-use super::matrix::Matrix;
+use {
+    super::{matrix::Matrix, ray::Ray},
+    crate::tuple::{point::Point, vector::Vector},
+};
 /// Note: Pixel sizes are of type `f64`, even though they will always be postivie integers (`usize`).
 /// This is to make the comptations `pixel_size` more accurate.
 pub struct Camera {
@@ -79,7 +82,7 @@ impl Camera {
     /// The function actually returns `(half_width, half_height, pixel_size)`.
     fn compute_pixel_size(hsize: f64, vsize: f64, field_of_view: f64) -> (f64, f64, f64) {
         let half_view = (field_of_view / 2.0).tan();
-        let aspect = (hsize / vsize) as f64;
+        let aspect = hsize / vsize;
         let (half_width, half_height) = if aspect >= 1.0 {
             (half_view, half_view / aspect)
         } else {
@@ -93,5 +96,10 @@ impl Camera {
 
     pub fn pixel_size(&self) -> f64 {
         self.pixel_size
+    }
+
+    // TODO
+    pub fn ray_for_pixel(pixel_x: f64, pixel_y: f64) -> Ray {
+        Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 0.0, 0.0))
     }
 }
