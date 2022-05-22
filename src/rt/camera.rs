@@ -2,8 +2,8 @@ use {
     super::{matrix::Matrix, ray::Ray},
     crate::tuple::{point::Point, vector::Vector},
 };
-/// Note: Pixel sizes are of type `f64`, even though they will always be postivie integers (`usize`).
-/// This is to make the comptations `pixel_size` more accurate.
+/// Note: Pixel sizes are of type `f64`, even though they will always be positive integers (`usize`).
+/// This is to make the computations in `pixel_size` more accurate.
 pub struct Camera {
     /// The horizontal size (in pixels) of the canvas that the picture will be rendered to.
     hsize: f64,
