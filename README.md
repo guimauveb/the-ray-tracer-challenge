@@ -14,5 +14,5 @@
 
 #### ✅ Chapter 7 - Making a scene
 
-#### 👨🏼‍💻 Chapt 8 - Shadows
+#### 👨🏼‍ Chapter 8 - Shadows
 
