@@ -1,6 +1,6 @@
 use {
-    super::{matrix::Matrix, ray::Ray},
-    crate::tuple::{point::Point, vector::Vector},
+    super::{canvas::Canvas, matrix::Matrix, ray::Ray, world::World},
+    crate::tuple::point::Point,
 };
 /// Note: Pixel sizes are of type `f64`, even though they will always be positive integers (`usize`).
 /// This is to make the computations in `pixel_size` more accurate.
@@ -94,12 +94,40 @@ impl Camera {
         (half_width, half_height, pixel_size)
     }
 
-    pub fn pixel_size(&self) -> f64 {
+    pub const fn pixel_size(&self) -> f64 {
         self.pixel_size
     }
 
-    // TODO
-    pub fn ray_for_pixel(pixel_x: f64, pixel_y: f64) -> Ray {
-        Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 0.0, 0.0))
+    pub fn ray_for_pixel(&self, pixel_x: f64, pixel_y: f64) -> Ray {
+        // The offset from the edge of the canvas to the pixel's center.
+        let x_offset = (pixel_x + 0.5) * self.pixel_size;
+        let y_offset = (pixel_y + 0.5) * self.pixel_size;
+        // The untransformed coordinates of the pixel in world space.
+        // Note: the camera looks towards -z, so +x is to the "left".
+        let world_x = self.half_width - x_offset;
+        let world_y = self.half_height - y_offset;
+
+        // Using the camera matrix, transform the canvas point and the origin,
+        // and then compute the ray's direction vector.
+        // Note: the canvas is at z = -1.
+        let inverse = self.transform.inverse().expect("Matrix is not invertible!");
+        let pixel = &inverse * Point::new(world_x, world_y, -1.0);
+        let origin = &inverse * Point::new(0.0, 0.0, 0.0);
+        let direction = (&pixel - &origin).normalized();
+
+        Ray::new(origin, direction)
+    }
+
+    pub fn render(&self, world: &World) -> Canvas {
+        let (vsize, hsize) = (self.vsize as usize, self.hsize as usize);
+        let mut image = Canvas::new(hsize, vsize);
+        for y in 0..vsize - 1 {
+            for x in 0..hsize - 1 {
+                let ray = self.ray_for_pixel(x as f64, y as f64);
+                let color = world.color_at(&ray);
+                image.write_pixel(x, y, color);
+            }
+        }
+        image
     }
 }
