@@ -220,18 +220,20 @@ impl Div<f64> for &Point {
     }
 }
 
-impl Point {
-    pub const fn new(x: f64, y: f64, z: f64) -> Self {
-        Self { x, y, z, w: 1.0 }
-    }
-
-    pub const fn zero() -> Self {
+impl Default for Point {
+    fn default() -> Self {
         Self {
             x: 0.0,
             y: 0.0,
             z: 0.0,
             w: 1.0,
         }
+    }
+}
+
+impl Point {
+    pub const fn new(x: f64, y: f64, z: f64) -> Self {
+        Self { x, y, z, w: 1.0 }
     }
 
     pub const fn x(&self) -> f64 {

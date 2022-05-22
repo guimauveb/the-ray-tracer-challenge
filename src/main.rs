@@ -7,19 +7,20 @@ pub mod float;
 pub mod rt;
 pub mod tuple;
 
-use drawings::{ray_sphere, ray_sphere_3d};
-
 fn main() {
-    //if let Err(e) = projectile::launch_projecticle() {
+    //if let Err(e) = drawing::projectile::launch_projecticle() {
     //    println!("{:#?}", e);
     //}
-    //if let Err(e) = clock::draw_clock() {
+    //if let Err(e) = drawings::clock::draw_clock() {
     //    println!("{:#?}", e);
     //}
-    if let Err(e) = ray_sphere::ray_sphere_hit() {
-        println!("{:#?}", e);
-    }
-    if let Err(e) = ray_sphere_3d::ray_sphere_hit() {
+    // if let Err(e) = drawings::ray_sphere::ray_sphere_hit() {
+    //     println!("{:#?}", e);
+    // }
+    // if let Err(e) = drawings::ray_sphere_3d::ray_sphere_hit() {
+    //     println!("{:#?}", e);
+    // }
+    if let Err(e) = drawings::camera::spheres() {
         println!("{:#?}", e);
     }
 }
