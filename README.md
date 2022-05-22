@@ -10,5 +10,9 @@
 
 #### ✅ Chapter 5 - Ray-Sphere intersections
 
-#### 👨🏼‍💻 Chapter 6 - Light and shading
+#### ✅ Chapter 6 - Light and shading
+
+#### ✅ Chapter 7 - Making a scene
+
+#### 👨🏼‍💻 Chapt 8 - Shadows
 
