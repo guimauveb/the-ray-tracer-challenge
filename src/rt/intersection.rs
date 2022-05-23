@@ -1,6 +1,6 @@
 use {
     super::{computation::Computation, normal::Normal, object::Object, ray::Ray},
-    crate::tuple::vector::Vector,
+    crate::{float::epsilon::EPSILON, tuple::vector::Vector},
 };
 
 #[derive(Debug, PartialEq, Clone)]
@@ -33,6 +33,7 @@ impl<'object> Intersection<'object> {
         let eye_vector = -ray.direction();
         let normal_vector = self.object().normal_at(&point);
         let inside = Self::is_inside(&eye_vector, &normal_vector);
+        let over_point = &point + &normal_vector * EPSILON;
 
         Computation::new(
             self,
@@ -45,6 +46,7 @@ impl<'object> Intersection<'object> {
                 normal_vector
             },
             inside,
+            over_point,
         )
     }
 }

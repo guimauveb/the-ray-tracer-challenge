@@ -21,7 +21,7 @@ impl Sphere {
         }
     }
 
-    /// Createss a sphere with a given material. All other fields are set to default values.
+    /// Creates a sphere with a given material. All other fields are set to default values.
     pub fn with_material(material: Material) -> Self {
         Self {
             material,
@@ -29,7 +29,7 @@ impl Sphere {
         }
     }
 
-    /// Createss a sphere with a given transform. All other fields are set to default values.
+    /// Creates a sphere with a given transform. All other fields are set to default values.
     pub fn with_transform(transform: Matrix<4>) -> Self {
         Self {
             transform,

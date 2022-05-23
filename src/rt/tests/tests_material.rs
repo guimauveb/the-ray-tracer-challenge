@@ -20,7 +20,7 @@ fn lighting_with_the_eye_between_the_light_and_the_surface() {
     let eye = Vector::new(0.0, 0.0, -1.0);
     let normal = Vector::new(0.0, 0.0, -1.0);
     let light = PointLight::new(Point::new(0.0, 0.0, -10.0), Color::white());
-    let result = m.lighting(&light, &position, &eye, &normal);
+    let result = m.lighting(&light, &position, &eye, &normal, false);
     assert_eq!(result, Color::new(1.9, 1.9, 1.9));
 }
 
@@ -31,7 +31,7 @@ fn lighting_with_the_eye_between_the_light_and_surface_eye_offset_45deg() {
     let eye = Vector::new(0.0, 2.0_f64.sqrt() / 2.0, -2.0_f64.sqrt() / 2.0);
     let normal = Vector::new(0.0, 0.0, -1.0);
     let light = PointLight::new(Point::new(0.0, 0.0, -10.0), Color::white());
-    let result = m.lighting(&light, &position, &eye, &normal);
+    let result = m.lighting(&light, &position, &eye, &normal, false);
     assert_eq!(result, Color::white());
 }
 
@@ -42,7 +42,7 @@ fn lighting_with_eye_opposite_surface_light_offset_45deg() {
     let eye = Vector::new(0.0, 0.0, -1.0);
     let normal = Vector::new(0.0, 0.0, -1.0);
     let light = PointLight::new(Point::new(0.0, 10.0, -10.0), Color::white());
-    let result = m.lighting(&light, &position, &eye, &normal);
+    let result = m.lighting(&light, &position, &eye, &normal, false);
     assert_eq!(result, Color::new(0.7364, 0.7364, 0.7364));
 }
 
@@ -53,7 +53,7 @@ fn lighting_with_eye_in_the_path_of_the_reflection_vector() {
     let eye = Vector::new(0.0, -2.0_f64.sqrt() / 2.0, -2.0_f64.sqrt() / 2.0);
     let normal = Vector::new(0.0, 0.0, -1.0);
     let light = PointLight::new(Point::new(0.0, 10.0, -10.0), Color::white());
-    let result = m.lighting(&light, &position, &eye, &normal);
+    let result = m.lighting(&light, &position, &eye, &normal, false);
     assert_eq!(result, Color::new(1.6364, 1.6364, 1.6364));
 }
 
@@ -64,6 +64,18 @@ fn lighting_with_the_eye_behind_the_suface() {
     let eye = Vector::new(0.0, 0.0, -1.0);
     let normal = Vector::new(0.0, 0.0, -1.0);
     let light = PointLight::new(Point::new(0.0, 0.0, 10.0), Color::white());
-    let result = m.lighting(&light, &position, &eye, &normal);
+    let result = m.lighting(&light, &position, &eye, &normal, false);
+    assert_eq!(result, Color::new(0.1, 0.1, 0.1));
+}
+
+#[test]
+fn lighting_with_the_surface_in_shadow() {
+    let m = Material::default();
+    let position = Point::new(0.0, 0.0, 0.0);
+    let eye = Vector::new(0.0, 0.0, -1.0);
+    let normal = Vector::new(0.0, 0.0, -1.0);
+    let light = PointLight::new(Point::new(0.0, 0.0, -10.0), Color::white());
+    let in_shadow = true;
+    let result = m.lighting(&light, &position, &eye, &normal, in_shadow);
     assert_eq!(result, Color::new(0.1, 0.1, 0.1));
 }

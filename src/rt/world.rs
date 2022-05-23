@@ -78,6 +78,7 @@ impl World {
             computations.point(),
             computations.eye_vector(),
             computations.normal_vector(),
+            self.is_shadowed(computations.over_point()),
         )
     }
 
@@ -89,6 +90,27 @@ impl World {
             }
         }
         Color::black()
+    }
+
+    pub fn is_shadowed(&self, point: &Point) -> bool {
+        let point_to_light = self
+            .light
+            .as_ref()
+            .expect("This world has no light!")
+            .position()
+            - point;
+        let distance = point_to_light.magnitude();
+        let direction = point_to_light.normalized();
+        let ray = Ray::new(point.clone(), direction);
+        let intersections = ray.intersect(self);
+        if let Some(intersections) = intersections {
+            let hit = intersections.hit();
+            if let Some(hit) = hit {
+                return hit.t() < distance;
+            }
+            return false;
+        }
+        false
     }
 }
 

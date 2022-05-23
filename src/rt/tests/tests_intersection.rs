@@ -1,9 +1,11 @@
 #[cfg(test)]
 use crate::{
+    float::epsilon::EPSILON,
     rt::{
         computation::Computation,
         intersection::Intersection,
         intersections::Intersections,
+        matrix::Matrix,
         object::Object,
         ray::{Intersect, Ray},
         sphere::Sphere,
@@ -102,6 +104,7 @@ fn precomputing_the_state_of_an_intersection() {
         Vector::new(0.0, 0.0, -1.0),
         Vector::new(0.0, 0.0, -1.0),
         false,
+        Point::new(0.0, 0.0, -1.00001),
     );
 
     assert_eq!(comps, expected_comps);
@@ -127,4 +130,16 @@ fn the_hit_when_the_instersection_occurs_on_the_inside() {
     assert_eq!(comps.inside(), true);
     // The normal is inverted to reflect the light properly.
     assert_eq!(comps.normal_vector(), &Vector::new(0.0, 0.0, -1.0));
+}
+
+#[test]
+fn the_hit_should_offset_the_point() {
+    let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
+    let shape = Object::Sphere(Sphere::with_transform(Matrix::<4>::translation(
+        0.0, 0.0, 1.0,
+    )));
+    let i = Intersection::new(5.0, &shape);
+    let comps = i.prepare_computations(&r);
+    assert!(comps.over_point().z() < -EPSILON / 2.0);
+    assert!(comps.point().z() > comps.over_point().z());
 }

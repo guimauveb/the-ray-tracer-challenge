@@ -13,6 +13,7 @@ pub struct Computation<'object> {
     /// If the intersection hit occurs inside the shape, we inverse the normal to get the reflection on the "inside" material.
     normal_vector: Vector,
     inside: bool,
+    over_point: Point,
 }
 
 impl<'object> Computation<'object> {
@@ -22,6 +23,7 @@ impl<'object> Computation<'object> {
         eye_vector: Vector,
         normal_vector: Vector,
         inside: bool,
+        over_point: Point,
     ) -> Self {
         Self {
             intersection,
@@ -29,6 +31,7 @@ impl<'object> Computation<'object> {
             eye_vector,
             normal_vector,
             inside,
+            over_point,
         }
     }
 
@@ -50,5 +53,9 @@ impl<'object> Computation<'object> {
 
     pub const fn normal_vector(&self) -> &Vector {
         &self.normal_vector
+    }
+
+    pub const fn over_point(&self) -> &Point {
+        &self.over_point
     }
 }

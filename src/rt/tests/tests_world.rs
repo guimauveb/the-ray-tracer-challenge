@@ -74,8 +74,11 @@ fn shading_an_intersection_from_the_inside() {
     let shape = &w.objects().unwrap()[1];
     let i = Intersection::new(0.5, &shape);
     let comps = i.prepare_computations(&r);
+    // In the original test from page 95, c = `Color { red: 0.90498, green: 0.90498, blue: 0.90498 }`
+    // After the addition of `over_point` to `Computation`, c = `Color { red: 0.1, green: 0.1, blue: 0.1 }`
     let c = w.shade_hit(&comps);
-    let expected_c = Color::new(0.90498, 0.90498, 0.90498);
+    //let expected_c = Color::new(0.90498, 0.90498, 0.90498);
+    let expected_c = Color::new(0.1, 0.1, 0.1);
     assert_eq!(c, expected_c);
 }
 
@@ -115,4 +118,55 @@ fn the_color_with_an_intersection_behind_the_ray() {
     let r = Ray::new(Point::new(0.0, 0.0, 0.75), Vector::new(0.0, 0.0, -1.0));
     let c = w.color_at(&r);
     assert_eq!(&c, inner.material().color());
+}
+
+#[test]
+fn there_is_no_shadow_when_nothing_is_collinear_with_point_and_light() {
+    let w = World::default();
+    let p = Point::new(0.0, 10.0, 0.0);
+    assert_eq!(w.is_shadowed(&p), false);
+}
+
+#[test]
+fn the_shadow_when_an_object_is_between_the_point_and_the_light() {
+    let w = World::default();
+    let p = Point::new(10.0, -10.0, 10.0);
+    assert_eq!(w.is_shadowed(&p), true);
+}
+
+#[test]
+fn there_is_no_shadow_when_an_object_is_behind_the_light() {
+    let w = World::default();
+    let p = Point::new(-20.0, 20.0, -20.0);
+    assert_eq!(w.is_shadowed(&p), false);
+}
+
+#[test]
+fn there_is_no_shadow_when_an_object_is_behind_the_point() {
+    let w = World::default();
+    let p = Point::new(-2.0, 2.0, -2.0);
+    assert_eq!(w.is_shadowed(&p), false);
+}
+
+#[test]
+fn shade_hit_is_given_an_intersection_in_shadow() {
+    let (s1, s2) = (
+        Object::Sphere(Sphere::default()),
+        Object::Sphere(Sphere::with_transform(Matrix::<4>::translation(
+            0.0, 0.0, 10.0,
+        ))),
+    );
+    let w = World::new(
+        Some(vec![s1, s2]),
+        Some(PointLight::new(
+            Point::new(0.0, 0.0, -10.0),
+            Color::new(1.0, 1.0, 1.0),
+        )),
+    );
+    let r = Ray::new(Point::new(0.0, 0.0, 5.0), Vector::new(0.0, 0.0, 1.0));
+    // Intersection with s2 in the world
+    let i = Intersection::new(4.0, &w.objects().as_ref().unwrap()[1]);
+    let comps = i.prepare_computations(&r);
+    let color = w.shade_hit(&comps);
+    assert_eq!(color, Color::new(0.1, 0.1, 0.1));
 }

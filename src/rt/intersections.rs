@@ -4,6 +4,7 @@ use {
 };
 
 /// Wrapper around a `Vec<Intersection<'objects>>` that keeps intersections sorted.
+#[derive(Debug)]
 pub struct Intersections<'objects>(Vec<Intersection<'objects>>);
 
 impl<'object> From<([f64; 2], &'object Object)> for Intersections<'object> {

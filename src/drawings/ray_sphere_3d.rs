@@ -70,7 +70,7 @@ pub fn ray_sphere_hit() -> Result<(), std::io::Error> {
                 let color = hit
                     .object()
                     .material()
-                    .lighting(&light, &point, &eye, &normal);
+                    .lighting(&light, &point, &eye, &normal, false);
                 canvas.write_pixel(x, y, color);
             }
         }
