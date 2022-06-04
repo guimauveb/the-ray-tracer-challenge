@@ -1,5 +1,5 @@
 use {
-    super::{computation::Computation, normal::Normal, object::Object, ray::Ray},
+    super::{computation::Computation, object::Object, ray::Ray, shape::Shape},
     crate::{float::epsilon::EPSILON, tuple::vector::Vector},
 };
 

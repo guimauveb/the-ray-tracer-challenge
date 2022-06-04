@@ -2,7 +2,7 @@ use {
     crate::{
         rt::{
             camera::Camera, color::Color, material::Material, matrix::Matrix, object::Object,
-            point_light::PointLight, sphere::Sphere, to_ppm::ToPPM, world::World,
+            point_light::PointLight, shape::Shape, sphere::Sphere, to_ppm::ToPPM, world::World,
         },
         tuple::{point::Point, vector::Vector},
     },

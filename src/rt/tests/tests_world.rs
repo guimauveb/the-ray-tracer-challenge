@@ -8,6 +8,7 @@ use crate::{
         object::Object,
         point_light::PointLight,
         ray::{Intersect, Ray},
+        shape::Shape,
         sphere::Sphere,
         world::World,
     },
@@ -117,7 +118,7 @@ fn the_color_with_an_intersection_behind_the_ray() {
 
     let r = Ray::new(Point::new(0.0, 0.0, 0.75), Vector::new(0.0, 0.0, -1.0));
     let c = w.color_at(&r);
-    assert_eq!(&c, inner.material().color());
+    assert_eq!(&c, inner.get_material().color());
 }
 
 #[test]

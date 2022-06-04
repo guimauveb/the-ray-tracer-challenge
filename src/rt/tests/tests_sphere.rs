@@ -4,9 +4,9 @@ use {
         rt::{
             material::Material,
             matrix::Matrix,
-            normal::Normal,
             object::Object,
             ray::{Intersect, Ray},
+            shape::Shape,
             sphere::Sphere,
         },
         tuple::{point::Point, vector::Vector},
@@ -69,14 +69,14 @@ fn a_sphere_is_behind_a_ray() {
 #[test]
 fn a_sphere_default_transform() {
     let s = Object::Sphere(Sphere::default());
-    assert_eq!(s.transform(), &Matrix::<4>::identity());
+    assert_eq!(s.get_transform(), &Matrix::<4>::identity());
 }
 
 #[test]
 fn changing_a_sphere_transform() {
     let t = Matrix::<4>::translation(2.0, 3.0, 4.0);
     let s = Object::Sphere(Sphere::with_transform(t.clone()));
-    assert_eq!(s.transform(), &t);
+    assert_eq!(s.get_transform(), &t);
 }
 
 #[test]
@@ -152,7 +152,7 @@ fn computing_the_normal_on_a_transformed_sphere() {
 #[test]
 fn a_sphere_has_a_default_material() {
     let s = Object::Sphere(Sphere::default());
-    let m = s.material();
+    let m = s.get_material();
     assert_eq!(m, &Material::default());
 }
 
@@ -161,5 +161,5 @@ fn a_sphere_may_be_assigned_a_material() {
     let mut m = Material::default();
     m.set_ambient(1.0);
     let s = Object::Sphere(Sphere::with_material(m.clone()));
-    assert_eq!(s.material(), &m);
+    assert_eq!(s.get_material(), &m);
 }

@@ -77,7 +77,7 @@ impl Camera {
     /// then `half_view` is instead half the height of the canvas, and half the canvas's width is `half_view` * `aspect`.
     ///
     /// The size of a single pixel on the canvas (`pixel_size`) is obtained by dividing the full width of the canvas (`half_width` * 2)
-    /// by the horizontal size (in pixels) of the canvas (`hsize`).
+    /// by the horizontal size (in pixels) of the canvas (`hsize`), assuming pixels are squares.
     ///
     /// The function actually returns `(half_width, half_height, pixel_size)`.
     fn compute_pixel_size(hsize: f64, vsize: f64, field_of_view: f64) -> (f64, f64, f64) {

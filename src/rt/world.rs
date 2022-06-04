@@ -7,6 +7,7 @@ use crate::{
         object::Object,
         point_light::PointLight,
         ray::{Intersect, Ray},
+        shape::Shape,
         sphere::Sphere,
     },
     tuple::point::Point,
@@ -73,13 +74,17 @@ impl World {
     }
 
     pub fn shade_hit(&self, computations: &Computation) -> Color {
-        computations.intersection().object().material().lighting(
-            self.light.as_ref().expect("World should have a light!"),
-            computations.point(),
-            computations.eye_vector(),
-            computations.normal_vector(),
-            self.is_shadowed(computations.over_point()),
-        )
+        computations
+            .intersection()
+            .object()
+            .get_material()
+            .lighting(
+                self.light.as_ref().expect("World should have a light!"),
+                computations.point(),
+                computations.eye_vector(),
+                computations.normal_vector(),
+                self.is_shadowed(computations.over_point()),
+            )
     }
 
     /// Intersects the world with the given ray and returns the color at the resulting intersection.

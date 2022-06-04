@@ -3,10 +3,10 @@ use crate::{
         canvas::Canvas,
         color::Color,
         material::Material,
-        normal::Normal,
         object::Object,
         point_light::PointLight,
         /*matrix::*,*/ ray::{Intersect, Ray},
+        shape::Shape,
         sphere::Sphere,
         to_ppm::ToPPM,
     },
@@ -69,7 +69,7 @@ pub fn ray_sphere_hit() -> Result<(), std::io::Error> {
                 let eye = -r.direction();
                 let color = hit
                     .object()
-                    .material()
+                    .get_material()
                     .lighting(&light, &point, &eye, &normal, false);
                 canvas.write_pixel(x, y, color);
             }

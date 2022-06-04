@@ -1,38 +1,53 @@
 use {
-    super::{
-        matrix::Matrix,
-        sphere::Sphere,
-        {material::Material, normal::Normal},
-    },
+    super::{material::Material, matrix::Matrix, plane::Plane, shape::Shape, sphere::Sphere},
     crate::tuple::{point::Point, vector::Vector},
 };
 
 /// Wrapper around an object used in the ray tracer (Sphere, Cube, etc).
+/// We could have gone the dynamic dispatch way instead by using
+/// the `dyn Shape` type everywhere we need to use any object in some collection
+/// but for performance reasons, I'll stick to a good old enum.
 #[derive(PartialEq, Debug)]
 #[non_exhaustive]
 pub enum Object {
     Sphere(Sphere),
+    Plane(Plane),
     //...
 }
 
-impl Normal for Object {
+impl Shape for Object {
+    fn get_material(&self) -> &Material {
+        match self {
+            Self::Sphere(sphere) => sphere.get_material(),
+            Self::Plane(plane) => plane.get_material(),
+        }
+    }
+
+    fn get_transform(&self) -> &Matrix<4> {
+        match self {
+            Self::Sphere(sphere) => sphere.get_transform(),
+            Self::Plane(plane) => plane.get_transform(),
+        }
+    }
+
     fn normal_at(&self, point: &Point) -> Vector {
         match self {
             Self::Sphere(sphere) => sphere.normal_at(point),
-        }
-    }
-}
-
-impl Object {
-    pub const fn material(&self) -> &Material {
-        match self {
-            Self::Sphere(sphere) => sphere.material(),
+            Self::Plane(plane) => plane.normal_at(point),
         }
     }
 
-    pub const fn transform(&self) -> &Matrix<4> {
+    fn set_transform(&mut self, transform: Matrix<4>) {
         match self {
-            Self::Sphere(sphere) => sphere.transform(),
+            Self::Sphere(sphere) => sphere.set_transform(transform),
+            Self::Plane(plane) => plane.set_transform(transform),
+        }
+    }
+
+    fn set_material(&mut self, material: Material) {
+        match self {
+            Self::Sphere(sphere) => sphere.set_material(material),
+            Self::Plane(plane) => plane.set_material(material),
         }
     }
 }

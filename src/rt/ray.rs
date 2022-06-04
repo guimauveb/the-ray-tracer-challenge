@@ -1,9 +1,10 @@
 use {
     super::{
-        intersections::Intersections, matrix::Matrix, object::Object, transform::Transform,
-        world::World,
+        intersections::Intersections, matrix::Matrix, object::Object, plane::Plane, shape::Shape,
+        transform::Transform, world::World,
     },
     crate::{
+        float::epsilon::EPSILON,
         rt::sphere::Sphere,
         tuple::{point::Point, vector::Vector},
     },
@@ -79,7 +80,7 @@ impl<'object> Intersect<'object, Sphere, [f64; 2]> for Ray {
     ///           b = 2D(O-C),
     ///           c = |O-C|^2 - R^2
     fn intersect(&self, sphere: &Sphere) -> Option<[f64; 2]> {
-        let transformed_ray = self.transform(&sphere.transform().inverse().unwrap());
+        let transformed_ray = self.transform(&sphere.get_transform().inverse().unwrap());
         let sphere_to_ray = transformed_ray.origin() - sphere.origin();
         let a = transformed_ray.direction().dot(transformed_ray.direction());
         let b = 2.0 * transformed_ray.direction().dot(&sphere_to_ray);
@@ -102,11 +103,27 @@ impl<'object> Intersect<'object, Sphere, [f64; 2]> for Ray {
     }
 }
 
+impl<'object> Intersect<'object, Plane, [f64; 2]> for Ray {
+    fn intersect(&self, _: &Plane) -> Option<[f64; 2]> {
+        // The plane is defined in xz, it has no slope in y at all.
+        // Thus, if a ray's direction vector also has no slope in y
+        // It's parallel to the plane. In practice we'll treat any
+        // number smaller than EPSILON as 0.0.
+        if self.direction.y().abs() < EPSILON {
+            None
+        } else {
+            let t = -self.origin.y() / self.direction.y();
+            Some([t, t])
+        }
+    }
+}
+
 impl<'object> Intersect<'object, Object, Intersections<'object>> for Ray {
     /// Returns a list of intersections with the object.
     fn intersect(&self, object: &'object Object) -> Option<Intersections<'object>> {
         match object {
             Object::Sphere(sphere) => self.intersect(sphere).map(|xs| (xs, object).into()),
+            Object::Plane(plane) => self.intersect(plane).map(|xs| (xs, object).into()),
         }
     }
 }

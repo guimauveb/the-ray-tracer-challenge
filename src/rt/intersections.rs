@@ -18,6 +18,7 @@ impl<'object> From<([f64; 2], &'object Object)> for Intersections<'object> {
 }
 
 type Idx = usize;
+
 impl<'objects> Index<Idx> for Intersections<'objects> {
     type Output = Intersection<'objects>;
     fn index(&self, idx: Idx) -> &Self::Output {
@@ -51,7 +52,6 @@ impl<'objects> Intersections<'objects> {
         self.0.is_empty()
     }
 
-    // NOTE - Use a generic (Self, IntoIterator<Item = Intersection>)?
     pub fn append(&mut self, intersections: &mut Self) {
         self.0.append(&mut intersections.0);
         Self::sort(&mut self.0);
