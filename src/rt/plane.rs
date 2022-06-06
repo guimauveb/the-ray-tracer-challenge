@@ -35,7 +35,7 @@ impl Shape for Plane {
         self.material = material;
     }
 
-    /// Since a plane has no curvature, the normal is always a Vector `{ 0.0, 1.0, 0.0 }`;
+    /// Since a plane has no curvature, the normal is always a `Vector { 0.0, 1.0, 0.0 }`.
     fn normal_at(&self, _: &Point) -> Vector {
         Vector::new(0.0, 1.0, 0.0)
     }

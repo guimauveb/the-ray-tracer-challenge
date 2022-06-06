@@ -20,7 +20,10 @@ fn main() {
     // if let Err(e) = drawings::ray_sphere_3d::ray_sphere_hit() {
     //     println!("{:#?}", e);
     // }
-    if let Err(e) = drawings::camera::spheres() {
+    //if let Err(e) = drawings::camera::spheres() {
+    //    println!("{:#?}", e);
+    //}
+    if let Err(e) = drawings::plane::spheres() {
         println!("{:#?}", e);
     }
 }
