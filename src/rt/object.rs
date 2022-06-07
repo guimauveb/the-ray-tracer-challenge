@@ -3,16 +3,28 @@ use {
     crate::tuple::{point::Point, vector::Vector},
 };
 
-/// Wrapper around an object used in the ray tracer (Sphere, Cube, etc).
+/// Wrapper around an object used in the World (Sphere, Cube, etc).
 /// We could have gone the dynamic dispatch way instead by using
-/// the `dyn Shape` type everywhere we need to use any object in some collection
-/// but for performance reasons, I'll stick to a good old enum.
+/// the `dyn Shape` trait object type everywhere we need to use
+/// any object in some collection, but for performance reasons,
+/// I'll stick to a good old enum.
 #[derive(PartialEq, Debug)]
 #[non_exhaustive]
 pub enum Object {
     Sphere(Sphere),
     Plane(Plane),
-    //...
+}
+
+impl From<Sphere> for Object {
+    fn from(sphere: Sphere) -> Self {
+        Self::Sphere(sphere)
+    }
+}
+
+impl From<Plane> for Object {
+    fn from(plane: Plane) -> Self {
+        Self::Plane(plane)
+    }
 }
 
 impl Shape for Object {

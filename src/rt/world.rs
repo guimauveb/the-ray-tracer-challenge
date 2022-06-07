@@ -122,13 +122,13 @@ impl World {
 impl Default for World {
     fn default() -> Self {
         let material = Material::new(Color::new(0.8, 1.0, 0.6), 0.1, 0.7, 0.2, 200.0);
-        let s1 = Object::Sphere(Sphere::with_material(material));
+        let s1 = Sphere::with_material(material);
 
         let transform = Matrix::<4>::scaling(0.5, 0.5, 0.5);
-        let s2 = Object::Sphere(Sphere::with_transform(transform));
+        let s2 = Sphere::with_transform(transform);
 
         Self {
-            objects: Some(vec![s1, s2]),
+            objects: Some(vec![s1.into(), s2.into()]),
             light: Some(Self::default_light()),
         }
     }

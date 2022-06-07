@@ -5,7 +5,6 @@ use crate::{
         intersection::Intersection,
         material::Material,
         matrix::Matrix,
-        object::Object,
         point_light::PointLight,
         ray::{Intersect, Ray},
         shape::Shape,
@@ -34,8 +33,8 @@ fn the_default_world() {
     let world = World::default();
 
     assert_eq!(world.light(), Some(&light));
-    assert!(world.objects().unwrap().contains(&Object::Sphere(s1)));
-    assert!(world.objects().unwrap().contains(&Object::Sphere(s2)));
+    assert!(world.objects().unwrap().contains(&s1.into()));
+    assert!(world.objects().unwrap().contains(&s2.into()));
 }
 
 #[test]
@@ -106,12 +105,12 @@ fn the_color_with_an_intersection_behind_the_ray() {
     // Create the default objects of the world with the values specfied in the test instead of having to make the material() method return a mutable reference
     // when it shouldnt be necessary for the rest of the program.
     let material = Material::new(Color::new(0.8, 1.0, 0.6), 1.0, 0.7, 0.2, 200.0);
-    let s1 = Object::Sphere(Sphere::with_material(material.clone()));
+    let s1 = Sphere::with_material(material.clone());
 
     let transform = Matrix::<4>::scaling(0.5, 0.5, 0.5);
-    let s2 = Object::Sphere(Sphere::new(Point::new(0.0, 0.0, 0.0), transform, material));
+    let s2 = Sphere::new(Point::new(0.0, 0.0, 0.0), transform, material);
 
-    let w = World::with_objects(Some(vec![s1, s2]));
+    let w = World::with_objects(Some(vec![s1.into(), s2.into()]));
 
     let _outer = &w.objects().unwrap()[0];
     let inner = &w.objects().unwrap()[1];
@@ -152,13 +151,11 @@ fn there_is_no_shadow_when_an_object_is_behind_the_point() {
 #[test]
 fn shade_hit_is_given_an_intersection_in_shadow() {
     let (s1, s2) = (
-        Object::Sphere(Sphere::default()),
-        Object::Sphere(Sphere::with_transform(Matrix::<4>::translation(
-            0.0, 0.0, 10.0,
-        ))),
+        Sphere::default(),
+        Sphere::with_transform(Matrix::<4>::translation(0.0, 0.0, 10.0)),
     );
     let w = World::new(
-        Some(vec![s1, s2]),
+        Some(vec![s1.into(), s2.into()]),
         Some(PointLight::new(
             Point::new(0.0, 0.0, -10.0),
             Color::new(1.0, 1.0, 1.0),

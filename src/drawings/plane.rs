@@ -1,9 +1,8 @@
 use {
     crate::{
         rt::{
-            camera::Camera, color::Color, material::Material, matrix::Matrix, object::Object,
-            plane::Plane, point_light::PointLight, shape::Shape, sphere::Sphere, to_ppm::ToPPM,
-            world::World,
+            camera::Camera, color::Color, material::Material, matrix::Matrix, plane::Plane,
+            point_light::PointLight, shape::Shape, sphere::Sphere, to_ppm::ToPPM, world::World,
         },
         tuple::{point::Point, vector::Vector},
     },
@@ -11,12 +10,16 @@ use {
 };
 
 pub fn spheres() -> Result<(), std::io::Error> {
-    // The floor is an extremely flattened sphere with a matte texture.
     let mut material = Material::default();
     material.set_color(Color::new(1.0, 0.9, 0.9));
     material.set_specular(0.0);
+
     let mut floor = Plane::default();
     floor.set_material(material.clone());
+
+    let mut wall = Plane::default();
+    wall.set_transform(Matrix::<4>::rotation_x(PI / 2.0) * Matrix::<4>::translation(0.0, 0.0, 5.0));
+    wall.set_material(material.clone());
 
     // The large sphere in the middle is a unit sphere, translated upward slightly and colored green.
     let mut middle = Sphere::default();
@@ -51,10 +54,11 @@ pub fn spheres() -> Result<(), std::io::Error> {
     // The light source is white, shining from above and to the left.
     let world = World::new(
         Some(vec![
-            Object::Plane(floor),
-            Object::Sphere(middle),
-            Object::Sphere(right),
-            Object::Sphere(left),
+            floor.into(),
+            wall.into(),
+            middle.into(),
+            right.into(),
+            left.into(),
         ]),
         Some(PointLight::new(
             Point::new(-10.0, 10.0, -10.0),
@@ -63,8 +67,8 @@ pub fn spheres() -> Result<(), std::io::Error> {
     );
 
     let camera = Camera::new(
-        3840.0,
-        2160.0,
+        384.0,
+        216.0,
         PI / 3.0,
         Some(Matrix::<4>::view_transform(
             &Point::new(0.0, 1.5, -5.0),

@@ -1,7 +1,7 @@
 use {
     crate::{
         rt::{
-            camera::Camera, color::Color, material::Material, matrix::Matrix, object::Object,
+            camera::Camera, color::Color, material::Material, matrix::Matrix,
             point_light::PointLight, shape::Shape, sphere::Sphere, to_ppm::ToPPM, world::World,
         },
         tuple::{point::Point, vector::Vector},
@@ -73,12 +73,12 @@ pub fn spheres() -> Result<(), std::io::Error> {
     // The light source is white, shining from above and to the left.
     let world = World::new(
         Some(vec![
-            Object::Sphere(floor),
-            Object::Sphere(left_wall),
-            Object::Sphere(right_wall),
-            Object::Sphere(middle),
-            Object::Sphere(right),
-            Object::Sphere(left),
+            floor.into(),
+            left_wall.into(),
+            right_wall.into(),
+            middle.into(),
+            right.into(),
+            left.into(),
         ]),
         Some(PointLight::new(
             Point::new(-10.0, 10.0, -10.0),

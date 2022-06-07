@@ -87,7 +87,6 @@ impl<'object> Intersect<'object, Sphere, [f64; 2]> for Ray {
         let c = sphere_to_ray.dot(&sphere_to_ray) - 1.0;
 
         let discriminant = b.powi(2) - 4.0 * a * c;
-
         if discriminant < 0.0 {
             None
         } else if discriminant == 0.0 {
