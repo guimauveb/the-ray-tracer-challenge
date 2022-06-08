@@ -16,5 +16,4 @@ pub mod shape;
 pub mod sphere;
 pub mod tests;
 pub mod to_ppm;
-pub mod transform;
 pub mod world;

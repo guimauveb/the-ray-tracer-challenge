@@ -25,6 +25,10 @@ impl<const N: usize> Display for MatrixError<'_, N> {
     }
 }
 
+pub trait Transform {
+    fn transform(&self, m: &Matrix<4>) -> Self;
+}
+
 // Submatrix can only be a Matrix<N> where N >= 2
 pub trait Submatrix<T> {
     fn submatrix(&self, index: Idx) -> T;

@@ -1,7 +1,11 @@
 use {
     super::{
-        intersections::Intersections, matrix::Matrix, object::Object, plane::Plane, shape::Shape,
-        transform::Transform, world::World,
+        intersections::Intersections,
+        matrix::{Matrix, Transform},
+        object::Object,
+        plane::Plane,
+        shape::Shape,
+        world::World,
     },
     crate::{
         float::epsilon::EPSILON,
