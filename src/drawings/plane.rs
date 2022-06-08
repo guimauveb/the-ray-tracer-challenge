@@ -18,7 +18,7 @@ pub fn spheres() -> Result<(), std::io::Error> {
     floor.set_material(material.clone());
 
     let mut wall = Plane::default();
-    wall.set_transform(Matrix::<4>::translation(0.0, 0.0, 5.0) * Matrix::<4>::rotation_x(PI / 2.0));
+    wall.set_transform(Matrix::<4>::translation(0.0, 0.0, 8.5) * Matrix::<4>::rotation_x(PI / 2.0));
     let mut wall_material = material.clone();
     wall_material.set_color(Color::new(0.4, 0.1, 1.8));
     wall_material.set_diffuse(0.7);
