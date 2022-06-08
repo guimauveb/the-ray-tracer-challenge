@@ -18,7 +18,7 @@ pub fn spheres() -> Result<(), std::io::Error> {
     floor.set_material(material.clone());
 
     let mut wall = Plane::default();
-    wall.set_transform(Matrix::<4>::translation(0.0, 0.0, 2.0) * Matrix::<4>::rotation_x(PI / 2.0));
+    wall.set_transform(Matrix::<4>::translation(0.0, 0.0, 5.0) * Matrix::<4>::rotation_x(PI / 2.0));
     let mut wall_material = material.clone();
     wall_material.set_color(Color::new(0.4, 0.1, 1.8));
     wall_material.set_diffuse(0.7);
@@ -71,11 +71,11 @@ pub fn spheres() -> Result<(), std::io::Error> {
     );
 
     let camera = Camera::new(
-        384.0,
-        216.0,
+        1280.0,
+        720.0,
         PI / 3.0,
         Some(Matrix::<4>::view_transform(
-            &Point::new(0.0, 1.0, -7.0),
+            &Point::new(-4.0, 1.0, -7.0),
             &Point::new(0.0, 1.0, 0.0),
             &Vector::new(0.0, 1.0, 0.0),
         )),
