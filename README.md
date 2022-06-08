@@ -1,4 +1,4 @@
-## The Ray Tracer Challenge, by Jamis Buck (using Rust's standard libray only)
+## The Ray Tracer Challenge, by Jamis Buck (using Rust standard libray only)
 
 ![spheres](https://raw.githubusercontent.com/guimauveb/the-ray-tracer-challenge/main/spheres.jpg)
 
