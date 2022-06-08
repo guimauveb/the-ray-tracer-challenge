@@ -47,6 +47,10 @@ impl Transform for Ray {
 /// `O` is the object (most likely an Object or a World (composed of many objects)) being intersected.
 /// `I` is the type of the intersection returned (could be of type `[f64; 2]` or `Intersections` for instance).
 pub trait Intersect<'object, O, I> {
+    /// Before computing the intersections, the ray
+    /// must first be converted into object space by
+    /// multiplying it by the inverse of the object
+    /// transformation matrix.
     fn intersect(&self, object: &'object O) -> Option<I>;
 }
 
@@ -103,15 +107,16 @@ impl<'object> Intersect<'object, Sphere, [f64; 2]> for Ray {
 }
 
 impl<'object> Intersect<'object, Plane, [f64; 2]> for Ray {
-    fn intersect(&self, _: &Plane) -> Option<[f64; 2]> {
+    fn intersect(&self, plane: &Plane) -> Option<[f64; 2]> {
+        let transformed_ray = self.transform(&plane.get_transform().inverse().unwrap());
         // The plane is defined in xz, it has no slope in y at all.
         // Thus, if a ray's direction vector also has no slope in y
         // It's parallel to the plane. In practice we'll treat any
         // number smaller than EPSILON as 0.0.
-        if self.direction.y().abs() < EPSILON {
+        if transformed_ray.direction.y().abs() < EPSILON {
             None
         } else {
-            let t = -self.origin.y() / self.direction.y();
+            let t = -transformed_ray.origin.y() / transformed_ray.direction.y();
             Some([t, t])
         }
     }
@@ -126,7 +131,10 @@ impl<'object> Intersect<'object, Object, Intersections<'object>> for Ray {
         }
     }
 }
-
+/// Before computing the normal at some point,
+/// all shapes must first convert the point to
+/// object space by multiplying it by the inverse
+/// of the shape's transformation matrix.
 impl<'objects> Intersect<'objects, World, Intersections<'objects>> for Ray {
     /// Returns a list of intersections with the objects composing the world.
     fn intersect(&self, world: &'objects World) -> Option<Intersections<'objects>> {

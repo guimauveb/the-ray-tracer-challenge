@@ -37,6 +37,14 @@ impl Shape for Plane {
 
     /// Since a plane has no curvature, the normal is always a `Vector { 0.0, 1.0, 0.0 }`.
     fn normal_at(&self, _: &Point) -> Vector {
-        Vector::new(0.0, 1.0, 0.0)
+        const PLANE_NORMAL: Vector = Vector::new(0.0, 1.0, 0.0);
+        let world_normal = self
+            .transform
+            .inverse()
+            .expect("Matrix is not invertible!")
+            .transpose()
+            * PLANE_NORMAL;
+
+        world_normal.normalized()
     }
 }

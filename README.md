@@ -16,6 +16,8 @@
 
 #### ✅ Chapter 8 - Shadows
 
-#### 👨🏼‍💻 Chapter 9 - Planes
+#### ✅ Chapter 9 - Planes
+
+#### 👨🏼‍💻 Chapter 10 - Patterns
 
 

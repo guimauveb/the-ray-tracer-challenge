@@ -18,8 +18,12 @@ pub fn spheres() -> Result<(), std::io::Error> {
     floor.set_material(material.clone());
 
     let mut wall = Plane::default();
-    wall.set_transform(Matrix::<4>::rotation_x(PI / 2.0) * Matrix::<4>::translation(0.0, 0.0, 5.0));
-    wall.set_material(material.clone());
+    wall.set_transform(Matrix::<4>::translation(0.0, 0.0, 2.0) * Matrix::<4>::rotation_x(PI / 2.0));
+    let mut wall_material = material.clone();
+    wall_material.set_color(Color::new(0.4, 0.1, 1.8));
+    wall_material.set_diffuse(0.7);
+    wall_material.set_specular(0.3);
+    wall.set_material(wall_material);
 
     // The large sphere in the middle is a unit sphere, translated upward slightly and colored green.
     let mut middle = Sphere::default();
@@ -55,13 +59,13 @@ pub fn spheres() -> Result<(), std::io::Error> {
     let world = World::new(
         Some(vec![
             floor.into(),
-            wall.into(),
             middle.into(),
             right.into(),
             left.into(),
+            wall.into(),
         ]),
         Some(PointLight::new(
-            Point::new(-10.0, 10.0, -10.0),
+            Point::new(2.0, 4.0, -7.0),
             Color::new(1.0, 1.0, 1.0),
         )),
     );
@@ -71,7 +75,7 @@ pub fn spheres() -> Result<(), std::io::Error> {
         216.0,
         PI / 3.0,
         Some(Matrix::<4>::view_transform(
-            &Point::new(0.0, 1.5, -5.0),
+            &Point::new(0.0, 1.0, -7.0),
             &Point::new(0.0, 1.0, 0.0),
             &Vector::new(0.0, 1.0, 0.0),
         )),
