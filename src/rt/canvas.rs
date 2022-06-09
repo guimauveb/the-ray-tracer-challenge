@@ -119,13 +119,12 @@ impl ToPPM for Canvas {
     }
 
     fn to_ppm(&self) -> Ppm {
-        let pixel_data = self.build_pixel_data();
         Ppm::new(
             "P3",
             &self.width.to_string(),
             &self.height.to_string(),
             &PPM_MAX_COLOR_VALUE.to_string(),
-            pixel_data,
+            self.build_pixel_data(),
         )
     }
 }

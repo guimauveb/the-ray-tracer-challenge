@@ -81,7 +81,7 @@ pub fn spheres() -> Result<(), std::io::Error> {
             left.into(),
         ]),
         Some(PointLight::new(
-            Point::new(-10.0, 10.0, -10.0),
+            Point::new(-10.0, 15.0, -10.0),
             Color::new(1.0, 1.0, 1.0),
         )),
     );

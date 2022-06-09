@@ -3,6 +3,9 @@ use {
     crate::tuple::{point::Point, vector::Vector},
 };
 
+/// Since a plane has no curvature, the normal is always a `Vector { 0.0, 1.0, 0.0 }`.
+const PLANE_NORMAL: Vector = Vector::new(0.0, 1.0, 0.0);
+
 #[derive(PartialEq, Debug)]
 pub struct Plane {
     transform: Matrix<4>,
@@ -35,9 +38,7 @@ impl Shape for Plane {
         self.material = material;
     }
 
-    /// Since a plane has no curvature, the normal is always a `Vector { 0.0, 1.0, 0.0 }`.
     fn normal_at(&self, _: &Point) -> Vector {
-        const PLANE_NORMAL: Vector = Vector::new(0.0, 1.0, 0.0);
         let world_normal = self
             .transform
             .inverse()

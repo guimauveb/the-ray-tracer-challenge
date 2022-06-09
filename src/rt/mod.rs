@@ -6,7 +6,6 @@ pub mod intersection;
 pub mod intersections;
 pub mod material;
 pub mod matrix;
-pub mod normal;
 pub mod object;
 pub mod plane;
 pub mod point_light;
