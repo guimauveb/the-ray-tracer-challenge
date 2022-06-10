@@ -76,5 +76,8 @@ fn rendering_a_world_with_a_camera() {
         Some(Matrix::<4>::view_transform(&from, &to, &up)),
     );
     let image = c.render(&w);
-    assert_eq!(image.pixel_at(5, 5), &Color::new(0.38066, 0.47583, 0.2855));
+    assert_eq!(
+        image.pixel_at(5, 5),
+        &Color::new(0.3804233, 0.4755291, 0.28531748)
+    );
 }

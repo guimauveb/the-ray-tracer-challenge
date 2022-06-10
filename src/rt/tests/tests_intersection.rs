@@ -104,7 +104,7 @@ fn precomputing_the_state_of_an_intersection() {
         Vector::new(0.0, 0.0, -1.0),
         Vector::new(0.0, 0.0, -1.0),
         false,
-        Point::new(0.0, 0.0, -1.0001),
+        Point::new(0.0, 0.0, -1.01),
     );
 
     assert_eq!(comps, expected_comps);

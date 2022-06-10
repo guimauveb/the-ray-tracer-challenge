@@ -5,7 +5,7 @@ use {
 
 /// Used in replacement of EPSILON, which, being too small,
 /// causes acne in some scenes.
-const OFFSET: f32 = 0.0001;
+const OFFSET: f32 = 0.01;
 
 #[derive(Debug, PartialEq, Clone)]
 #[non_exhaustive]
@@ -45,13 +45,6 @@ impl<'object> Intersection<'object> {
         };
         let over_point = &point + (&normal_vector * OFFSET);
 
-        Computation::new(
-            self,
-            point.clone(),
-            eye_vector,
-            normal_vector,
-            inside,
-            over_point,
-        )
+        Computation::new(self, point, eye_vector, normal_vector, inside, over_point)
     }
 }

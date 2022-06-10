@@ -39,7 +39,7 @@ pub fn spheres() -> Result<(), std::io::Error> {
     right.set_transform(
         Matrix::<4>::translation(1.5, 0.5, -0.5) * Matrix::<4>::scaling(0.5, 0.5, 0.5),
     );
-    let mut right_material = material;
+    let mut right_material = material.clone();
     right_material.set_color(Color::new(0.5, 1.0, 0.1));
     right_material.set_diffuse(0.7);
     right_material.set_specular(0.3);
@@ -50,10 +50,11 @@ pub fn spheres() -> Result<(), std::io::Error> {
     left.set_transform(
         Matrix::<4>::translation(-1.5, 0.33, -0.75) * Matrix::<4>::scaling(0.33, 0.33, 0.33),
     );
-    let mut left_material = Material::default();
+    let mut left_material = material;
     left_material.set_color(Color::new(1.0, 0.8, 0.1));
     left_material.set_diffuse(0.7);
     left_material.set_specular(0.3);
+    left.set_material(left_material);
 
     // The light source is white, shining from above and to the left.
     let world = World::new(
@@ -65,17 +66,17 @@ pub fn spheres() -> Result<(), std::io::Error> {
             wall.into(),
         ]),
         Some(PointLight::new(
-            Point::new(2.0, 4.0, -7.0),
+            Point::new(-10.0, 10.0, -10.0),
             Color::new(1.0, 1.0, 1.0),
         )),
     );
 
     let camera = Camera::new(
-        3840.0,
-        2160.0,
+        1280.0,
+        720.0,
         PI / 3.0,
         Some(Matrix::<4>::view_transform(
-            &Point::new(-4.0, 1.0, -7.0),
+            &Point::new(0.0, 1.5, -5.0),
             &Point::new(0.0, 1.0, 0.0),
             &Vector::new(0.0, 1.0, 0.0),
         )),

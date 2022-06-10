@@ -60,7 +60,7 @@ fn shading_an_intersection() {
 
     let comps = i.prepare_computations(&r);
     let c = w.shade_hit(&comps);
-    let expected_c = Color::new(0.38066, 0.47583, 0.2855);
+    let expected_c = Color::new(0.3804233, 0.4755291, 0.28531748);
     assert_eq!(c, expected_c);
 }
 
@@ -75,7 +75,7 @@ fn shading_an_intersection_from_the_inside() {
     let i = Intersection::new(0.5, &shape);
     let comps = i.prepare_computations(&r);
     let c = w.shade_hit(&comps);
-    let expected_c = Color::new(0.90495235, 0.90495235, 0.90495235);
+    let expected_c = Color::new(0.90168566, 0.90168566, 0.90168566);
     assert_eq!(c, expected_c);
 }
 
@@ -93,7 +93,7 @@ fn the_color_when_a_ray_hits() {
     let w = World::default();
     let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
     let c = w.color_at(&r);
-    let expected_c = Color::new(0.38066, 0.47583, 0.2855);
+    let expected_c = Color::new(0.3804233, 0.4755291, 0.28531748);
     assert_eq!(c, expected_c);
 }
 

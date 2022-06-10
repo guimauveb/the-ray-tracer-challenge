@@ -1,14 +1,14 @@
 use std::{
     fmt::{Display, Formatter, Result},
     fs::File,
-    io::prelude::*,
+    io::prelude::Write,
 };
 
 pub const PPM_MIN_COLOR_VALUE: f32 = 0.0;
 pub const PPM_MAX_COLOR_VALUE: f32 = 255.0;
 pub const PPM_MAX_CHARACTERS_PER_LINE: usize = 70;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Ppm {
     header: String,
     pixel_data: String,
@@ -33,8 +33,6 @@ impl Ppm {
                 + "\n".len(),
         );
 
-        //let initial_capacity = header.capacity();
-
         header.push_str(identifier);
         header.push('\n');
         header.push_str(width);
@@ -43,9 +41,6 @@ impl Ppm {
         header.push('\n');
         header.push_str(max_color_value);
         header.push('\n');
-
-        //let final_capacity = header.capacity();
-        //assert_eq!(initial_capacity, final_capacity);
 
         Self { header, pixel_data }
     }

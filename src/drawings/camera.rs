@@ -69,6 +69,7 @@ pub fn spheres() -> Result<(), std::io::Error> {
     left_material.set_color(Color::new(1.0, 0.8, 0.1));
     left_material.set_diffuse(0.7);
     left_material.set_specular(0.3);
+    left.set_material(left_material);
 
     // The light source is white, shining from above and to the left.
     let world = World::new(
@@ -87,8 +88,8 @@ pub fn spheres() -> Result<(), std::io::Error> {
     );
 
     let camera = Camera::new(
-        384.0,
-        216.0,
+        1280.0,
+        720.0,
         PI / 3.0,
         Some(Matrix::<4>::view_transform(
             &Point::new(0.0, 1.5, -5.0),
