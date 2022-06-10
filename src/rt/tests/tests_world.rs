@@ -74,11 +74,8 @@ fn shading_an_intersection_from_the_inside() {
     let shape = &w.objects().unwrap()[1];
     let i = Intersection::new(0.5, &shape);
     let comps = i.prepare_computations(&r);
-    // In the original test from page 95, c = `Color { red: 0.90498, green: 0.90498, blue: 0.90498 }`
-    // After the addition of `over_point` to `Computation`, c = `Color { red: 0.1, green: 0.1, blue: 0.1 }`
     let c = w.shade_hit(&comps);
-    //let expected_c = Color::new(0.90498, 0.90498, 0.90498);
-    let expected_c = Color::new(0.1, 0.1, 0.1);
+    let expected_c = Color::new(0.90495235, 0.90495235, 0.90495235);
     assert_eq!(c, expected_c);
 }
 

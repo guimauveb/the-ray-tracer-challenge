@@ -3,7 +3,7 @@ use {
         rt::{canvas::Canvas, color::Color, matrix::Matrix, to_ppm::ToPPM},
         tuple::point::Point,
     },
-    std::f64::consts::PI,
+    std::f32::consts::PI,
 };
 
 pub fn draw_clock() -> Result<(), std::io::Error> {
@@ -16,7 +16,7 @@ pub fn draw_clock() -> Result<(), std::io::Error> {
     // 12 hours
     for i in 0..12 {
         // 30° == (PI/6.0)
-        let rotation = Matrix::<4>::rotation_z(f64::from(i) * PI / 6.0);
+        let rotation = Matrix::<4>::rotation_z(i as f32 * PI / 6.0);
         let rotated_point = &rotation * &point;
         canvas.write_pixel(
             (origin.x() + rotated_point.x()) as usize,

@@ -10,7 +10,7 @@ use {
 };
 
 #[derive(Debug, Clone)]
-pub struct Matrix<const N: usize>([[f64; N]; N]);
+pub struct Matrix<const N: usize>([[f32; N]; N]);
 
 #[derive(Debug)]
 pub enum MatrixError<'a, const N: usize> {
@@ -36,26 +36,26 @@ pub trait Submatrix<T> {
 
 // Minor can only be computed for Matrix<N> where N >= 3
 pub trait Minor {
-    fn minor(&self, index: Idx) -> f64;
+    fn minor(&self, index: Idx) -> f32;
 }
 
 pub trait Cofactor {
-    fn cofactor(&self, index: Idx) -> f64;
+    fn cofactor(&self, index: Idx) -> f32;
 }
 
 pub trait Determinant {
-    fn determinant(&self) -> f64;
+    fn determinant(&self) -> f32;
 }
 
 impl<const N: usize> Matrix<N> {
-    pub const fn new(matrix: [[f64; N]; N]) -> Self {
+    pub const fn new(matrix: [[f32; N]; N]) -> Self {
         Self(matrix)
     }
 }
 
 type Idx = [usize; 2];
 impl<const N: usize> Index<Idx> for Matrix<{ N }> {
-    type Output = f64;
+    type Output = f32;
     /// Indexes Matrix like this: `matrix[[0, 1]]`
     fn index(&self, index: Idx) -> &Self::Output {
         &self.0[index[0]][index[1]]
@@ -64,7 +64,7 @@ impl<const N: usize> Index<Idx> for Matrix<{ N }> {
 
 impl<const N: usize> IndexMut<Idx> for Matrix<{ N }> {
     /// Indexes Matrix like this: `matrix[[0, 1]]`
-    fn index_mut(&mut self, index: Idx) -> &mut f64 {
+    fn index_mut(&mut self, index: Idx) -> &mut f32 {
         &mut self.0[index[0]][index[1]]
     }
 }
@@ -242,19 +242,19 @@ impl<const N: usize> Submatrix<Matrix<{ N - 1 }>> for Matrix<N> {
 }
 
 impl Minor for Matrix<3> {
-    fn minor(&self, index: Idx) -> f64 {
+    fn minor(&self, index: Idx) -> f32 {
         self.submatrix(index).determinant()
     }
 }
 
 impl Minor for Matrix<4> {
-    fn minor(&self, index: Idx) -> f64 {
+    fn minor(&self, index: Idx) -> f32 {
         self.submatrix(index).determinant()
     }
 }
 
 impl Cofactor for Matrix<3> {
-    fn cofactor(&self, index: Idx) -> f64 {
+    fn cofactor(&self, index: Idx) -> f32 {
         let minor = self.minor(index);
 
         if (index[0] + index[1]) % 2 == 0 {
@@ -266,7 +266,7 @@ impl Cofactor for Matrix<3> {
 }
 
 impl Cofactor for Matrix<4> {
-    fn cofactor(&self, index: Idx) -> f64 {
+    fn cofactor(&self, index: Idx) -> f32 {
         let minor = self.minor(index);
 
         if (index[0] + index[1]) % 2 == 0 {
@@ -278,19 +278,19 @@ impl Cofactor for Matrix<4> {
 }
 
 impl Determinant for Matrix<2> {
-    fn determinant(&self) -> f64 {
+    fn determinant(&self) -> f32 {
         self[[0, 0]] * self[[1, 1]] - self[[0, 1]] * self[[1, 0]]
     }
 }
 
 impl Determinant for Matrix<3> {
-    fn determinant(&self) -> f64 {
+    fn determinant(&self) -> f32 {
         (0..3).map(|x| self[[0, x]] * self.cofactor([0, x])).sum()
     }
 }
 
 impl Determinant for Matrix<4> {
-    fn determinant(&self) -> f64 {
+    fn determinant(&self) -> f32 {
         (0..4).map(|x| self[[0, x]] * self.cofactor([0, x])).sum()
     }
 }
@@ -306,7 +306,7 @@ impl Matrix<4> {
     }
 
     pub fn is_invertible(&self) -> bool {
-        !(self.determinant() == 0.0)
+        !(self.determinant().approx_eq(0.0))
     }
 
     /// If the matrix is invertible, we compute the inverse matrix like the following.
@@ -347,7 +347,7 @@ impl Matrix<4> {
         }
     }
 
-    pub const fn translation(x: f64, y: f64, z: f64) -> Self {
+    pub const fn translation(x: f32, y: f32, z: f32) -> Self {
         Self([
             [1.0, 0.0, 0.0, x],
             [0.0, 1.0, 0.0, y],
@@ -356,7 +356,7 @@ impl Matrix<4> {
         ])
     }
 
-    pub const fn scaling(x: f64, y: f64, z: f64) -> Self {
+    pub const fn scaling(x: f32, y: f32, z: f32) -> Self {
         Self([
             [x, 0.0, 0.0, 0.0],
             [0.0, y, 0.0, 0.0],
@@ -365,7 +365,7 @@ impl Matrix<4> {
         ])
     }
 
-    pub fn rotation_x(radians: f64) -> Self {
+    pub fn rotation_x(radians: f32) -> Self {
         Self([
             [1.0, 0.0, 0.0, 0.0],
             [0.0, radians.cos(), -radians.sin(), 0.0],
@@ -374,7 +374,7 @@ impl Matrix<4> {
         ])
     }
 
-    pub fn rotation_y(radians: f64) -> Self {
+    pub fn rotation_y(radians: f32) -> Self {
         Self([
             [radians.cos(), 0.0, radians.sin(), 0.0],
             [0.0, 1.0, 0.0, 0.0],
@@ -383,7 +383,7 @@ impl Matrix<4> {
         ])
     }
 
-    pub fn rotation_z(radians: f64) -> Self {
+    pub fn rotation_z(radians: f32) -> Self {
         Self([
             [radians.cos(), -radians.sin(), 0.0, 0.0],
             [radians.sin(), radians.cos(), 0.0, 0.0],
@@ -392,7 +392,7 @@ impl Matrix<4> {
         ])
     }
 
-    pub const fn shearing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Self {
+    pub const fn shearing(xy: f32, xz: f32, yx: f32, yz: f32, zx: f32, zy: f32) -> Self {
         Self([
             [1.0, xy, xz, 0.0],
             [yx, 1.0, yz, 0.0],

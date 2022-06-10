@@ -11,7 +11,7 @@ use {
         },
         tuple::{point::Point, vector::Vector},
     },
-    std::f64::consts::PI,
+    std::f32::consts::PI,
 };
 
 #[test]
@@ -115,16 +115,16 @@ fn the_normal_on_a_sphere_at_a_point_on_the_z_axis() {
 fn the_normal_on_a_sphere_at_a_nonaxial_point() {
     let s = Object::Sphere(Sphere::default());
     let n = s.normal_at(&Point::new(
-        3.0_f64.sqrt() / 3.0,
-        3.0_f64.sqrt() / 3.0,
-        3.0_f64.sqrt() / 3.0,
+        3.0_f32.sqrt() / 3.0,
+        3.0_f32.sqrt() / 3.0,
+        3.0_f32.sqrt() / 3.0,
     ));
     assert_eq!(
         n,
         Vector::new(
-            3.0_f64.sqrt() / 3.0,
-            3.0_f64.sqrt() / 3.0,
-            3.0_f64.sqrt() / 3.0,
+            3.0_f32.sqrt() / 3.0,
+            3.0_f32.sqrt() / 3.0,
+            3.0_f32.sqrt() / 3.0,
         )
     );
 }
@@ -143,8 +143,8 @@ fn computing_the_normal_on_a_transformed_sphere() {
     let s = Object::Sphere(Sphere::with_transform(m));
     let n = s.normal_at(&Point::new(
         0.0,
-        2.0_f64.sqrt() / 2.0,
-        -2.0_f64.sqrt() / 2.0,
+        2.0_f32.sqrt() / 2.0,
+        -2.0_f32.sqrt() / 2.0,
     ));
     assert_eq!(n, Vector::new(0.0, 0.97014, -0.24254));
 }

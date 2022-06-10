@@ -1,5 +1,5 @@
 #[cfg(test)]
-use crate::tuple::vector::Vector;
+use crate::{approx_eq::ApproxEq, tuple::vector::Vector};
 
 #[test]
 fn can_create_a_vector() {
@@ -12,9 +12,9 @@ fn can_create_a_vector() {
 #[test]
 fn can_access_vector_coordinates() {
     let vector = Vector::new(4.0, -4.0, 3.0);
-    assert_eq!(vector.x(), 4.0);
-    assert_eq!(vector.y(), -4.0);
-    assert_eq!(vector.z(), 3.0);
+    assert!(vector.x().approx_eq(4.0));
+    assert!(vector.y().approx_eq(-4.0));
+    assert!(vector.z().approx_eq(3.0));
 }
 
 #[test]
@@ -51,14 +51,14 @@ fn can_negate_a_vector() {
 #[test]
 fn can_multiply_vector_by_scalar() {
     let vector = Vector::new(1.0, -2.0, 3.0);
-    let scalar = 3.5_f64;
+    let scalar = 3.5_f32;
     let expected = Vector::new(3.5, -7.0, 10.5);
     assert_eq!(vector * scalar, expected);
 }
 
 #[test]
 fn can_multiply_scalar_by_vector() {
-    let scalar = 3.5_f64;
+    let scalar = 3.5_f32;
     let vector = Vector::new(1.0, -2.0, 3.0);
     let expected = Vector::new(3.5, -7.0, 10.5);
     assert_eq!(scalar * vector, expected);
@@ -67,26 +67,33 @@ fn can_multiply_scalar_by_vector() {
 #[test]
 fn can_divide_vector_by_scalar() {
     let vector = Vector::new(1.0, -2.0, 3.0);
-    let scalar = 2_f64;
+    let scalar = 2_f32;
     let expected = Vector::new(0.5, -1.0, 1.5);
     assert_eq!(vector / scalar, expected);
 }
 
 #[test]
 fn can_compute_vector_magnitude_1() {
-    assert_eq!(Vector::new(0.0, 1.0, 0.0).magnitude(), 1.0)
+    assert!(Vector::new(0.0, 1.0, 0.0).magnitude().approx_eq(1.0))
 }
+
 #[test]
 fn can_compute_vector_magnitude_2() {
-    assert_eq!(Vector::new(0.0, 0.0, 1.0).magnitude(), 1.0)
+    assert!(Vector::new(0.0, 0.0, 1.0).magnitude().approx_eq(1.0))
 }
+
 #[test]
 fn can_compute_vector_magnitude_3() {
-    assert_eq!(Vector::new(1.0, 2.0, 3.0).magnitude(), f64::sqrt(14.0))
+    assert!(Vector::new(1.0, 2.0, 3.0)
+        .magnitude()
+        .approx_eq(f32::sqrt(14.0)))
 }
+
 #[test]
 fn can_compute_vector_magnitude_4() {
-    assert_eq!(Vector::new(-1.0, -2.0, -3.0).magnitude(), f64::sqrt(14.0))
+    assert!(Vector::new(-1.0, -2.0, -3.0)
+        .magnitude()
+        .approx_eq(f32::sqrt(14.0)))
 }
 
 #[test]
@@ -108,7 +115,7 @@ fn can_normalize_vector_2() {
 fn can_normalize_unit_vector() {
     let vector = Vector::new(1.0, 2.0, 3.0);
     let normalized = vector.normalized();
-    assert_eq!(normalized.magnitude(), 1.0)
+    assert!(normalized.magnitude().approx_eq(1.0))
 }
 
 #[test]
@@ -137,7 +144,7 @@ fn reflecting_a_vector_approaching_at_45_deg() {
 #[test]
 fn reflecting_a_vector_off_a_slanted_surface() {
     let v = Vector::new(0.0, -1.0, 0.0);
-    let normal = Vector::new(2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0, 0.0);
+    let normal = Vector::new(2.0_f32.sqrt() / 2.0, 2.0_f32.sqrt() / 2.0, 0.0);
     let r = v.reflect(&normal);
     assert_eq!(r, Vector::new(1.0, 0.0, 0.0));
 }

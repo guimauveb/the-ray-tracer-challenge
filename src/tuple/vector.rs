@@ -6,17 +6,17 @@ use {
 
 #[derive(Debug, Clone)]
 pub struct Vector {
-    x: f64,
-    y: f64,
-    z: f64,
-    w: f64,
+    x: f32,
+    y: f32,
+    z: f32,
+    w: f32,
 }
 
 type Idx = usize;
 impl Index<Idx> for Vector {
-    type Output = f64;
+    type Output = f32;
 
-    fn index(&self, index: Idx) -> &f64 {
+    fn index(&self, index: Idx) -> &f32 {
         match index {
             0 => &self.x,
             1 => &self.y,
@@ -28,7 +28,7 @@ impl Index<Idx> for Vector {
 }
 
 impl IndexMut<Idx> for Vector {
-    fn index_mut(&mut self, index: Idx) -> &mut f64 {
+    fn index_mut(&mut self, index: Idx) -> &mut f32 {
         match index {
             0 => &mut self.x,
             1 => &mut self.y,
@@ -178,10 +178,10 @@ impl Neg for &Vector {
     }
 }
 
-impl Mul<f64> for Vector {
+impl Mul<f32> for Vector {
     type Output = Self;
 
-    fn mul(self, rhs: f64) -> Self::Output {
+    fn mul(self, rhs: f32) -> Self::Output {
         Self {
             x: self.x * rhs,
             y: self.y * rhs,
@@ -191,10 +191,10 @@ impl Mul<f64> for Vector {
     }
 }
 
-impl Mul<f64> for &Vector {
+impl Mul<f32> for &Vector {
     type Output = Vector;
 
-    fn mul(self, rhs: f64) -> Self::Output {
+    fn mul(self, rhs: f32) -> Self::Output {
         Vector {
             x: self.x * rhs,
             y: self.y * rhs,
@@ -204,7 +204,7 @@ impl Mul<f64> for &Vector {
     }
 }
 
-impl Mul<Vector> for f64 {
+impl Mul<Vector> for f32 {
     type Output = Vector;
 
     fn mul(self, rhs: Vector) -> Self::Output {
@@ -217,7 +217,7 @@ impl Mul<Vector> for f64 {
     }
 }
 
-impl Mul<&Vector> for f64 {
+impl Mul<&Vector> for f32 {
     type Output = Vector;
 
     fn mul(self, rhs: &Vector) -> Self::Output {
@@ -230,10 +230,10 @@ impl Mul<&Vector> for f64 {
     }
 }
 
-impl Div<f64> for Vector {
+impl Div<f32> for Vector {
     type Output = Self;
 
-    fn div(self, rhs: f64) -> Self::Output {
+    fn div(self, rhs: f32) -> Self::Output {
         Self {
             x: self.x / rhs,
             y: self.y / rhs,
@@ -243,10 +243,10 @@ impl Div<f64> for Vector {
     }
 }
 
-impl Div<f64> for &Vector {
+impl Div<f32> for &Vector {
     type Output = Vector;
 
-    fn div(self, rhs: f64) -> Self::Output {
+    fn div(self, rhs: f32) -> Self::Output {
         Vector {
             x: self.x / rhs,
             y: self.y / rhs,
@@ -257,7 +257,7 @@ impl Div<f64> for &Vector {
 }
 
 impl Vector {
-    pub const fn new(x: f64, y: f64, z: f64) -> Self {
+    pub const fn new(x: f32, y: f32, z: f32) -> Self {
         Self { x, y, z, w: 0.0 }
     }
 
@@ -270,24 +270,24 @@ impl Vector {
         }
     }
 
-    pub const fn x(&self) -> f64 {
+    pub const fn x(&self) -> f32 {
         self.x
     }
 
-    pub const fn y(&self) -> f64 {
+    pub const fn y(&self) -> f32 {
         self.y
     }
 
-    pub const fn z(&self) -> f64 {
+    pub const fn z(&self) -> f32 {
         self.z
     }
 
-    pub const fn w(&self) -> f64 {
+    pub const fn w(&self) -> f32 {
         self.w
     }
 
-    pub fn magnitude(&self) -> f64 {
-        f64::sqrt(
+    pub fn magnitude(&self) -> f32 {
+        f32::sqrt(
             self.z
                 .mul_add(self.z, self.y.mul_add(self.y, self.x.powi(2))),
         )
@@ -301,7 +301,7 @@ impl Vector {
         self / self.magnitude()
     }
 
-    pub fn dot(&self, rhs: &Self) -> f64 {
+    pub fn dot(&self, rhs: &Self) -> f32 {
         //(self.x * rhs.x) + (self.y * rhs.y) + (self.z * rhs.z)
         self.z.mul_add(rhs.z, self.x.mul_add(rhs.x, self.y * rhs.y))
     }

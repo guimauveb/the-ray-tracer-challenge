@@ -2,26 +2,26 @@ use {
     super::{canvas::Canvas, matrix::Matrix, ray::Ray, world::World},
     crate::tuple::point::Point,
 };
-/// Note: Pixel sizes are of type `f64`, even though they will always be positive integers (`usize`).
+/// Note: Pixel sizes are of type `f32`, even though they will always be positive integers (`usize`).
 /// This is to make the computations in `pixel_size` more accurate.
 pub struct Camera {
     /// The horizontal size (in pixels) of the canvas that the picture will be rendered to.
-    hsize: f64,
+    hsize: f32,
     /// The vertical size (in pixels) of the canvas that the picture will be rendered to.
-    vsize: f64,
+    vsize: f32,
     /// Angle that describes how much the camera can see. WHen the field of view is small, the wiew will be zoomed in,
     /// magnifying a smaller area of the scene.
-    field_of_view: f64,
+    field_of_view: f32,
     /// Transform is a matrix describing how the world should be oriented relative to the camera.
     /// This is usually a view transformation.
     transform: Matrix<4>,
-    half_width: f64,
-    half_height: f64,
-    pixel_size: f64,
+    half_width: f32,
+    half_height: f32,
+    pixel_size: f32,
 }
 
 impl Camera {
-    pub fn new(hsize: f64, vsize: f64, field_of_view: f64, transform: Option<Matrix<4>>) -> Self {
+    pub fn new(hsize: f32, vsize: f32, field_of_view: f32, transform: Option<Matrix<4>>) -> Self {
         let (half_width, half_height, pixel_size) =
             Self::compute_pixel_size(hsize, vsize, field_of_view);
         Self {
@@ -35,15 +35,15 @@ impl Camera {
         }
     }
 
-    pub const fn hsize(&self) -> f64 {
+    pub const fn hsize(&self) -> f32 {
         self.hsize
     }
 
-    pub const fn vsize(&self) -> f64 {
+    pub const fn vsize(&self) -> f32 {
         self.vsize
     }
 
-    pub const fn field_of_view(&self) -> f64 {
+    pub const fn field_of_view(&self) -> f32 {
         self.field_of_view
     }
 
@@ -51,11 +51,11 @@ impl Camera {
         &self.transform
     }
 
-    pub const fn half_width(&self) -> f64 {
+    pub const fn half_width(&self) -> f32 {
         self.half_width
     }
 
-    pub const fn half_height(&self) -> f64 {
+    pub const fn half_height(&self) -> f32 {
         self.half_height
     }
 
@@ -80,7 +80,7 @@ impl Camera {
     /// by the horizontal size (in pixels) of the canvas (`hsize`), assuming pixels are squares.
     ///
     /// The function actually returns `(half_width, half_height, pixel_size)`.
-    fn compute_pixel_size(hsize: f64, vsize: f64, field_of_view: f64) -> (f64, f64, f64) {
+    fn compute_pixel_size(hsize: f32, vsize: f32, field_of_view: f32) -> (f32, f32, f32) {
         let half_view = (field_of_view / 2.0).tan();
         let aspect = hsize / vsize;
         let (half_width, half_height) = if aspect >= 1.0 {
@@ -94,11 +94,11 @@ impl Camera {
         (half_width, half_height, pixel_size)
     }
 
-    pub const fn pixel_size(&self) -> f64 {
+    pub const fn pixel_size(&self) -> f32 {
         self.pixel_size
     }
 
-    pub fn ray_for_pixel(&self, pixel_x: f64, pixel_y: f64) -> Ray {
+    pub fn ray_for_pixel(&self, pixel_x: f32, pixel_y: f32) -> Ray {
         // The offset from the edge of the canvas to the pixel's center.
         let x_offset = (pixel_x + 0.5) * self.pixel_size;
         let y_offset = (pixel_y + 0.5) * self.pixel_size;
@@ -123,7 +123,7 @@ impl Camera {
         let mut image = Canvas::new(hsize, vsize);
         for y in 0..vsize - 1 {
             for x in 0..hsize - 1 {
-                let ray = self.ray_for_pixel(x as f64, y as f64);
+                let ray = self.ray_for_pixel(x as f32, y as f32);
                 let color = world.color_at(&ray);
                 image.write_pixel(x, y, color);
             }

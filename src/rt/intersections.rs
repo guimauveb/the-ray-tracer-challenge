@@ -7,9 +7,9 @@ use {
 #[derive(Debug)]
 pub struct Intersections<'objects>(Vec<Intersection<'objects>>);
 
-impl<'object> From<([f64; 2], &'object Object)> for Intersections<'object> {
+impl<'object> From<([f32; 2], &'object Object)> for Intersections<'object> {
     /// Used to transform intersections computed from an Object variant to intersections refering the Object enum.
-    fn from((intersections, object): ([f64; 2], &'object Object)) -> Intersections<'object> {
+    fn from((intersections, object): ([f32; 2], &'object Object)) -> Intersections<'object> {
         Self::new(vec![
             Intersection::new(intersections[0], object),
             Intersection::new(intersections[1], object),

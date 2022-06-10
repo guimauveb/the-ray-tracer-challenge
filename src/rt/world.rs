@@ -80,7 +80,7 @@ impl World {
             .get_material()
             .lighting(
                 self.light.as_ref().expect("World should have a light!"),
-                computations.point(),
+                computations.over_point(),
                 computations.eye_vector(),
                 computations.normal_vector(),
                 self.is_shadowed(computations.over_point()),

@@ -55,7 +55,7 @@ impl Canvas {
 }
 
 impl ToPPM for Canvas {
-    fn process_color(color: f64) -> String {
+    fn process_color(color: f32) -> String {
         ((color * PPM_MAX_COLOR_VALUE)
             .clamp(PPM_MIN_COLOR_VALUE, PPM_MAX_COLOR_VALUE)
             .ceil() as usize)

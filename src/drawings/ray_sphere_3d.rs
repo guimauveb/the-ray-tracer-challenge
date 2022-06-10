@@ -21,7 +21,7 @@ pub fn ray_sphere_hit() -> Result<(), std::io::Error> {
     // Wall is a square (7.0 * 7.0)
     let wall_size = 7.0;
     // Divide the wall size by the number of pixels to get the size of a single pixel (in world space units)
-    let pixel_size = wall_size / canvas_pixels as f64;
+    let pixel_size = wall_size / canvas_pixels as f32;
     let half = wall_size / 2.0;
 
     let mut canvas = Canvas::new(canvas_pixels, canvas_pixels);
@@ -52,10 +52,10 @@ pub fn ray_sphere_hit() -> Result<(), std::io::Error> {
 
     for y in 0..canvas.height() {
         // top = half, bottom = -half
-        let world_y = half - pixel_size * y as f64;
+        let world_y = half - pixel_size * y as f32;
         for x in 0..canvas.width() {
             // left = -half, right = half
-            let world_x = pixel_size.mul_add(x as f64, -half);
+            let world_x = pixel_size.mul_add(x as f32, -half);
             let ray_origin = ray_origin.clone();
             // Point on the wall that the ray will target
             let position = Point::new(world_x, world_y, wall_z);

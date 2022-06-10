@@ -1,10 +1,11 @@
 #[cfg(test)]
 use {
     crate::{
+        approx_eq::ApproxEq,
         rt::{camera::Camera, color::Color, matrix::Matrix, world::World},
         tuple::{point::Point, vector::Vector},
     },
-    std::f64::consts::PI,
+    std::f32::consts::PI,
 };
 
 #[test]
@@ -20,13 +21,14 @@ fn constructing_a_camera() {
 #[test]
 fn the_pixel_size_for_a_horizontal_canvas() {
     let c = Camera::new(200.0, 125.0, PI / 2.0, None);
-    assert_eq!(c.pixel_size(), 0.009999999999999998);
+    println!("c: {}", c.pixel_size());
+    assert!(c.pixel_size().approx_eq(0.01));
 }
 
 #[test]
 fn the_pixel_size_for_a_vertical_canvas() {
     let c = Camera::new(125.0, 200.0, PI / 2.0, None);
-    assert_eq!(c.pixel_size(), 0.009999999999999998);
+    assert!(c.pixel_size().approx_eq(0.01));
 }
 
 #[test]
@@ -57,7 +59,7 @@ fn constructing_a_ray_when_the_camera_is_transformed() {
     assert_eq!(r.origin(), &Point::new(0.0, 2.0, -5.0));
     assert_eq!(
         r.direction(),
-        &Vector::new(2.0_f64.sqrt() / 2.0, 0.0, -2.0_f64.sqrt() / 2.0)
+        &Vector::new(2.0_f32.sqrt() / 2.0, 0.0, -2.0_f32.sqrt() / 2.0)
     );
 }
 

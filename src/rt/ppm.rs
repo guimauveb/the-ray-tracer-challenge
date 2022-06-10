@@ -4,8 +4,8 @@ use std::{
     io::prelude::*,
 };
 
-pub const PPM_MIN_COLOR_VALUE: f64 = 0.0;
-pub const PPM_MAX_COLOR_VALUE: f64 = 255.0;
+pub const PPM_MIN_COLOR_VALUE: f32 = 0.0;
+pub const PPM_MAX_COLOR_VALUE: f32 = 255.0;
 pub const PPM_MAX_CHARACTERS_PER_LINE: usize = 70;
 
 #[derive(Debug, PartialEq)]

@@ -6,10 +6,10 @@ use {
 #[derive(PartialEq, Debug, Clone)]
 pub struct Material {
     color: Color,
-    ambient: f64,
-    diffuse: f64,
-    specular: f64,
-    shininess: f64,
+    ambient: f32,
+    diffuse: f32,
+    specular: f32,
+    shininess: f32,
 }
 
 impl Default for Material {
@@ -36,10 +36,10 @@ impl Default for Material {
 impl Material {
     pub const fn new(
         color: Color,
-        ambient: f64,
-        diffuse: f64,
-        specular: f64,
-        shininess: f64,
+        ambient: f32,
+        diffuse: f32,
+        specular: f32,
+        shininess: f32,
     ) -> Self {
         Self {
             color,
@@ -54,19 +54,19 @@ impl Material {
         &self.color
     }
 
-    pub const fn ambient(&self) -> f64 {
+    pub const fn ambient(&self) -> f32 {
         self.ambient
     }
 
-    pub const fn diffuse(&self) -> f64 {
+    pub const fn diffuse(&self) -> f32 {
         self.diffuse
     }
 
-    pub const fn specular(&self) -> f64 {
+    pub const fn specular(&self) -> f32 {
         self.specular
     }
 
-    pub const fn shininess(&self) -> f64 {
+    pub const fn shininess(&self) -> f32 {
         self.shininess
     }
 
@@ -74,19 +74,19 @@ impl Material {
         self.color = color;
     }
 
-    pub fn set_ambient(&mut self, ambient: f64) {
+    pub fn set_ambient(&mut self, ambient: f32) {
         self.ambient = ambient;
     }
 
-    pub fn set_diffuse(&mut self, diffuse: f64) {
+    pub fn set_diffuse(&mut self, diffuse: f32) {
         self.diffuse = diffuse;
     }
 
-    pub fn set_specular(&mut self, specular: f64) {
+    pub fn set_specular(&mut self, specular: f32) {
         self.specular = specular;
     }
 
-    pub fn set_shininess(&mut self, shininess: f64) {
+    pub fn set_shininess(&mut self, shininess: f32) {
         self.shininess = shininess;
     }
 

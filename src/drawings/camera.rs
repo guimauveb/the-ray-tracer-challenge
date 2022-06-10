@@ -6,7 +6,7 @@ use {
         },
         tuple::{point::Point, vector::Vector},
     },
-    std::f64::consts::PI,
+    std::f32::consts::PI,
 };
 
 pub fn spheres() -> Result<(), std::io::Error> {
