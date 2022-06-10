@@ -71,8 +71,8 @@ pub fn spheres() -> Result<(), std::io::Error> {
     );
 
     let camera = Camera::new(
-        1280.0,
-        720.0,
+        3840.0,
+        2160.0,
         PI / 3.0,
         Some(Matrix::<4>::view_transform(
             &Point::new(-4.0, 1.0, -7.0),
