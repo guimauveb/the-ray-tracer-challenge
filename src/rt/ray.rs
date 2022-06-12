@@ -136,6 +136,7 @@ impl<'object> Intersect<'object, Object, Intersections<'object>> for Ray {
         }
     }
 }
+
 /// Before computing the normal at some point,
 /// all shapes must first convert the point to
 /// object space by multiplying it by the inverse
