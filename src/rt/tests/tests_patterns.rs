@@ -4,7 +4,7 @@ use crate::{
         color::Color,
         matrix::Matrix,
         object::Object,
-        patterns::{Gradient, Pattern, Stripe},
+        patterns::{Gradient, Pattern, Ring, Stripe},
         shape::Shape,
         sphere::Sphere,
     },
@@ -115,5 +115,27 @@ fn a_gradient_linearly_interpolates_between_colors() {
     assert_eq!(
         pattern.pattern_at(&Point::new(0.75, 0.0, 0.0)),
         Color::new(0.25, 0.25, 0.25)
+    );
+}
+
+#[test]
+fn a_ring_should_extend_in_both_x_and_z() {
+    let pattern = Pattern::Ring(Ring::new(Color::white(), Color::black(), None));
+    assert_eq!(
+        pattern.pattern_at(&Point::new(0.0, 0.0, 0.0)),
+        Color::white()
+    );
+    assert_eq!(
+        pattern.pattern_at(&Point::new(1.0, 0.0, 0.0)),
+        Color::black()
+    );
+    assert_eq!(
+        pattern.pattern_at(&Point::new(0.0, 0.0, 1.0)),
+        Color::black()
+    );
+    assert_eq!(
+        // 0.708 = just slightly more than 2.0.sqrt() / 2
+        pattern.pattern_at(&Point::new(0.708, 0.0, 0.708)),
+        Color::black()
     );
 }

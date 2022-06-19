@@ -7,7 +7,7 @@ use {
 pub enum Pattern {
     Stripe(Stripe),
     Gradient(Gradient),
-    // Ring(Ring),
+    Ring(Ring),
 }
 
 impl Pattern {
@@ -15,6 +15,7 @@ impl Pattern {
         match self {
             Self::Stripe(stripe) => stripe.get_transform(),
             Self::Gradient(gradient) => gradient.get_transform(),
+            Self::Ring(ring) => ring.get_transform(),
         }
     }
 
@@ -22,6 +23,7 @@ impl Pattern {
         match self {
             Self::Stripe(stripe) => stripe.set_transform(transform),
             Self::Gradient(gradient) => gradient.set_transform(transform),
+            Self::Ring(ring) => ring.set_transform(transform),
         }
     }
 
@@ -29,6 +31,7 @@ impl Pattern {
         match self {
             Self::Stripe(stripe) => stripe.stripe_at(point),
             Self::Gradient(gradient) => gradient.gradient_at(point),
+            Self::Ring(ring) => ring.ring_at(point),
         }
     }
 
@@ -36,6 +39,7 @@ impl Pattern {
         match self {
             Self::Stripe(stripe) => stripe.stripe_at_object(object, point),
             Self::Gradient(gradient) => gradient.gradient_at_object(object, point),
+            Self::Ring(ring) => ring.ring_at_object(object, point),
         }
     }
 }
@@ -136,5 +140,51 @@ impl Gradient {
         let pattern_point = self.get_transform().inverse().unwrap() * object_point;
 
         self.gradient_at(&pattern_point)
+    }
+}
+
+#[derive(PartialEq, Debug, Clone)]
+pub struct Ring {
+    a: Color,
+    b: Color,
+    transform: Matrix<4>,
+}
+
+impl From<Ring> for Pattern {
+    fn from(ring: Ring) -> Self {
+        Self::Ring(ring)
+    }
+}
+
+impl Ring {
+    pub fn new(a: Color, b: Color, transform: Option<Matrix<4>>) -> Self {
+        Self {
+            a,
+            b,
+            transform: transform.map_or_else(Matrix::<4>::identity, |t| t),
+        }
+    }
+
+    pub const fn get_transform(&self) -> &Matrix<4> {
+        &self.transform
+    }
+
+    pub fn set_transform(&mut self, transform: Matrix<4>) {
+        self.transform = transform;
+    }
+
+    pub fn ring_at(&self, point: &Point) -> Color {
+        if ((point.x().powi(2) + point.z().powi(2)).sqrt().floor()) % 2.0 == 0.0 {
+            self.a.clone()
+        } else {
+            self.b.clone()
+        }
+    }
+
+    pub fn ring_at_object(&self, object: &Object, point: &Point) -> Color {
+        let object_point = object.get_transform().inverse().unwrap() * point;
+        let pattern_point = self.get_transform().inverse().unwrap() * object_point;
+
+        self.ring_at(&pattern_point)
     }
 }
