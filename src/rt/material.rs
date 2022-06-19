@@ -112,13 +112,12 @@ impl Material {
         normal: &Vector,
         in_shadow: bool,
     ) -> Color {
-        let color = if let Some(pattern) = &self.pattern {
-            pattern.pattern_at_object(object, point)
-        } else {
-            &self.color
-        };
+        let color = self.pattern.as_ref().map_or_else(
+            || self.color.clone(),
+            |p| p.pattern_at_object(object, point),
+        );
         // Combine the surface color with the light intensity
-        let effective_color = color * light.intensity();
+        let effective_color = &color * light.intensity();
         // Find the direction to the light source (point -> light source)
         let point_to_light = (light.position() - point).normalized();
         // Compute the ambient contribution

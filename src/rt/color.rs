@@ -83,11 +83,35 @@ impl Add for Color {
     }
 }
 
+impl Add for &Color {
+    type Output = Color;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Color {
+            red: self.red + rhs.red,
+            green: self.green + rhs.green,
+            blue: self.blue + rhs.blue,
+        }
+    }
+}
+
 impl Sub for Color {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self::Output {
         Self {
+            red: self.red - rhs.red,
+            green: self.green - rhs.green,
+            blue: self.blue - rhs.blue,
+        }
+    }
+}
+
+impl Sub for &Color {
+    type Output = Color;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Color {
             red: self.red - rhs.red,
             green: self.green - rhs.green,
             blue: self.blue - rhs.blue,

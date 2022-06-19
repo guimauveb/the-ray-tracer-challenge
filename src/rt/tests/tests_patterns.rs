@@ -1,7 +1,11 @@
 #[cfg(test)]
 use crate::{
     rt::{
-        color::Color, matrix::Matrix, object::Object, patterns::Stripe, shape::Shape,
+        color::Color,
+        matrix::Matrix,
+        object::Object,
+        patterns::{Gradient, Pattern, Stripe},
+        shape::Shape,
         sphere::Sphere,
     },
     tuple::point::Point,
@@ -19,15 +23,15 @@ fn a_stripe_pattern_is_constant_in_y() {
     let pattern = Stripe::new(Color::white(), Color::black(), None);
     assert_eq!(
         pattern.stripe_at(&Point::new(0.0, 0.0, 0.0)),
-        &Color::white()
+        Color::white()
     );
     assert_eq!(
         pattern.stripe_at(&Point::new(0.0, 1.0, 0.0)),
-        &Color::white()
+        Color::white()
     );
     assert_eq!(
         pattern.stripe_at(&Point::new(0.0, 2.0, 0.0)),
-        &Color::white()
+        Color::white()
     );
 }
 
@@ -36,15 +40,15 @@ fn a_stripe_pattern_is_constant_in_z() {
     let pattern = Stripe::new(Color::white(), Color::black(), None);
     assert_eq!(
         pattern.stripe_at(&Point::new(0.0, 0.0, 0.0)),
-        &Color::white()
+        Color::white()
     );
     assert_eq!(
         pattern.stripe_at(&Point::new(0.0, 0.0, 1.0)),
-        &Color::white()
+        Color::white()
     );
     assert_eq!(
         pattern.stripe_at(&Point::new(0.0, 0.0, 2.0)),
-        &Color::white()
+        Color::white()
     );
 }
 
@@ -53,15 +57,15 @@ fn a_stripe_pattern_alternates_in_x() {
     let pattern = Stripe::new(Color::white(), Color::black(), None);
     assert_eq!(
         pattern.stripe_at(&Point::new(0.0, 0.0, 0.0)),
-        &Color::white()
+        Color::white()
     );
     assert_eq!(
         pattern.stripe_at(&Point::new(1.0, 0.0, 0.0)),
-        &Color::black()
+        Color::black()
     );
     assert_eq!(
         pattern.stripe_at(&Point::new(2.0, 0.0, 0.0)),
-        &Color::white()
+        Color::white()
     );
 }
 
@@ -71,7 +75,7 @@ fn stripes_with_an_object_transformation() {
     object.set_transform(Matrix::<4>::scaling(2.0, 2.0, 2.0));
     let pattern = Stripe::new(Color::white(), Color::black(), None);
     let c = pattern.stripe_at_object(&object, &Point::new(1.5, 0.0, 0.0));
-    assert_eq!(c, &Color::white());
+    assert_eq!(c, Color::white());
 }
 
 #[test]
@@ -80,7 +84,7 @@ fn stripes_with_a_pattern_transformation() {
     let mut pattern = Stripe::new(Color::white(), Color::black(), None);
     pattern.set_transform(Matrix::<4>::scaling(2.0, 2.0, 2.0));
     let c = pattern.stripe_at_object(&object, &Point::new(1.5, 0.0, 0.0));
-    assert_eq!(c, &Color::white());
+    assert_eq!(c, Color::white());
 }
 
 #[test]
@@ -90,5 +94,26 @@ fn stripes_with_both_an_object_and_a_pattern_transformation() {
     let mut pattern = Stripe::new(Color::white(), Color::black(), None);
     pattern.set_transform(Matrix::<4>::translation(0.5, 0.0, 0.0));
     let c = pattern.stripe_at_object(&object, &Point::new(2.5, 0.0, 0.0));
-    assert_eq!(c, &Color::white());
+    assert_eq!(c, Color::white());
+}
+
+#[test]
+fn a_gradient_linearly_interpolates_between_colors() {
+    let pattern = Pattern::Gradient(Gradient::new(Color::white(), Color::black(), None));
+    assert_eq!(
+        pattern.pattern_at(&Point::new(0.0, 0.0, 0.0)),
+        Color::white()
+    );
+    assert_eq!(
+        pattern.pattern_at(&Point::new(0.25, 0.0, 0.0)),
+        Color::new(0.75, 0.75, 0.75)
+    );
+    assert_eq!(
+        pattern.pattern_at(&Point::new(0.5, 0.0, 0.0)),
+        Color::new(0.5, 0.5, 0.5)
+    );
+    assert_eq!(
+        pattern.pattern_at(&Point::new(0.75, 0.0, 0.0)),
+        Color::new(0.25, 0.25, 0.25)
+    );
 }
