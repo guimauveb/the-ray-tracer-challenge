@@ -23,7 +23,7 @@ fn creating_a_world() {
 
 #[test]
 fn the_default_world() {
-    let material = Material::new(Color::new(0.8, 1.0, 0.6), 0.1, 0.7, 0.2, 200.0);
+    let material = Material::new(Color::new(0.8, 1.0, 0.6), None, 0.1, 0.7, 0.2, 200.0);
     let s1 = Sphere::with_material(material);
 
     let transform = Matrix::<4>::scaling(0.5, 0.5, 0.5);
@@ -101,7 +101,7 @@ fn the_color_when_a_ray_hits() {
 fn the_color_with_an_intersection_behind_the_ray() {
     // Create the default objects of the world with the values specfied in the test instead of having to make the material() method return a mutable reference
     // when it shouldnt be necessary for the rest of the program.
-    let material = Material::new(Color::new(0.8, 1.0, 0.6), 1.0, 0.7, 0.2, 200.0);
+    let material = Material::new(Color::new(0.8, 1.0, 0.6), None, 1.0, 0.7, 0.2, 200.0);
     let s1 = Sphere::with_material(material.clone());
 
     let transform = Matrix::<4>::scaling(0.5, 0.5, 0.5);

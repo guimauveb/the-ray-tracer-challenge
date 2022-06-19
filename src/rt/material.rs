@@ -1,11 +1,12 @@
 use {
-    super::{color::Color, point_light::PointLight},
+    super::{color::Color, object::Object, patterns::Pattern, point_light::PointLight},
     crate::tuple::{point::Point, vector::Vector},
 };
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct Material {
     color: Color,
+    pattern: Option<Pattern>,
     ambient: f32,
     diffuse: f32,
     specular: f32,
@@ -30,12 +31,14 @@ impl Default for Material {
             diffuse: 0.9,
             specular: 0.9,
             shininess: 200.0,
+            pattern: None,
         }
     }
 }
 impl Material {
     pub const fn new(
         color: Color,
+        pattern: Option<Pattern>,
         ambient: f32,
         diffuse: f32,
         specular: f32,
@@ -43,6 +46,7 @@ impl Material {
     ) -> Self {
         Self {
             color,
+            pattern,
             ambient,
             diffuse,
             specular,
@@ -52,6 +56,10 @@ impl Material {
 
     pub const fn color(&self) -> &Color {
         &self.color
+    }
+
+    pub const fn pattern(&self) -> Option<&Pattern> {
+        self.pattern.as_ref()
     }
 
     pub const fn ambient(&self) -> f32 {
@@ -74,6 +82,10 @@ impl Material {
         self.color = color;
     }
 
+    pub fn set_pattern(&mut self, pattern: Pattern) {
+        self.pattern = Some(pattern);
+    }
+
     pub fn set_ambient(&mut self, ambient: f32) {
         self.ambient = ambient;
     }
@@ -93,14 +105,20 @@ impl Material {
     /// Returns the color of the material at a specified point from a specified view point.
     pub fn lighting(
         &self,
+        object: &Object,
         light: &PointLight,
         point: &Point,
         eye: &Vector,
         normal: &Vector,
         in_shadow: bool,
     ) -> Color {
+        let color = if let Some(pattern) = &self.pattern {
+            pattern.pattern_at_object(object, point)
+        } else {
+            &self.color
+        };
         // Combine the surface color with the light intensity
-        let effective_color = &self.color * light.intensity();
+        let effective_color = color * light.intensity();
         // Find the direction to the light source (point -> light source)
         let point_to_light = (light.position() - point).normalized();
         // Compute the ambient contribution

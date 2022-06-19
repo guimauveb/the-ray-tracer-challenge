@@ -79,6 +79,7 @@ impl World {
             .object()
             .get_material()
             .lighting(
+                computations.intersection().object(),
                 self.light.as_ref().expect("World should have a light!"),
                 computations.over_point(),
                 computations.eye_vector(),
@@ -121,7 +122,7 @@ impl World {
 
 impl Default for World {
     fn default() -> Self {
-        let material = Material::new(Color::new(0.8, 1.0, 0.6), 0.1, 0.7, 0.2, 200.0);
+        let material = Material::new(Color::new(0.8, 1.0, 0.6), None, 0.1, 0.7, 0.2, 200.0);
         let s1 = Sphere::with_material(material);
 
         let transform = Matrix::<4>::scaling(0.5, 0.5, 0.5);
