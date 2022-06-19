@@ -39,12 +39,7 @@ impl Shape for Plane {
     }
 
     fn normal_at(&self, _: &Point) -> Vector {
-        let world_normal = self
-            .transform
-            .inverse()
-            .expect("Matrix is not invertible!")
-            .transpose()
-            * PLANE_NORMAL;
+        let world_normal = self.transform.inverse().unwrap().transpose() * PLANE_NORMAL;
 
         world_normal.normalized()
     }

@@ -259,7 +259,7 @@ pub fn gradient_spheres() -> Result<(), std::io::Error> {
         Gradient::new(
             Color::white(),
             Color::new(0.82, 0.24, 0.35),
-            Some(Matrix::<4>::rotation_z(PI / 2.0)),
+            Some(Matrix::<4>::scaling(0.0, 10.0, 0.1) * Matrix::<4>::rotation_z(PI / 2.0)),
         )
         .into(),
     );

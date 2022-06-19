@@ -62,15 +62,10 @@ impl Shape for Sphere {
     /// Returns the normal vector at a specified point.
     fn normal_at(&self, point: &Point) -> Vector {
         // Convert the point from world space to object space
-        let object_point = &self.transform.inverse().expect("Matrix is not invertible!") * point;
+        let object_point = &self.transform.inverse().unwrap() * point;
         let object_normal = &object_point - &self.origin;
         // To keep the normal perpendicular to their surface, we multiply the object normal by the inverted then transposed object transform (matrix).
-        let world_normal = self
-            .transform
-            .inverse()
-            .expect("Matrix is not invertible!")
-            .transpose()
-            * object_normal;
+        let world_normal = self.transform.inverse().unwrap().transpose() * object_normal;
 
         world_normal.normalized()
     }

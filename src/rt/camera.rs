@@ -110,7 +110,7 @@ impl Camera {
         // Using the camera matrix, transform the canvas point and the origin,
         // and then compute the ray's direction vector.
         // Note: the canvas is at z = -1.
-        let inverse = self.transform.inverse().expect("Matrix is not invertible!");
+        let inverse = self.transform.inverse().unwrap();
         let pixel = &inverse * Point::new(world_x, world_y, -1.0);
         let origin = &inverse * Point::new(0.0, 0.0, 0.0);
         let direction = (&pixel - &origin).normalized();

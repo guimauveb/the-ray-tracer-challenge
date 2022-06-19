@@ -87,16 +87,8 @@ impl Stripe {
     }
 
     pub fn stripe_at_object(&self, object: &Object, point: &Point) -> Color {
-        let object_point = object
-            .get_transform()
-            .inverse()
-            .expect("Matrix is not invertibe!")
-            * point;
-        let pattern_point = self
-            .get_transform()
-            .inverse()
-            .expect("Matrix is not invertible!")
-            * object_point;
+        let object_point = object.get_transform().inverse().unwrap() * point;
+        let pattern_point = self.get_transform().inverse().unwrap() * object_point;
 
         self.stripe_at(&pattern_point)
     }
@@ -140,16 +132,8 @@ impl Gradient {
     }
 
     pub fn gradient_at_object(&self, object: &Object, point: &Point) -> Color {
-        let object_point = object
-            .get_transform()
-            .inverse()
-            .expect("Matrix is not invertibe!")
-            * point;
-        let pattern_point = self
-            .get_transform()
-            .inverse()
-            .expect("Matrix is not invertible!")
-            * object_point;
+        let object_point = object.get_transform().inverse().unwrap() * point;
+        let pattern_point = self.get_transform().inverse().unwrap() * object_point;
 
         self.gradient_at(&pattern_point)
     }
