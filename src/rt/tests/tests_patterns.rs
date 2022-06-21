@@ -4,7 +4,7 @@ use crate::{
         color::Color,
         matrix::Matrix,
         object::Object,
-        patterns::{Gradient, Pattern, Ring, Stripe},
+        patterns::{Checkers, Gradient, Pattern, Ring, Stripe},
         shape::Shape,
         sphere::Sphere,
     },
@@ -136,6 +136,57 @@ fn a_ring_should_extend_in_both_x_and_z() {
     assert_eq!(
         // 0.708 = just slightly more than 2.0.sqrt() / 2
         pattern.pattern_at(&Point::new(0.708, 0.0, 0.708)),
+        Color::black()
+    );
+}
+
+#[test]
+fn checkers_should_repeat_in_x() {
+    let pattern = Pattern::Checkers(Checkers::new(Color::white(), Color::black(), None));
+    assert_eq!(
+        pattern.pattern_at(&Point::new(0.0, 0.0, 0.0)),
+        Color::white()
+    );
+    assert_eq!(
+        pattern.pattern_at(&Point::new(0.99, 0.0, 0.0)),
+        Color::white()
+    );
+    assert_eq!(
+        pattern.pattern_at(&Point::new(1.01, 0.0, 0.0)),
+        Color::black()
+    );
+}
+
+#[test]
+fn checkers_should_repeat_in_y() {
+    let pattern = Pattern::Checkers(Checkers::new(Color::white(), Color::black(), None));
+    assert_eq!(
+        pattern.pattern_at(&Point::new(0.0, 0.0, 0.0)),
+        Color::white()
+    );
+    assert_eq!(
+        pattern.pattern_at(&Point::new(0.0, 0.99, 0.0)),
+        Color::white()
+    );
+    assert_eq!(
+        pattern.pattern_at(&Point::new(0.0, 1.01, 0.0)),
+        Color::black()
+    );
+}
+
+#[test]
+fn checkers_should_repeat_in_z() {
+    let pattern = Pattern::Checkers(Checkers::new(Color::white(), Color::black(), None));
+    assert_eq!(
+        pattern.pattern_at(&Point::new(0.0, 0.0, 0.0)),
+        Color::white()
+    );
+    assert_eq!(
+        pattern.pattern_at(&Point::new(0.0, 0.0, 0.99)),
+        Color::white()
+    );
+    assert_eq!(
+        pattern.pattern_at(&Point::new(0.0, 0.0, 1.01)),
         Color::black()
     );
 }

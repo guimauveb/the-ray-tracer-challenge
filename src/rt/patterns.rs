@@ -8,6 +8,7 @@ pub enum Pattern {
     Stripe(Stripe),
     Gradient(Gradient),
     Ring(Ring),
+    Checkers(Checkers),
 }
 
 impl Pattern {
@@ -16,6 +17,7 @@ impl Pattern {
             Self::Stripe(stripe) => stripe.get_transform(),
             Self::Gradient(gradient) => gradient.get_transform(),
             Self::Ring(ring) => ring.get_transform(),
+            Self::Checkers(checkers) => checkers.get_transform(),
         }
     }
 
@@ -24,6 +26,7 @@ impl Pattern {
             Self::Stripe(stripe) => stripe.set_transform(transform),
             Self::Gradient(gradient) => gradient.set_transform(transform),
             Self::Ring(ring) => ring.set_transform(transform),
+            Self::Checkers(checkers) => checkers.set_transform(transform),
         }
     }
 
@@ -32,6 +35,7 @@ impl Pattern {
             Self::Stripe(stripe) => stripe.stripe_at(point),
             Self::Gradient(gradient) => gradient.gradient_at(point),
             Self::Ring(ring) => ring.ring_at(point),
+            Self::Checkers(checkers) => checkers.checkers_at(point),
         }
     }
 
@@ -40,6 +44,7 @@ impl Pattern {
             Self::Stripe(stripe) => stripe.stripe_at_object(object, point),
             Self::Gradient(gradient) => gradient.gradient_at_object(object, point),
             Self::Ring(ring) => ring.ring_at_object(object, point),
+            Self::Checkers(checkers) => checkers.checkers_at_object(object, point),
         }
     }
 }
@@ -186,5 +191,51 @@ impl Ring {
         let pattern_point = self.get_transform().inverse().unwrap() * object_point;
 
         self.ring_at(&pattern_point)
+    }
+}
+
+#[derive(PartialEq, Debug, Clone)]
+pub struct Checkers {
+    a: Color,
+    b: Color,
+    transform: Matrix<4>,
+}
+
+impl From<Checkers> for Pattern {
+    fn from(checkers: Checkers) -> Self {
+        Self::Checkers(checkers)
+    }
+}
+
+impl Checkers {
+    pub fn new(a: Color, b: Color, transform: Option<Matrix<4>>) -> Self {
+        Self {
+            a,
+            b,
+            transform: transform.map_or_else(Matrix::<4>::identity, |t| t),
+        }
+    }
+
+    pub const fn get_transform(&self) -> &Matrix<4> {
+        &self.transform
+    }
+
+    pub fn set_transform(&mut self, transform: Matrix<4>) {
+        self.transform = transform;
+    }
+
+    pub fn checkers_at(&self, point: &Point) -> Color {
+        if (point.x().floor() + point.y().floor() + point.z().floor()) % 2.0 == 0.0 {
+            self.a.clone()
+        } else {
+            self.b.clone()
+        }
+    }
+
+    pub fn checkers_at_object(&self, object: &Object, point: &Point) -> Color {
+        let object_point = object.get_transform().inverse().unwrap() * point;
+        let pattern_point = self.get_transform().inverse().unwrap() * object_point;
+
+        self.checkers_at(&pattern_point)
     }
 }

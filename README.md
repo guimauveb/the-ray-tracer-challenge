@@ -20,7 +20,6 @@
 
 #### ✅ Chapter 9 - Planes
 
-#### 👨🏼‍💻 Chapter 10 - Patterns
+#### ✅ Chapter 10 - Patterns
 
-
-
+#### 👨🏼‍💻 Chapter 11 - Reflection and Refraction
