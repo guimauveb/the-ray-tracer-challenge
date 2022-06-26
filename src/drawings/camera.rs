@@ -47,6 +47,7 @@ pub fn spheres() -> Result<(), std::io::Error> {
     middle_material.set_color(Color::new(0.1, 1.0, 0.5));
     middle_material.set_diffuse(0.7);
     middle_material.set_specular(0.3);
+    middle_material.set_reflective(0.1);
     middle.set_material(middle_material);
 
     // The smaller green sphere on the right is scaled in half.
@@ -58,6 +59,7 @@ pub fn spheres() -> Result<(), std::io::Error> {
     right_material.set_color(Color::new(0.5, 1.0, 0.1));
     right_material.set_diffuse(0.7);
     right_material.set_specular(0.3);
+    right_material.set_reflective(0.1);
     right.set_material(right_material);
 
     // The smallest sphere is scaled by a third, before being translated.
@@ -69,6 +71,7 @@ pub fn spheres() -> Result<(), std::io::Error> {
     left_material.set_color(Color::new(1.0, 0.8, 0.1));
     left_material.set_diffuse(0.7);
     left_material.set_specular(0.3);
+    left_material.set_reflective(0.1);
     left.set_material(left_material);
 
     // The light source is white, shining from above and to the left.
