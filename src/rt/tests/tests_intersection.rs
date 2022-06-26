@@ -98,7 +98,7 @@ fn precomputing_the_state_of_an_intersection() {
     let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
     let shape = Object::Sphere(Sphere::default());
     let i = Intersection::new(4.0, &shape);
-    let comps = i.prepare_computations(&r);
+    let comps = i.prepare_computations(&r, None);
     let expected_comps = Computation::new(
         &i,
         Point::new(0.0, 0.0, -1.0),
@@ -107,6 +107,7 @@ fn precomputing_the_state_of_an_intersection() {
         false,
         Point::new(0.0, 0.0, -1.00001),
         Vector::new(0.0, 0.0, -1.0), // NOTE - Might need to be updated
+        (1.0, 1.0),
     );
 
     assert_eq!(comps, expected_comps);
@@ -117,7 +118,7 @@ fn the_hit_when_the_instersection_occurs_on_the_outside() {
     let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
     let shape = Object::Sphere(Sphere::default());
     let i = Intersection::new(4.0, &shape);
-    let comps = i.prepare_computations(&r);
+    let comps = i.prepare_computations(&r, None);
     assert_eq!(comps.inside(), false);
 }
 
@@ -126,7 +127,7 @@ fn the_hit_when_the_instersection_occurs_on_the_inside() {
     let r = Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 0.0, 1.0));
     let shape = Object::Sphere(Sphere::default());
     let i = Intersection::new(1.0, &shape);
-    let comps = i.prepare_computations(&r);
+    let comps = i.prepare_computations(&r, None);
     assert_eq!(comps.point(), &Point::new(0.0, 0.0, 1.0));
     assert_eq!(comps.eye_vector(), &Vector::new(0.0, 0.0, -1.0));
     assert_eq!(comps.inside(), true);
@@ -141,7 +142,7 @@ fn the_hit_should_offset_the_point() {
         0.0, 0.0, 1.0,
     )));
     let i = Intersection::new(5.0, &shape);
-    let comps = i.prepare_computations(&r);
+    let comps = i.prepare_computations(&r, None);
     assert!(comps.over_point().z() < -EPSILON / 2.0);
     assert!(comps.point().z() > comps.over_point().z());
 }
@@ -154,7 +155,7 @@ fn precomputing_the_reflection_vector() {
         Vector::new(0.0, -2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0),
     );
     let i = Intersection::new(2.0_f64.sqrt(), &shape);
-    let comps = i.prepare_computations(&r);
+    let comps = i.prepare_computations(&r, None);
     assert_eq!(
         comps.reflect_vector(),
         &Vector::new(0.0, 2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0)

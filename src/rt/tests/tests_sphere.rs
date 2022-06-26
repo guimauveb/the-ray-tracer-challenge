@@ -2,6 +2,8 @@
 use {
     crate::{
         rt::{
+            intersection::Intersection,
+            intersections::Intersections,
             material::Material,
             matrix::Matrix,
             object::Object,
@@ -11,7 +13,7 @@ use {
         },
         tuple::{point::Point, vector::Vector},
     },
-    std::f64::consts::PI,
+    std::{f64::consts::PI, ops::Deref},
 };
 
 #[test]
@@ -162,4 +164,52 @@ fn a_sphere_may_be_assigned_a_material() {
     m.set_ambient(1.0);
     let s = Object::Sphere(Sphere::with_material(m.clone()));
     assert_eq!(s.material(), &m);
+}
+
+#[test]
+fn a_helper_for_producing_a_sphere_with_a_glassy_material() {
+    let s = Sphere::glassy();
+    assert_eq!(s.transform(), &Matrix::identity());
+    assert_eq!(s.material().transparency(), 1.0);
+    assert_eq!(s.material().refractive_index(), 1.5);
+}
+
+// TODO
+#[test]
+fn finding_n1_and_n2_at_various_intersections() {
+    let mut a = Object::Sphere(Sphere::glassy());
+    a.set_transform(Matrix::scaling(2.0, 2.0, 2.0));
+    a.material_mut().set_refractive_index(1.5);
+
+    let mut b = Object::Sphere(Sphere::glassy());
+    b.set_transform(Matrix::translation(0.0, 0.0, -0.25));
+    b.material_mut().set_refractive_index(2.0);
+
+    let mut c = Object::Sphere(Sphere::glassy());
+    c.set_transform(Matrix::translation(0.0, 0.0, 0.25));
+    c.material_mut().set_refractive_index(2.5);
+
+    let r = Ray::new(Point::new(0.0, 0.0, -4.0), Vector::new(0.0, 0.0, 1.0));
+    let xs = Intersections::new(vec![
+        Intersection::new(2.0, &a),
+        Intersection::new(2.75, &b),
+        Intersection::new(3.25, &c),
+        Intersection::new(4.75, &b),
+        Intersection::new(5.25, &c),
+        Intersection::new(6.0, &a),
+    ]);
+    let examples = vec![
+        (1.0, 1.5),
+        (1.5, 2.0),
+        (2.0, 2.5),
+        (2.0, 2.5),
+        (2.5, 2.5),
+        (2.5, 1.5),
+        (1.5, 1.0),
+    ];
+    for i in 0..examples.len() {
+        let comps = xs[i].prepare_computations(&r, Some(&xs));
+        assert_eq!(comps.n1(), examples[i].0);
+        assert_eq!(comps.n2(), examples[i].1);
+    }
 }

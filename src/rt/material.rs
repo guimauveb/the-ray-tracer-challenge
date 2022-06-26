@@ -12,6 +12,8 @@ pub struct Material {
     specular: f64,
     shininess: f64,
     reflective: f64,
+    transparency: f64,
+    refractive_index: f64,
 }
 
 impl Default for Material {
@@ -19,21 +21,27 @@ impl Default for Material {
     /// ```
     /// let material = Material {
     ///     color: Color { 1.0, 1.0, 1.0 },
+    ///     pattern: None,
     ///     ambient: 0.1,
     ///     diffuse: 0.9,
     ///     specular: 0.9,
     ///     shininess: 200.0,
+    ///     reflective: 0.0,
+    ///     transparency: 0.0,
+    ///     refractive_index: 1.0,
     /// };
     /// ```
     fn default() -> Self {
         Self {
             color: Color::white(),
+            pattern: None,
             ambient: 0.1,
             diffuse: 0.9,
             specular: 0.9,
             shininess: 200.0,
-            pattern: None,
             reflective: 0.0,
+            transparency: 0.0,
+            refractive_index: 1.0,
         }
     }
 }
@@ -46,6 +54,8 @@ impl Material {
         specular: f64,
         shininess: f64,
         reflective: f64,
+        transparency: f64,
+        refractive_index: f64,
     ) -> Self {
         Self {
             color,
@@ -55,6 +65,8 @@ impl Material {
             specular,
             shininess,
             reflective,
+            refractive_index,
+            transparency,
         }
     }
 
@@ -86,6 +98,14 @@ impl Material {
         self.reflective
     }
 
+    pub const fn transparency(&self) -> f64 {
+        self.transparency
+    }
+
+    pub const fn refractive_index(&self) -> f64 {
+        self.refractive_index
+    }
+
     pub fn set_color(&mut self, color: Color) {
         self.color = color;
     }
@@ -112,6 +132,14 @@ impl Material {
 
     pub fn set_reflective(&mut self, reflective: f64) {
         self.reflective = reflective;
+    }
+
+    pub fn set_transparency(&mut self, transparency: f64) {
+        self.transparency = transparency;
+    }
+
+    pub fn set_refractive_index(&mut self, refractive_index: f64) {
+        self.refractive_index = refractive_index;
     }
 
     /// Returns the color of the material at a specified point from a specified view point.

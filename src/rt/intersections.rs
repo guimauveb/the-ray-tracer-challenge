@@ -1,6 +1,6 @@
 use {
     super::{intersection::Intersection, object::Object},
-    std::ops::Index,
+    std::ops::{Deref, Index},
 };
 
 /// Wrapper around a `Vec<Intersection<'objects>>` that keeps intersections sorted.
@@ -21,6 +21,7 @@ type Idx = usize;
 
 impl<'objects> Index<Idx> for Intersections<'objects> {
     type Output = Intersection<'objects>;
+
     fn index(&self, idx: Idx) -> &Self::Output {
         &self.0[idx]
     }
@@ -29,6 +30,7 @@ impl<'objects> Index<Idx> for Intersections<'objects> {
 impl<'object> IntoIterator for Intersections<'object> {
     type Item = Intersection<'object>;
     type IntoIter = std::vec::IntoIter<Self::Item>;
+
     fn into_iter(self) -> Self::IntoIter {
         self.0.into_iter()
     }
@@ -70,5 +72,13 @@ impl<'objects> Intersections<'objects> {
     /// Returns the first positive intersection or `None` if there is none.
     pub fn hit(&self) -> Option<&Intersection<'objects>> {
         self.0.iter().find(|&i| i.t() > 0.0)
+    }
+}
+
+impl<'objects> Deref for Intersections<'objects> {
+    type Target = [Intersection<'objects>];
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }

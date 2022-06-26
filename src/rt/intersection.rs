@@ -31,7 +31,12 @@ impl<'object> Intersection<'object> {
         eye_vector.dot(normal) < 0.0
     }
 
-    pub fn prepare_computations(&'object self, ray: &Ray) -> Computation<'object> {
+    // TODO
+    pub fn prepare_computations(
+        &'object self,
+        ray: &Ray,
+        intersections: Option<&[Intersection]>,
+    ) -> Computation<'object> {
         let point = ray.position(self.t());
         let eye_vector = -ray.direction();
         let normal_vector = self.object().normal_at(&point);
@@ -53,6 +58,7 @@ impl<'object> Intersection<'object> {
             inside,
             over_point,
             reflect_vector,
+            (1.0, 1.0), // TODO - Refractive indices
         )
     }
 }

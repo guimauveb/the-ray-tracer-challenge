@@ -87,7 +87,10 @@ impl World {
     pub fn color_at(&self, ray: &Ray, remaining_calls: u8) -> Color {
         if let Some(intersections) = ray.intersect(self) {
             if let Some(hit) = intersections.hit() {
-                return self.shade_hit(&hit.prepare_computations(ray), remaining_calls);
+                return self.shade_hit(
+                    &hit.prepare_computations(ray, Some(&intersections)),
+                    remaining_calls,
+                );
             }
         }
         Color::black()
@@ -146,7 +149,17 @@ impl World {
 
 impl Default for World {
     fn default() -> Self {
-        let material = Material::new(Color::new(0.8, 1.0, 0.6), None, 0.1, 0.7, 0.2, 200.0, 0.0);
+        let material = Material::new(
+            Color::new(0.8, 1.0, 0.6),
+            None,
+            0.1,
+            0.7,
+            0.2,
+            200.0,
+            0.0,
+            0.0,
+            1.0,
+        );
         let s1 = Sphere::with_material(material);
 
         let transform = Matrix::<4>::scaling(0.5, 0.5, 0.5);

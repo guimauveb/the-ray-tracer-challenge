@@ -15,6 +15,9 @@ pub struct Computation<'object> {
     inside: bool,
     over_point: Point,
     reflect_vector: Vector,
+    /// `(n1, n2)` are the names given to the refractive indices of the material on either side of the ray,
+    /// with `n1` belonging to the material being "exited", and `n2` belonging to the material being "entered".
+    refractive_indices: (f64, f64),
 }
 
 impl<'object> Computation<'object> {
@@ -26,6 +29,7 @@ impl<'object> Computation<'object> {
         inside: bool,
         over_point: Point,
         reflect_vector: Vector,
+        (n1, n2): (f64, f64),
     ) -> Self {
         Self {
             intersection,
@@ -35,6 +39,7 @@ impl<'object> Computation<'object> {
             inside,
             over_point,
             reflect_vector,
+            refractive_indices: (n1, n2),
         }
     }
 
@@ -64,5 +69,13 @@ impl<'object> Computation<'object> {
 
     pub const fn reflect_vector(&self) -> &Vector {
         &self.reflect_vector
+    }
+
+    pub const fn n1(&self) -> f64 {
+        self.refractive_indices.0
+    }
+
+    pub const fn n2(&self) -> f64 {
+        self.refractive_indices.1
     }
 }

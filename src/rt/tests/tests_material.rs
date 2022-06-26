@@ -105,6 +105,8 @@ fn lighting_with_a_pattern_applied() {
         0.0,
         0.0,
         0.0,
+        0.0,
+        0.0,
     );
     let eye = Vector::new(0.0, 0.0, -1.0);
     let normal = Vector::new(0.0, 0.0, -1.0);

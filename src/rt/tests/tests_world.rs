@@ -24,7 +24,17 @@ fn creating_a_world() {
 
 #[test]
 fn the_default_world() {
-    let material = Material::new(Color::new(0.8, 1.0, 0.6), None, 0.1, 0.7, 0.2, 200.0, 0.0);
+    let material = Material::new(
+        Color::new(0.8, 1.0, 0.6),
+        None,
+        0.1,
+        0.7,
+        0.2,
+        200.0,
+        0.0,
+        0.0,
+        1.0,
+    );
     let s1 = Sphere::with_material(material);
 
     let transform = Matrix::<4>::scaling(0.5, 0.5, 0.5);
@@ -59,7 +69,7 @@ fn shading_an_intersection() {
     let shape = &w.objects().unwrap()[0]; // The first object in the world
     let i = Intersection::new(4.0, &shape);
 
-    let comps = i.prepare_computations(&r);
+    let comps = i.prepare_computations(&r, None);
     let c = w.shade_hit(&comps, MAX_REFLECTION_DEPTH);
     let expected_c = Color::new(0.3806609553101071, 0.47582619413763383, 0.2854957164825803);
     assert_eq!(c, expected_c);
@@ -74,7 +84,7 @@ fn shading_an_intersection_from_the_inside() {
     let r = Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 0.0, 1.0));
     let shape = &w.objects().unwrap()[1];
     let i = Intersection::new(0.5, &shape);
-    let comps = i.prepare_computations(&r);
+    let comps = i.prepare_computations(&r, None);
     let c = w.shade_hit(&comps, MAX_REFLECTION_DEPTH);
     let expected_c = Color::new(0.9049812520679432, 0.9049812520679432, 0.9049812520679432);
     assert_eq!(c, expected_c);
@@ -102,7 +112,17 @@ fn the_color_when_a_ray_hits() {
 fn the_color_with_an_intersection_behind_the_ray() {
     // Create the default objects of the world with the values specfied in the test instead of having to make the material() method return a mutable reference
     // when it shouldnt be necessary for the rest of the program.
-    let material = Material::new(Color::new(0.8, 1.0, 0.6), None, 1.0, 0.7, 0.2, 200.0, 0.0);
+    let material = Material::new(
+        Color::new(0.8, 1.0, 0.6),
+        None,
+        1.0,
+        0.7,
+        0.2,
+        200.0,
+        0.0,
+        0.0,
+        0.0,
+    );
     let s1 = Sphere::with_material(material.clone());
 
     let transform = Matrix::<4>::scaling(0.5, 0.5, 0.5);
@@ -162,7 +182,7 @@ fn shade_hit_is_given_an_intersection_in_shadow() {
     let r = Ray::new(Point::new(0.0, 0.0, 5.0), Vector::new(0.0, 0.0, 1.0));
     // Intersection with s2 in the world
     let i = Intersection::new(4.0, &w.objects().as_ref().unwrap()[1]);
-    let comps = i.prepare_computations(&r);
+    let comps = i.prepare_computations(&r, None);
     let color = w.shade_hit(&comps, MAX_REFLECTION_DEPTH);
     assert_eq!(color, Color::new(0.1, 0.1, 0.1));
 }
@@ -174,7 +194,7 @@ fn the_reflected_color_for_a_non_reflective_material() {
     w.objects_mut().unwrap()[1].material_mut().set_ambient(1.0);
     let shape = &w.objects().unwrap()[1];
     let i = Intersection::new(1.0, &shape);
-    let comps = i.prepare_computations(&r);
+    let comps = i.prepare_computations(&r, None);
     let color = w.reflected_color(&comps, MAX_REFLECTION_DEPTH);
     assert_eq!(color, Color::new(0.0, 0.0, 0.0));
 }
@@ -191,7 +211,7 @@ fn the_reflected_color_for_a_reflective_material() {
         Vector::new(0.0, -2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0),
     );
     let i = Intersection::new(2.0_f64.sqrt(), &w.objects().unwrap()[2]);
-    let comps = i.prepare_computations(&r);
+    let comps = i.prepare_computations(&r, None);
     let color = w.reflected_color(&comps, MAX_REFLECTION_DEPTH);
     assert_eq!(
         color,
@@ -211,7 +231,7 @@ fn shade_hit_with_a_reflective_material() {
         Vector::new(0.0, -2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0),
     );
     let i = Intersection::new(2.0_f64.sqrt(), &w.objects().unwrap()[2]);
-    let comps = i.prepare_computations(&r);
+    let comps = i.prepare_computations(&r, None);
     let color = w.shade_hit(&comps, MAX_REFLECTION_DEPTH);
     assert_eq!(
         color,
@@ -235,8 +255,8 @@ fn color_at_with_mutually_reflective_surfaces() {
     upper.set_transform(Matrix::translation(0.0, 1.0, 0.0));
     w.add_object(upper.into());
     let r = Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 1.0, 0.0));
-    // NOTE - Actually, "should terminate successfully" (and not
-    // cause a stack overflow).
+    // NOTE - Here, we're actually testing that the function
+    // "should terminate successfully" (not cause a stack overflow).
     assert_eq!(
         w.color_at(&r, MAX_REFLECTION_DEPTH),
         Color::new(1.9, 1.9, 1.9)
@@ -255,7 +275,7 @@ fn the_reflected_color_at_the_maximum_recursive_depth() {
         Vector::new(0.0, -2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0),
     );
     let i = Intersection::new(2.0_f64.sqrt(), &w.objects().unwrap()[2]);
-    let comps = i.prepare_computations(&r);
+    let comps = i.prepare_computations(&r, None);
     let color = w.reflected_color(&comps, 0);
     assert_eq!(color, Color::black());
 }
