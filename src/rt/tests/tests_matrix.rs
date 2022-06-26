@@ -4,7 +4,7 @@ use {
         rt::matrix::{Cofactor, Determinant, Matrix, Minor, Submatrix},
         tuple::{point::Point, vector::Vector},
     },
-    std::f32::consts::PI,
+    std::f64::consts::PI,
 };
 
 #[test]
@@ -445,7 +445,7 @@ fn rotating_a_point_around_the_x_axis() {
 
     assert_eq!(
         half_quarter * &point,
-        Point::new(0.0, 2.0_f32.sqrt() / 2.0, 2.0_f32.sqrt() / 2.0)
+        Point::new(0.0, 2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0)
     );
     assert_eq!(full_quarter * &point, Point::new(0.0, 0.0, 1.0));
 }
@@ -458,7 +458,7 @@ fn the_inverse_of_an_x_rotation_rotates_in_the_opposite_direciton() {
 
     assert_eq!(
         inverse * point,
-        Point::new(0.0, 2.0_f32.sqrt() / 2.0, -2.0_f32.sqrt() / 2.0)
+        Point::new(0.0, 2.0_f64.sqrt() / 2.0, -2.0_f64.sqrt() / 2.0)
     );
 }
 
@@ -470,7 +470,7 @@ fn rotating_a_point_around_the_y_axis() {
 
     assert_eq!(
         half_quarter * &point,
-        Point::new(2.0_f32.sqrt() / 2.0, 0.0, 2.0_f32.sqrt() / 2.0)
+        Point::new(2.0_f64.sqrt() / 2.0, 0.0, 2.0_f64.sqrt() / 2.0)
     );
     assert_eq!(full_quarter * point, Point::new(1.0, 0.0, 0.0));
 }
@@ -483,7 +483,7 @@ fn rotating_a_point_around_the_z_axis() {
 
     assert_eq!(
         half_quarter * &point,
-        Point::new(-2.0_f32.sqrt() / 2.0, 2.0_f32.sqrt() / 2.0, 0.0)
+        Point::new(-2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0, 0.0)
     );
     assert_eq!(full_quarter * &point, Point::new(-1.0, 0.0, 0.0));
 }

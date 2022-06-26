@@ -38,7 +38,7 @@ pub fn ray_sphere_hit() -> Result<(), std::io::Error> {
     // Wall
     for y in -128..127 {
         for x in -128..127 {
-            wall.push(Point::new(x as f32, y as f32, 10.0));
+            wall.push(Point::new(x as f64, y as f64, 10.0));
         }
     }
     assert_eq!(wall.capacity(), 256_usize.pow(2));
@@ -47,7 +47,7 @@ pub fn ray_sphere_hit() -> Result<(), std::io::Error> {
     for y in -128..127 {
         for x in -128..127 {
             let origin = Point::new(0.0, 0.0, -1.005);
-            let direction = Vector::new(x as f32, y as f32, 10.0);
+            let direction = Vector::new(x as f64, y as f64, 10.0);
             rays.push(Ray::new(origin, direction));
         }
     }

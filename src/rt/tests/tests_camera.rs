@@ -5,7 +5,7 @@ use {
         rt::{camera::Camera, color::Color, matrix::Matrix, world::World},
         tuple::{point::Point, vector::Vector},
     },
-    std::f32::consts::PI,
+    std::f64::consts::PI,
 };
 
 #[test]
@@ -59,7 +59,7 @@ fn constructing_a_ray_when_the_camera_is_transformed() {
     assert_eq!(r.origin(), &Point::new(0.0, 2.0, -5.0));
     assert_eq!(
         r.direction(),
-        &Vector::new(2.0_f32.sqrt() / 2.0, 0.0, -2.0_f32.sqrt() / 2.0)
+        &Vector::new(2.0_f64.sqrt() / 2.0, 0.0, -2.0_f64.sqrt() / 2.0)
     );
 }
 
@@ -78,6 +78,6 @@ fn rendering_a_world_with_a_camera() {
     let image = c.render(&w);
     assert_eq!(
         image.pixel_at(5, 5),
-        &Color::new(0.3804233, 0.4755291, 0.28531748)
+        &Color::new(0.3806609553101071, 0.47582619413763383, 0.2854957164825803)
     );
 }

@@ -51,14 +51,14 @@ fn can_negate_a_vector() {
 #[test]
 fn can_multiply_vector_by_scalar() {
     let vector = Vector::new(1.0, -2.0, 3.0);
-    let scalar = 3.5_f32;
+    let scalar = 3.5_f64;
     let expected = Vector::new(3.5, -7.0, 10.5);
     assert_eq!(vector * scalar, expected);
 }
 
 #[test]
 fn can_multiply_scalar_by_vector() {
-    let scalar = 3.5_f32;
+    let scalar = 3.5_f64;
     let vector = Vector::new(1.0, -2.0, 3.0);
     let expected = Vector::new(3.5, -7.0, 10.5);
     assert_eq!(scalar * vector, expected);
@@ -67,7 +67,7 @@ fn can_multiply_scalar_by_vector() {
 #[test]
 fn can_divide_vector_by_scalar() {
     let vector = Vector::new(1.0, -2.0, 3.0);
-    let scalar = 2_f32;
+    let scalar = 2_f64;
     let expected = Vector::new(0.5, -1.0, 1.5);
     assert_eq!(vector / scalar, expected);
 }
@@ -86,14 +86,14 @@ fn can_compute_vector_magnitude_2() {
 fn can_compute_vector_magnitude_3() {
     assert!(Vector::new(1.0, 2.0, 3.0)
         .magnitude()
-        .approx_eq(f32::sqrt(14.0)))
+        .approx_eq(f64::sqrt(14.0)))
 }
 
 #[test]
 fn can_compute_vector_magnitude_4() {
     assert!(Vector::new(-1.0, -2.0, -3.0)
         .magnitude()
-        .approx_eq(f32::sqrt(14.0)))
+        .approx_eq(f64::sqrt(14.0)))
 }
 
 #[test]
@@ -144,7 +144,7 @@ fn reflecting_a_vector_approaching_at_45_deg() {
 #[test]
 fn reflecting_a_vector_off_a_slanted_surface() {
     let v = Vector::new(0.0, -1.0, 0.0);
-    let normal = Vector::new(2.0_f32.sqrt() / 2.0, 2.0_f32.sqrt() / 2.0, 0.0);
+    let normal = Vector::new(2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0, 0.0);
     let r = v.reflect(&normal);
     assert_eq!(r, Vector::new(1.0, 0.0, 0.0));
 }

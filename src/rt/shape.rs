@@ -5,9 +5,10 @@ use {
 
 /// Methods common to all objects.
 pub trait Shape {
-    fn get_transform(&self) -> &Matrix<4>;
+    fn transform(&self) -> &Matrix<4>;
     fn set_transform(&mut self, transform: Matrix<4>);
-    fn get_material(&self) -> &Material;
+    fn material(&self) -> &Material;
+    fn material_mut(&mut self) -> &mut Material;
     fn set_material(&mut self, material: Material);
     /// Before computing the normal at some point,
     /// all shapes must first convert the point to

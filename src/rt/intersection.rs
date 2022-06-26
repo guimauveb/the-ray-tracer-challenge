@@ -1,26 +1,25 @@
 use {
     super::{computation::Computation, object::Object, ray::Ray, shape::Shape},
-    crate::tuple::vector::Vector,
+    crate::{float::epsilon::EPSILON, tuple::vector::Vector},
 };
 
-/// Used in replacement of EPSILON, which, being too small,
-/// causes acne in some scenes.
-const OFFSET: f32 = 0.01;
+/// Used in replacement of EPSILON if needed.
+const OFFSET: f64 = EPSILON;
 
 #[derive(Debug, PartialEq, Clone)]
 #[non_exhaustive]
 /// Represents the intersection between a ray and an object at point `t` along the ray.
 pub struct Intersection<'object> {
-    t: f32,
+    t: f64,
     object: &'object Object,
 }
 
 impl<'object> Intersection<'object> {
-    pub const fn new(t: f32, object: &'object Object) -> Self {
+    pub const fn new(t: f64, object: &'object Object) -> Self {
         Self { t, object }
     }
 
-    pub const fn t(&self) -> f32 {
+    pub const fn t(&self) -> f64 {
         self.t
     }
 
@@ -44,7 +43,16 @@ impl<'object> Intersection<'object> {
             normal_vector
         };
         let over_point = &point + (&normal_vector * OFFSET);
+        let reflect_vector = ray.direction().reflect(&normal_vector);
 
-        Computation::new(self, point, eye_vector, normal_vector, inside, over_point)
+        Computation::new(
+            self,
+            point,
+            eye_vector,
+            normal_vector,
+            inside,
+            over_point,
+            reflect_vector,
+        )
     }
 }

@@ -7,6 +7,7 @@ use crate::{
         intersections::Intersections,
         matrix::Matrix,
         object::Object,
+        plane::Plane,
         ray::{Intersect, Ray},
         sphere::Sphere,
     },
@@ -104,7 +105,8 @@ fn precomputing_the_state_of_an_intersection() {
         Vector::new(0.0, 0.0, -1.0),
         Vector::new(0.0, 0.0, -1.0),
         false,
-        Point::new(0.0, 0.0, -1.01),
+        Point::new(0.0, 0.0, -1.00001),
+        Vector::new(0.0, 0.0, -1.0), // NOTE - Might need to be updated
     );
 
     assert_eq!(comps, expected_comps);
@@ -142,4 +144,19 @@ fn the_hit_should_offset_the_point() {
     let comps = i.prepare_computations(&r);
     assert!(comps.over_point().z() < -EPSILON / 2.0);
     assert!(comps.point().z() > comps.over_point().z());
+}
+
+#[test]
+fn precomputing_the_reflection_vector() {
+    let shape = Object::Plane(Plane::default());
+    let r = Ray::new(
+        Point::new(0.0, 1.0, -1.0),
+        Vector::new(0.0, -2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0),
+    );
+    let i = Intersection::new(2.0_f64.sqrt(), &shape);
+    let comps = i.prepare_computations(&r);
+    assert_eq!(
+        comps.reflect_vector(),
+        &Vector::new(0.0, 2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0)
+    );
 }

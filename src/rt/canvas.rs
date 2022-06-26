@@ -32,17 +32,17 @@ impl Canvas {
         &self.pixels
     }
 
-    const fn get_pixel_index(&self, x: usize, y: usize) -> usize {
+    const fn pixel_index(&self, x: usize, y: usize) -> usize {
         y * self.width + x
     }
 
     pub fn write_pixel(&mut self, x: usize, y: usize, color: Color) {
-        let index = self.get_pixel_index(x, y);
+        let index = self.pixel_index(x, y);
         self.pixels[index] = color;
     }
 
     pub fn pixel_at(&self, x: usize, y: usize) -> &Color {
-        let index = self.get_pixel_index(x, y);
+        let index = self.pixel_index(x, y);
         &self.pixels[index]
     }
 
@@ -55,7 +55,7 @@ impl Canvas {
 }
 
 impl ToPPM for Canvas {
-    fn process_color(color: f32) -> String {
+    fn process_color(color: f64) -> String {
         ((color * PPM_MAX_COLOR_VALUE)
             .clamp(PPM_MIN_COLOR_VALUE, PPM_MAX_COLOR_VALUE)
             .ceil() as usize)
@@ -100,7 +100,7 @@ impl ToPPM for Canvas {
         let mut pixel_data = String::new();
         for y in 0..self.height {
             for x in 0..self.width {
-                let index = self.get_pixel_index(x, y);
+                let index = self.pixel_index(x, y);
                 pixel_data.push_str(&Self::process_color(self.pixels[index].red()));
                 pixel_data.push(' ');
                 pixel_data.push_str(&Self::process_color(self.pixels[index].green()));

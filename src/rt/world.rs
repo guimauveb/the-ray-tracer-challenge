@@ -13,6 +13,12 @@ use crate::{
     tuple::point::Point,
 };
 
+/// Maximum number of times `reflected_color` can be called before stopping
+/// the recursion and returning `Color::black()` by default.
+/// The puprpose of this limit is to avoid infinite recursion in the case
+/// where two surfaces reflect each other.
+pub const MAX_REFLECTION_DEPTH: u8 = 6;
+
 #[derive(PartialEq, Debug)]
 pub struct World {
     objects: Option<Vec<Object>>,
@@ -57,6 +63,10 @@ impl World {
         self.objects.as_deref()
     }
 
+    pub fn objects_mut(&mut self) -> Option<&mut [Object]> {
+        self.objects.as_deref_mut()
+    }
+
     pub const fn light(&self) -> Option<&PointLight> {
         self.light.as_ref()
     }
@@ -73,29 +83,28 @@ impl World {
         }
     }
 
-    pub fn shade_hit(&self, computations: &Computation) -> Color {
-        computations
-            .intersection()
-            .object()
-            .get_material()
-            .lighting(
-                computations.intersection().object(),
-                self.light.as_ref().expect("World should have a light!"),
-                computations.over_point(),
-                computations.eye_vector(),
-                computations.normal_vector(),
-                self.is_shadowed(computations.over_point()),
-            )
-    }
-
     /// Intersects the world with the given ray and returns the color at the resulting intersection.
-    pub fn color_at(&self, ray: &Ray) -> Color {
+    pub fn color_at(&self, ray: &Ray, remaining_calls: u8) -> Color {
         if let Some(intersections) = ray.intersect(self) {
             if let Some(hit) = intersections.hit() {
-                return self.shade_hit(&hit.prepare_computations(ray));
+                return self.shade_hit(&hit.prepare_computations(ray), remaining_calls);
             }
         }
         Color::black()
+    }
+
+    pub fn shade_hit(&self, computations: &Computation, remaining_calls: u8) -> Color {
+        let surface = computations.intersection().object().material().lighting(
+            computations.intersection().object(),
+            self.light.as_ref().expect("World should have a light!"),
+            computations.over_point(),
+            computations.eye_vector(),
+            computations.normal_vector(),
+            self.is_shadowed(computations.over_point()),
+        );
+        let reflected = self.reflected_color(computations, remaining_calls);
+
+        surface + reflected
     }
 
     pub fn is_shadowed(&self, point: &Point) -> bool {
@@ -118,11 +127,26 @@ impl World {
         }
         false
     }
+
+    pub fn reflected_color(&self, computations: &Computation, remaining_calls: u8) -> Color {
+        if remaining_calls == 0
+            || computations.intersection().object().material().reflective() == 0.0
+        {
+            Color::black()
+        } else {
+            let reflect_ray = Ray::new(
+                computations.over_point().clone(),
+                computations.reflect_vector().clone(),
+            );
+            let color = self.color_at(&reflect_ray, remaining_calls - 1);
+            color * computations.intersection().object().material().reflective()
+        }
+    }
 }
 
 impl Default for World {
     fn default() -> Self {
-        let material = Material::new(Color::new(0.8, 1.0, 0.6), None, 0.1, 0.7, 0.2, 200.0);
+        let material = Material::new(Color::new(0.8, 1.0, 0.6), None, 0.1, 0.7, 0.2, 200.0, 0.0);
         let s1 = Sphere::with_material(material);
 
         let transform = Matrix::<4>::scaling(0.5, 0.5, 0.5);

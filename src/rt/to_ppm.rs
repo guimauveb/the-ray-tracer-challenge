@@ -7,7 +7,7 @@ pub trait ToPPM {
     /* Transform the color value originally ranging from 0.0 to 1.0 to a value between 0.0 and 255.0.
      * Then take the smallest integer greater than the result.
      * Finally, convert it to a string.*/
-    fn process_color(color: f32) -> String;
+    fn process_color(color: f64) -> String;
 
     /* NOTE (good to know if we get rid a the Vec<String>)
      * The final PPM pixel_data in which we split lines greater than 70 chars will be the same length as the pixel_data, since we are only

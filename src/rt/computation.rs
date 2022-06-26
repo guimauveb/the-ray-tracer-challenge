@@ -14,6 +14,7 @@ pub struct Computation<'object> {
     normal_vector: Vector,
     inside: bool,
     over_point: Point,
+    reflect_vector: Vector,
 }
 
 impl<'object> Computation<'object> {
@@ -24,6 +25,7 @@ impl<'object> Computation<'object> {
         normal_vector: Vector,
         inside: bool,
         over_point: Point,
+        reflect_vector: Vector,
     ) -> Self {
         Self {
             intersection,
@@ -32,6 +34,7 @@ impl<'object> Computation<'object> {
             normal_vector,
             inside,
             over_point,
+            reflect_vector,
         }
     }
 
@@ -57,5 +60,9 @@ impl<'object> Computation<'object> {
 
     pub const fn over_point(&self) -> &Point {
         &self.over_point
+    }
+
+    pub const fn reflect_vector(&self) -> &Vector {
+        &self.reflect_vector
     }
 }

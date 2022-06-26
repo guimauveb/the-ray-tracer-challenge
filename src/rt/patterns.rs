@@ -12,12 +12,12 @@ pub enum Pattern {
 }
 
 impl Pattern {
-    pub const fn get_transform(&self) -> &Matrix<4> {
+    pub const fn transform(&self) -> &Matrix<4> {
         match self {
-            Self::Stripe(stripe) => stripe.get_transform(),
-            Self::Gradient(gradient) => gradient.get_transform(),
-            Self::Ring(ring) => ring.get_transform(),
-            Self::Checkers(checkers) => checkers.get_transform(),
+            Self::Stripe(stripe) => stripe.transform(),
+            Self::Gradient(gradient) => gradient.transform(),
+            Self::Ring(ring) => ring.transform(),
+            Self::Checkers(checkers) => checkers.transform(),
         }
     }
 
@@ -79,7 +79,7 @@ impl Stripe {
         &self.b
     }
 
-    pub const fn get_transform(&self) -> &Matrix<4> {
+    pub const fn transform(&self) -> &Matrix<4> {
         &self.transform
     }
 
@@ -96,8 +96,8 @@ impl Stripe {
     }
 
     pub fn stripe_at_object(&self, object: &Object, point: &Point) -> Color {
-        let object_point = object.get_transform().inverse().unwrap() * point;
-        let pattern_point = self.get_transform().inverse().unwrap() * object_point;
+        let object_point = object.transform().inverse().unwrap() * point;
+        let pattern_point = self.transform().inverse().unwrap() * object_point;
 
         self.stripe_at(&pattern_point)
     }
@@ -125,7 +125,7 @@ impl Gradient {
         }
     }
 
-    pub const fn get_transform(&self) -> &Matrix<4> {
+    pub const fn transform(&self) -> &Matrix<4> {
         &self.transform
     }
 
@@ -141,8 +141,8 @@ impl Gradient {
     }
 
     pub fn gradient_at_object(&self, object: &Object, point: &Point) -> Color {
-        let object_point = object.get_transform().inverse().unwrap() * point;
-        let pattern_point = self.get_transform().inverse().unwrap() * object_point;
+        let object_point = object.transform().inverse().unwrap() * point;
+        let pattern_point = self.transform().inverse().unwrap() * object_point;
 
         self.gradient_at(&pattern_point)
     }
@@ -170,7 +170,7 @@ impl Ring {
         }
     }
 
-    pub const fn get_transform(&self) -> &Matrix<4> {
+    pub const fn transform(&self) -> &Matrix<4> {
         &self.transform
     }
 
@@ -179,7 +179,7 @@ impl Ring {
     }
 
     pub fn ring_at(&self, point: &Point) -> Color {
-        if ((point.x().powi(2) + point.z().powi(2)).sqrt().floor()) % 2.0 == 0.0 {
+        if point.x().hypot(point.z()) == 0.0 {
             self.a.clone()
         } else {
             self.b.clone()
@@ -187,8 +187,8 @@ impl Ring {
     }
 
     pub fn ring_at_object(&self, object: &Object, point: &Point) -> Color {
-        let object_point = object.get_transform().inverse().unwrap() * point;
-        let pattern_point = self.get_transform().inverse().unwrap() * object_point;
+        let object_point = object.transform().inverse().unwrap() * point;
+        let pattern_point = self.transform().inverse().unwrap() * object_point;
 
         self.ring_at(&pattern_point)
     }
@@ -216,7 +216,7 @@ impl Checkers {
         }
     }
 
-    pub const fn get_transform(&self) -> &Matrix<4> {
+    pub const fn transform(&self) -> &Matrix<4> {
         &self.transform
     }
 
@@ -233,8 +233,8 @@ impl Checkers {
     }
 
     pub fn checkers_at_object(&self, object: &Object, point: &Point) -> Color {
-        let object_point = object.get_transform().inverse().unwrap() * point;
-        let pattern_point = self.get_transform().inverse().unwrap() * object_point;
+        let object_point = object.transform().inverse().unwrap() * point;
+        let pattern_point = self.transform().inverse().unwrap() * object_point;
 
         self.checkers_at(&pattern_point)
     }

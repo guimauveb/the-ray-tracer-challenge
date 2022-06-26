@@ -34,7 +34,7 @@ impl Ray {
     }
 
     /// Computes the point at the given distance along the ray.
-    pub fn position(&self, distance: f32) -> Point {
+    pub fn position(&self, distance: f64) -> Point {
         &self.origin + &self.direction * distance
     }
 }
@@ -50,7 +50,7 @@ impl Transform for Ray {
 
 /// Describes how a ray intersects with one or multiple objects.
 /// `O` is the object (most likely an Object or a World (composed of many objects)) being intersected.
-/// `I` is the type of the intersection returned (could be of type `[f32; 2]` or `Intersections` for instance).
+/// `I` is the type of the intersection returned (could be of type `[f64; 2]` or `Intersections` for instance).
 pub trait Intersect<'object, O, I> {
     /// Before computing the intersections, the ray
     /// must first be converted into object space by
@@ -59,7 +59,7 @@ pub trait Intersect<'object, O, I> {
     fn intersect(&self, object: &'object O) -> Option<I>;
 }
 
-impl<'object> Intersect<'object, Sphere, [f32; 2]> for Ray {
+impl<'object> Intersect<'object, Sphere, [f64; 2]> for Ray {
     /// If the ray intersects the sphere at two points P and P', we return [P, P']. If it intersects the sphere at one point P, we return [P, P]. Else we return None.
     ///  From <https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-sphere-intersection>:
     ///  1. Geometric solution
@@ -88,8 +88,8 @@ impl<'object> Intersect<'object, Sphere, [f32; 2]> for Ray {
     ///           a = D^2,
     ///           b = 2D(O-C),
     ///           c = |O-C|^2 - R^2
-    fn intersect(&self, sphere: &Sphere) -> Option<[f32; 2]> {
-        let transformed_ray = self.transform(&sphere.get_transform().inverse().unwrap());
+    fn intersect(&self, sphere: &Sphere) -> Option<[f64; 2]> {
+        let transformed_ray = self.transform(&sphere.transform().inverse().unwrap());
         let sphere_to_ray = transformed_ray.origin() - sphere.origin();
         let a = transformed_ray.direction().dot(transformed_ray.direction());
         let b = 2.0 * transformed_ray.direction().dot(&sphere_to_ray);
@@ -111,9 +111,9 @@ impl<'object> Intersect<'object, Sphere, [f32; 2]> for Ray {
     }
 }
 
-impl<'object> Intersect<'object, Plane, [f32; 2]> for Ray {
-    fn intersect(&self, plane: &Plane) -> Option<[f32; 2]> {
-        let transformed_ray = self.transform(&plane.get_transform().inverse().unwrap());
+impl<'object> Intersect<'object, Plane, [f64; 2]> for Ray {
+    fn intersect(&self, plane: &Plane) -> Option<[f64; 2]> {
+        let transformed_ray = self.transform(&plane.transform().inverse().unwrap());
         // The plane is defined in xz, it has no slope in y at all.
         // Thus, if a ray's direction vector also has no slope in y
         // It's parallel to the plane. In practice we'll treat any

@@ -22,12 +22,16 @@ impl Default for Plane {
 }
 
 impl Shape for Plane {
-    fn get_transform(&self) -> &Matrix<4> {
+    fn transform(&self) -> &Matrix<4> {
         &self.transform
     }
 
-    fn get_material(&self) -> &Material {
+    fn material(&self) -> &Material {
         &self.material
+    }
+
+    fn material_mut(&mut self) -> &mut Material {
+        &mut self.material
     }
 
     fn set_transform(&mut self, transform: Matrix<4>) {

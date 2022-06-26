@@ -7,7 +7,12 @@ pub mod float;
 pub mod rt;
 pub mod tuple;
 
-use rt::{color::Color, matrix::Matrix, patterns::Ring};
+// TODO - Test patterns
+use rt::{
+    color::Color,
+    matrix::Matrix,
+    patterns::{Checkers, Gradient, Ring},
+};
 
 fn main() {
     //if let Err(e) = drawing::projectile::launch_projecticle() {
@@ -22,14 +27,7 @@ fn main() {
     // if let Err(e) = drawings::ray_sphere_3d::ray_sphere_hit() {
     //     println!("{:#?}", e);
     // }
-    if let Err(e) = drawings::camera::spheres(Some(
-        Ring::new(
-            Color::white(),
-            Color::black(),
-            Some(Matrix::<4>::scaling(0.1, 0.1, 0.1)),
-        )
-        .into(),
-    )) {
+    if let Err(e) = drawings::camera::spheres() {
         println!("{:#?}", e);
     }
     //if let Err(e) = drawings::plane::spheres() {

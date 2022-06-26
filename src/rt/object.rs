@@ -28,17 +28,24 @@ impl From<Plane> for Object {
 }
 
 impl Shape for Object {
-    fn get_material(&self) -> &Material {
+    fn material(&self) -> &Material {
         match self {
-            Self::Sphere(sphere) => sphere.get_material(),
-            Self::Plane(plane) => plane.get_material(),
+            Self::Sphere(sphere) => sphere.material(),
+            Self::Plane(plane) => plane.material(),
         }
     }
 
-    fn get_transform(&self) -> &Matrix<4> {
+    fn material_mut(&mut self) -> &mut Material {
         match self {
-            Self::Sphere(sphere) => sphere.get_transform(),
-            Self::Plane(plane) => plane.get_transform(),
+            Self::Sphere(sphere) => sphere.material_mut(),
+            Self::Plane(plane) => plane.material_mut(),
+        }
+    }
+
+    fn transform(&self) -> &Matrix<4> {
+        match self {
+            Self::Sphere(sphere) => sphere.transform(),
+            Self::Plane(plane) => plane.transform(),
         }
     }
 

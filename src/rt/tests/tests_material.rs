@@ -34,7 +34,7 @@ fn lighting_with_the_eye_between_the_light_and_surface_eye_offset_45deg() {
     let object = Object::Sphere(Sphere::default());
     let m = Material::default();
     let position = Point::new(0.0, 0.0, 0.0);
-    let eye = Vector::new(0.0, 2.0_f32.sqrt() / 2.0, -2.0_f32.sqrt() / 2.0);
+    let eye = Vector::new(0.0, 2.0_f64.sqrt() / 2.0, -2.0_f64.sqrt() / 2.0);
     let normal = Vector::new(0.0, 0.0, -1.0);
     let light = PointLight::new(Point::new(0.0, 0.0, -10.0), Color::white());
     let result = m.lighting(&object, &light, &position, &eye, &normal, false);
@@ -58,11 +58,14 @@ fn lighting_with_eye_in_the_path_of_the_reflection_vector() {
     let object = Object::Sphere(Sphere::default());
     let m = Material::default();
     let position = Point::new(0.0, 0.0, 0.0);
-    let eye = Vector::new(0.0, -2.0_f32.sqrt() / 2.0, -2.0_f32.sqrt() / 2.0);
+    let eye = Vector::new(0.0, -2.0_f64.sqrt() / 2.0, -2.0_f64.sqrt() / 2.0);
     let normal = Vector::new(0.0, 0.0, -1.0);
     let light = PointLight::new(Point::new(0.0, 10.0, -10.0), Color::white());
     let result = m.lighting(&object, &light, &position, &eye, &normal, false);
-    assert_eq!(result, Color::new(1.6363853, 1.6363853, 1.6363853));
+    assert_eq!(
+        result,
+        Color::new(1.6363961030678928, 1.6363961030678928, 1.6363961030678928)
+    );
 }
 
 #[test]
@@ -98,6 +101,7 @@ fn lighting_with_a_pattern_applied() {
         Color::new(0.8, 1.0, 0.6),
         Some(p.into()),
         1.0,
+        0.0,
         0.0,
         0.0,
         0.0,

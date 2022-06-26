@@ -59,14 +59,14 @@ fn can_subtract_a_vector_from_point() {
 #[test]
 fn can_multiply_point_by_scalar() {
     let point = Point::new(1.0, -2.0, 3.0);
-    let scalar = 3.5_f32;
+    let scalar = 3.5_f64;
     let expected = Point::new(3.5, -7.0, 10.5);
     assert_eq!(point * scalar, expected);
 }
 
 #[test]
 fn can_multiply_scalar_by_point() {
-    let scalar = 3.5_f32;
+    let scalar = 3.5_f64;
     let point = Point::new(1.0, -2.0, 3.0);
     let expected = Point::new(3.5, -7.0, 10.5);
     assert_eq!(scalar * point, expected);
@@ -75,7 +75,7 @@ fn can_multiply_scalar_by_point() {
 #[test]
 fn can_divide_point_by_scalar() {
     let point = Point::new(1.0, -2.0, 3.0);
-    let scalar = 2_f32;
+    let scalar = 2_f64;
     let expected = Point::new(0.5, -1.0, 1.5);
     assert_eq!(point / scalar, expected);
 }

@@ -6,16 +6,16 @@ use {
 
 #[derive(Debug, Clone)]
 pub struct Point {
-    x: f32,
-    y: f32,
-    z: f32,
-    w: f32,
+    x: f64,
+    y: f64,
+    z: f64,
+    w: f64,
 }
 
 impl Index<usize> for Point {
-    type Output = f32;
+    type Output = f64;
 
-    fn index(&self, index: usize) -> &f32 {
+    fn index(&self, index: usize) -> &f64 {
         match index {
             0 => &self.x,
             1 => &self.y,
@@ -27,7 +27,7 @@ impl Index<usize> for Point {
 }
 
 impl IndexMut<usize> for Point {
-    fn index_mut(&mut self, index: usize) -> &mut f32 {
+    fn index_mut(&mut self, index: usize) -> &mut f64 {
         match index {
             0 => &mut self.x,
             1 => &mut self.y,
@@ -142,10 +142,10 @@ impl Sub<Vector> for &Point {
     }
 }
 
-impl Mul<f32> for Point {
+impl Mul<f64> for Point {
     type Output = Self;
 
-    fn mul(self, rhs: f32) -> Self::Output {
+    fn mul(self, rhs: f64) -> Self::Output {
         Self {
             x: self.x * rhs,
             y: self.y * rhs,
@@ -155,10 +155,10 @@ impl Mul<f32> for Point {
     }
 }
 
-impl Mul<f32> for &Point {
+impl Mul<f64> for &Point {
     type Output = Point;
 
-    fn mul(self, rhs: f32) -> Self::Output {
+    fn mul(self, rhs: f64) -> Self::Output {
         Point {
             x: self.x * rhs,
             y: self.y * rhs,
@@ -168,7 +168,7 @@ impl Mul<f32> for &Point {
     }
 }
 
-impl Mul<Point> for f32 {
+impl Mul<Point> for f64 {
     type Output = Point;
 
     fn mul(self, rhs: Point) -> Self::Output {
@@ -181,7 +181,7 @@ impl Mul<Point> for f32 {
     }
 }
 
-impl Mul<&Point> for f32 {
+impl Mul<&Point> for f64 {
     type Output = Point;
 
     fn mul(self, rhs: &Point) -> Self::Output {
@@ -194,10 +194,10 @@ impl Mul<&Point> for f32 {
     }
 }
 
-impl Div<f32> for Point {
+impl Div<f64> for Point {
     type Output = Self;
 
-    fn div(self, rhs: f32) -> Self::Output {
+    fn div(self, rhs: f64) -> Self::Output {
         Self {
             x: self.x / rhs,
             y: self.y / rhs,
@@ -207,10 +207,10 @@ impl Div<f32> for Point {
     }
 }
 
-impl Div<f32> for &Point {
+impl Div<f64> for &Point {
     type Output = Point;
 
-    fn div(self, rhs: f32) -> Self::Output {
+    fn div(self, rhs: f64) -> Self::Output {
         Point {
             x: self.x / rhs,
             y: self.y / rhs,
@@ -232,20 +232,20 @@ impl Default for Point {
 }
 
 impl Point {
-    pub const fn new(x: f32, y: f32, z: f32) -> Self {
+    pub const fn new(x: f64, y: f64, z: f64) -> Self {
         Self { x, y, z, w: 1.0 }
     }
 
-    pub const fn x(&self) -> f32 {
+    pub const fn x(&self) -> f64 {
         self.x
     }
-    pub const fn y(&self) -> f32 {
+    pub const fn y(&self) -> f64 {
         self.y
     }
-    pub const fn z(&self) -> f32 {
+    pub const fn z(&self) -> f64 {
         self.z
     }
-    pub const fn w(&self) -> f32 {
+    pub const fn w(&self) -> f64 {
         self.w
     }
 }

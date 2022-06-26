@@ -1,24 +1,24 @@
 use {
     crate::{
         rt::{
-            camera::Camera, color::Color, material::Material, matrix::Matrix, patterns::Pattern,
-            point_light::PointLight, shape::Shape, sphere::Sphere, to_ppm::ToPPM, world::World,
+            camera::Camera, color::Color, material::Material, matrix::Matrix, patterns::Checkers,
+            plane::Plane, point_light::PointLight, shape::Shape, sphere::Sphere, to_ppm::ToPPM,
+            world::World,
         },
         tuple::{point::Point, vector::Vector},
     },
-    std::f32::consts::PI,
+    std::f64::consts::PI,
 };
 
-pub fn spheres(middle_pattern: Option<Pattern>) -> Result<(), std::io::Error> {
+pub fn spheres() -> Result<(), std::io::Error> {
     // The floor is an extremely flattened sphere with a matte texture.
     let mut material = Material::default();
     material.set_color(Color::new(1.0, 0.9, 0.9));
     material.set_specular(0.0);
-    let floor = Sphere::new(
-        Point::default(),
-        Matrix::<4>::scaling(10.0, 0.01, 10.0),
-        material.clone(),
-    );
+    material.set_pattern(Checkers::new(Color::black(), Color::white(), None).into());
+    material.set_reflective(0.5);
+    let mut floor = Plane::default();
+    floor.set_material(material.clone());
 
     // The wall on the left has the same scale and color as the floor, but is also rotated and translated into place.
     let left_wall = Sphere::new(
@@ -42,12 +42,9 @@ pub fn spheres(middle_pattern: Option<Pattern>) -> Result<(), std::io::Error> {
 
     // The large sphere in the middle is a unit sphere, translated upward slightly and colored green.
     let mut middle = Sphere::default();
-    let mut middle_material = material.clone();
+    let mut middle_material = Material::default();
     middle.set_transform(Matrix::<4>::translation(-0.5, 1.0, 0.5));
     middle_material.set_color(Color::new(0.1, 1.0, 0.5));
-    if let Some(pattern) = middle_pattern {
-        middle_material.set_pattern(pattern);
-    }
     middle_material.set_diffuse(0.7);
     middle_material.set_specular(0.3);
     middle.set_material(middle_material);
@@ -57,7 +54,7 @@ pub fn spheres(middle_pattern: Option<Pattern>) -> Result<(), std::io::Error> {
     right.set_transform(
         Matrix::<4>::translation(1.5, 0.5, -0.5) * Matrix::<4>::scaling(0.5, 0.5, 0.5),
     );
-    let mut right_material = material;
+    let mut right_material = Material::default();
     right_material.set_color(Color::new(0.5, 1.0, 0.1));
     right_material.set_diffuse(0.7);
     right_material.set_specular(0.3);
@@ -93,6 +90,8 @@ pub fn spheres(middle_pattern: Option<Pattern>) -> Result<(), std::io::Error> {
     let camera = Camera::new(
         1280.0,
         720.0,
+        //3840.0,
+        //2160.0,
         PI / 3.0,
         Some(Matrix::<4>::view_transform(
             &Point::new(0.0, 1.5, -5.0),

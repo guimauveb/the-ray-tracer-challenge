@@ -7,10 +7,11 @@ use {
 pub struct Material {
     color: Color,
     pattern: Option<Pattern>,
-    ambient: f32,
-    diffuse: f32,
-    specular: f32,
-    shininess: f32,
+    ambient: f64,
+    diffuse: f64,
+    specular: f64,
+    shininess: f64,
+    reflective: f64,
 }
 
 impl Default for Material {
@@ -32,6 +33,7 @@ impl Default for Material {
             specular: 0.9,
             shininess: 200.0,
             pattern: None,
+            reflective: 0.0,
         }
     }
 }
@@ -39,10 +41,11 @@ impl Material {
     pub const fn new(
         color: Color,
         pattern: Option<Pattern>,
-        ambient: f32,
-        diffuse: f32,
-        specular: f32,
-        shininess: f32,
+        ambient: f64,
+        diffuse: f64,
+        specular: f64,
+        shininess: f64,
+        reflective: f64,
     ) -> Self {
         Self {
             color,
@@ -51,6 +54,7 @@ impl Material {
             diffuse,
             specular,
             shininess,
+            reflective,
         }
     }
 
@@ -62,20 +66,24 @@ impl Material {
         self.pattern.as_ref()
     }
 
-    pub const fn ambient(&self) -> f32 {
+    pub const fn ambient(&self) -> f64 {
         self.ambient
     }
 
-    pub const fn diffuse(&self) -> f32 {
+    pub const fn diffuse(&self) -> f64 {
         self.diffuse
     }
 
-    pub const fn specular(&self) -> f32 {
+    pub const fn specular(&self) -> f64 {
         self.specular
     }
 
-    pub const fn shininess(&self) -> f32 {
+    pub const fn shininess(&self) -> f64 {
         self.shininess
+    }
+
+    pub const fn reflective(&self) -> f64 {
+        self.reflective
     }
 
     pub fn set_color(&mut self, color: Color) {
@@ -86,20 +94,24 @@ impl Material {
         self.pattern = Some(pattern);
     }
 
-    pub fn set_ambient(&mut self, ambient: f32) {
+    pub fn set_ambient(&mut self, ambient: f64) {
         self.ambient = ambient;
     }
 
-    pub fn set_diffuse(&mut self, diffuse: f32) {
+    pub fn set_diffuse(&mut self, diffuse: f64) {
         self.diffuse = diffuse;
     }
 
-    pub fn set_specular(&mut self, specular: f32) {
+    pub fn set_specular(&mut self, specular: f64) {
         self.specular = specular;
     }
 
-    pub fn set_shininess(&mut self, shininess: f32) {
+    pub fn set_shininess(&mut self, shininess: f64) {
         self.shininess = shininess;
+    }
+
+    pub fn set_reflective(&mut self, reflective: f64) {
+        self.reflective = reflective;
     }
 
     /// Returns the color of the material at a specified point from a specified view point.

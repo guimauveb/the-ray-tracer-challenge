@@ -5,13 +5,13 @@ use {
 
 #[derive(Debug, Clone)]
 pub struct Color {
-    red: f32,
-    green: f32,
-    blue: f32,
+    red: f64,
+    green: f64,
+    blue: f64,
 }
 
 impl Color {
-    pub const fn new(red: f32, green: f32, blue: f32) -> Self {
+    pub const fn new(red: f64, green: f64, blue: f64) -> Self {
         Self { red, green, blue }
     }
 
@@ -48,17 +48,17 @@ impl Color {
     }
 
     /// Returns the red component.
-    pub const fn red(&self) -> f32 {
+    pub const fn red(&self) -> f64 {
         self.red
     }
 
     /// Returns the green component.
-    pub const fn green(&self) -> f32 {
+    pub const fn green(&self) -> f64 {
         self.green
     }
 
     /// Returns the blue component.
-    pub const fn blue(&self) -> f32 {
+    pub const fn blue(&self) -> f64 {
         self.blue
     }
 }
@@ -119,10 +119,10 @@ impl Sub for &Color {
     }
 }
 
-impl Mul<f32> for Color {
+impl Mul<f64> for Color {
     type Output = Self;
 
-    fn mul(self, rhs: f32) -> Self::Output {
+    fn mul(self, rhs: f64) -> Self::Output {
         Self {
             red: self.red * rhs,
             green: self.green * rhs,
@@ -131,10 +131,10 @@ impl Mul<f32> for Color {
     }
 }
 
-impl Mul<f32> for &Color {
+impl Mul<f64> for &Color {
     type Output = Color;
 
-    fn mul(self, rhs: f32) -> Self::Output {
+    fn mul(self, rhs: f64) -> Self::Output {
         Color {
             red: self.red * rhs,
             green: self.green * rhs,
