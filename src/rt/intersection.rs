@@ -31,7 +31,6 @@ impl<'object> Intersection<'object> {
         eye_vector.dot(normal) < 0.0
     }
 
-    // TODO
     pub fn prepare_computations(
         &'object self,
         ray: &Ray,
@@ -50,6 +49,38 @@ impl<'object> Intersection<'object> {
         let over_point = &point + (&normal_vector * OFFSET);
         let reflect_vector = ray.direction().reflect(&normal_vector);
 
+        let (mut n1, mut n2) = (1.0, 1.0);
+        if let Some(intersections) = intersections {
+            let mut containers: Vec<&Object> = Vec::new();
+            for intersection in intersections {
+                if intersection == self {
+                    n1 = if containers.is_empty() {
+                        1.0
+                    } else {
+                        containers.last().unwrap().material().refractive_index()
+                    };
+                }
+
+                if let Some(index) = containers
+                    .iter()
+                    .position(|&object| object == intersection.object())
+                {
+                    containers.remove(index);
+                } else {
+                    containers.push(intersection.object());
+                }
+
+                if intersection == self {
+                    n2 = if containers.is_empty() {
+                        1.0
+                    } else {
+                        containers.last().unwrap().material().refractive_index()
+                    };
+                    break;
+                }
+            }
+        }
+
         Computation::new(
             self,
             point,
@@ -58,7 +89,7 @@ impl<'object> Intersection<'object> {
             inside,
             over_point,
             reflect_vector,
-            (1.0, 1.0), // TODO - Refractive indices
+            (n1, n2),
         )
     }
 }

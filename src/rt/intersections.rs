@@ -75,6 +75,17 @@ impl<'objects> Intersections<'objects> {
     }
 }
 
+// Use an extension trait to add additional methods on a type that we don't "control".
+pub trait IntersectionsExt {
+    fn hit<'objects>(&'objects self) -> Option<&'objects Intersection<'objects>>;
+}
+
+impl<'objects> IntersectionsExt for &'objects [Intersection<'objects>] {
+    fn hit(&self) -> Option<&'objects Intersection<'objects>> {
+        self.iter().find(|&i| i.t() > 0.0)
+    }
+}
+
 impl<'objects> Deref for Intersections<'objects> {
     type Target = [Intersection<'objects>];
 

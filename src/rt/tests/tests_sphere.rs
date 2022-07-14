@@ -13,7 +13,7 @@ use {
         },
         tuple::{point::Point, vector::Vector},
     },
-    std::{f64::consts::PI, ops::Deref},
+    std::f64::consts::PI,
 };
 
 #[test]
@@ -174,7 +174,6 @@ fn a_helper_for_producing_a_sphere_with_a_glassy_material() {
     assert_eq!(s.material().refractive_index(), 1.5);
 }
 
-// TODO
 #[test]
 fn finding_n1_and_n2_at_various_intersections() {
     let mut a = Object::Sphere(Sphere::glassy());
@@ -201,7 +200,6 @@ fn finding_n1_and_n2_at_various_intersections() {
     let examples = vec![
         (1.0, 1.5),
         (1.5, 2.0),
-        (2.0, 2.5),
         (2.0, 2.5),
         (2.5, 2.5),
         (2.5, 1.5),

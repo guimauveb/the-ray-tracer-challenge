@@ -29,7 +29,7 @@ impl<'object> Computation<'object> {
         inside: bool,
         over_point: Point,
         reflect_vector: Vector,
-        (n1, n2): (f64, f64),
+        /* (n1, n2) */ refractive_indices: (f64, f64),
     ) -> Self {
         Self {
             intersection,
@@ -39,7 +39,7 @@ impl<'object> Computation<'object> {
             inside,
             over_point,
             reflect_vector,
-            refractive_indices: (n1, n2),
+            refractive_indices,
         }
     }
 

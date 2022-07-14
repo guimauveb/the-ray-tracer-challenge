@@ -5,7 +5,6 @@ use {
 
 #[derive(PartialEq, Debug)]
 pub struct Sphere {
-    //id: u32, // TODO ?
     origin: Point,
     transform: Matrix<4>,
     material: Material,
@@ -14,7 +13,6 @@ pub struct Sphere {
 impl Sphere {
     pub const fn new(origin: Point, transform: Matrix<4>, material: Material) -> Self {
         Self {
-            //id: 1,
             origin,
             transform,
             material,
@@ -87,7 +85,6 @@ impl Default for Sphere {
     /// Creates a sphere centered at the origin and with a radius of 1.0.
     fn default() -> Self {
         Self {
-            //id: 1,
             origin: Point::new(0.0, 0.0, 0.0),
             transform: Matrix::<4>::identity(),
             material: Material::default(),

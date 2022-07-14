@@ -8,7 +8,7 @@ use {
 /// the `dyn Shape` trait object type everywhere we need to use
 /// any object in some collection, but for performance reasons,
 /// I'll stick to a good old enum.
-#[derive(PartialEq, Debug)]
+#[derive(Debug, PartialEq)]
 #[non_exhaustive]
 pub enum Object {
     Sphere(Sphere),
