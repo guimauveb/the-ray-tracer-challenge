@@ -3,6 +3,7 @@ use crate::{
     rt::{
         color::Color,
         intersection::Intersection,
+        intersections::Intersections,
         material::Material,
         matrix::Matrix,
         plane::Plane,
@@ -278,4 +279,38 @@ fn the_reflected_color_at_the_maximum_recursive_depth() {
     let comps = i.prepare_computations(&r, None);
     let color = w.reflected_color(&comps, 0);
     assert_eq!(color, Color::black());
+}
+
+#[test]
+fn the_refracted_color_with_an_opaque_surface() {
+    let w = World::default();
+    let shape = &w.objects().unwrap()[0];
+    let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
+    let xs = Intersections::new(vec![
+        Intersection::new(4.0, &shape),
+        Intersection::new(6.0, &shape),
+    ]);
+    let comps = xs[0].prepare_computations(&r, Some(&xs));
+    let c = w.refracted_color(&comps, 5);
+    assert_eq!(c, Color::black());
+}
+
+#[test]
+fn the_refracted_color_at_the_maximum_recursive_depth() {
+    let mut w = World::default();
+    w.objects_mut().unwrap()[0]
+        .material_mut()
+        .set_transparency(1.0);
+    w.objects_mut().unwrap()[0]
+        .material_mut()
+        .set_refractive_index(1.5);
+    let shape = &w.objects().unwrap()[0];
+    let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
+    let xs = Intersections::new(vec![
+        Intersection::new(4.0, &shape),
+        Intersection::new(6.0, &shape),
+    ]);
+    let comps = xs[0].prepare_computations(&r, Some(&xs));
+    let c = w.refracted_color(&comps, 0);
+    assert_eq!(c, Color::black());
 }

@@ -96,6 +96,21 @@ impl World {
         Color::black()
     }
 
+    pub fn refracted_color(&self, computations: &Computation, remaining_calls: u8) -> Color {
+        if remaining_calls == 0
+            || computations
+                .intersection()
+                .object()
+                .material()
+                .transparency()
+                == 0.0
+        {
+            Color::black()
+        } else {
+            Color::white()
+        }
+    }
+
     pub fn shade_hit(&self, computations: &Computation, remaining_calls: u8) -> Color {
         let surface = computations.intersection().object().material().lighting(
             computations.intersection().object(),

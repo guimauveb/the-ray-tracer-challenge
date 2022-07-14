@@ -9,6 +9,7 @@ use crate::{
         object::Object,
         plane::Plane,
         ray::{Intersect, Ray},
+        shape::Shape,
         sphere::Sphere,
     },
     tuple::{point::Point, vector::Vector},
@@ -106,7 +107,8 @@ fn precomputing_the_state_of_an_intersection() {
         Vector::new(0.0, 0.0, -1.0),
         false,
         Point::new(0.0, 0.0, -1.00001),
-        Vector::new(0.0, 0.0, -1.0), // NOTE - Might need to be updated
+        Point::new(0.0, 0.0, -0.99999),
+        Vector::new(0.0, 0.0, -1.0),
         (1.0, 1.0),
     );
 
@@ -160,4 +162,16 @@ fn precomputing_the_reflection_vector() {
         comps.reflect_vector(),
         &Vector::new(0.0, 2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0)
     );
+}
+
+#[test]
+fn the_under_point_is_offset_below_the_surface() {
+    let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
+    let mut shape = Object::Sphere(Sphere::glassy());
+    shape.set_transform(Matrix::translation(0.0, 0.0, 1.0));
+    let i = Intersection::new(5.0, &shape);
+    let xs = Intersections::new(vec![i]);
+    let comps = xs[0].prepare_computations(&r, Some(&xs));
+    assert!(comps.under_point().z() > EPSILON / 2.0);
+    assert!(comps.point().z() < comps.under_point().z());
 }

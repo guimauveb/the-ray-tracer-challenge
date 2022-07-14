@@ -3,9 +3,6 @@ use {
     crate::{float::epsilon::EPSILON, tuple::vector::Vector},
 };
 
-/// Used in replacement of EPSILON if needed.
-const OFFSET: f64 = EPSILON;
-
 #[derive(Debug, PartialEq, Clone)]
 #[non_exhaustive]
 /// Represents the intersection between a ray and an object at point `t` along the ray.
@@ -46,7 +43,8 @@ impl<'object> Intersection<'object> {
         } else {
             normal_vector
         };
-        let over_point = &point + (&normal_vector * OFFSET);
+        let over_point = &point + (&normal_vector * EPSILON);
+        let under_point = &point - (&normal_vector * EPSILON);
         let reflect_vector = ray.direction().reflect(&normal_vector);
 
         let (mut n1, mut n2) = (1.0, 1.0);
@@ -88,6 +86,7 @@ impl<'object> Intersection<'object> {
             normal_vector,
             inside,
             over_point,
+            under_point,
             reflect_vector,
             (n1, n2),
         )

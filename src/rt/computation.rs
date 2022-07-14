@@ -14,6 +14,7 @@ pub struct Computation<'object> {
     normal_vector: Vector,
     inside: bool,
     over_point: Point,
+    under_point: Point,
     reflect_vector: Vector,
     /// `(n1, n2)` are the names given to the refractive indices of the material on either side of the ray,
     /// with `n1` belonging to the material being "exited", and `n2` belonging to the material being "entered".
@@ -28,6 +29,7 @@ impl<'object> Computation<'object> {
         normal_vector: Vector,
         inside: bool,
         over_point: Point,
+        under_point: Point,
         reflect_vector: Vector,
         /* (n1, n2) */ refractive_indices: (f64, f64),
     ) -> Self {
@@ -38,6 +40,7 @@ impl<'object> Computation<'object> {
             normal_vector,
             inside,
             over_point,
+            under_point,
             reflect_vector,
             refractive_indices,
         }
@@ -65,6 +68,10 @@ impl<'object> Computation<'object> {
 
     pub const fn over_point(&self) -> &Point {
         &self.over_point
+    }
+
+    pub const fn under_point(&self) -> &Point {
+        &self.under_point
     }
 
     pub const fn reflect_vector(&self) -> &Vector {
