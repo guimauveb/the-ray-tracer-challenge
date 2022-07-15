@@ -2,8 +2,12 @@
 use crate::{
     approx_eq::ApproxEq,
     rt::{
-        color::Color, material::Material, object::Object, patterns::Stripe,
-        point_light::PointLight, sphere::Sphere,
+        color::{Color, BLACK, WHITE},
+        material::Material,
+        object::Object,
+        patterns::Stripe,
+        point_light::PointLight,
+        sphere::Sphere,
     },
     tuple::{point::Point, vector::Vector},
 };
@@ -11,7 +15,7 @@ use crate::{
 #[test]
 fn the_default_material() {
     let m = Material::default();
-    assert_eq!(m.color(), &Color::white());
+    assert_eq!(m.color(), &WHITE);
     assert!(m.ambient().approx_eq(0.1));
     assert!(m.diffuse().approx_eq(0.9));
     assert!(m.shininess().approx_eq(200.0));
@@ -24,7 +28,7 @@ fn lighting_with_the_eye_between_the_light_and_the_surface() {
     let position = Point::new(0.0, 0.0, 0.0);
     let eye = Vector::new(0.0, 0.0, -1.0);
     let normal = Vector::new(0.0, 0.0, -1.0);
-    let light = PointLight::new(Point::new(0.0, 0.0, -10.0), Color::white());
+    let light = PointLight::new(Point::new(0.0, 0.0, -10.0), WHITE);
     let result = m.lighting(&object, &light, &position, &eye, &normal, false);
     assert_eq!(result, Color::new(1.9, 1.9, 1.9));
 }
@@ -36,9 +40,9 @@ fn lighting_with_the_eye_between_the_light_and_surface_eye_offset_45deg() {
     let position = Point::new(0.0, 0.0, 0.0);
     let eye = Vector::new(0.0, 2.0_f64.sqrt() / 2.0, -2.0_f64.sqrt() / 2.0);
     let normal = Vector::new(0.0, 0.0, -1.0);
-    let light = PointLight::new(Point::new(0.0, 0.0, -10.0), Color::white());
+    let light = PointLight::new(Point::new(0.0, 0.0, -10.0), WHITE);
     let result = m.lighting(&object, &light, &position, &eye, &normal, false);
-    assert_eq!(result, Color::white());
+    assert_eq!(result, WHITE);
 }
 
 #[test]
@@ -48,7 +52,7 @@ fn lighting_with_eye_opposite_surface_light_offset_45deg() {
     let position = Point::new(0.0, 0.0, 0.0);
     let eye = Vector::new(0.0, 0.0, -1.0);
     let normal = Vector::new(0.0, 0.0, -1.0);
-    let light = PointLight::new(Point::new(0.0, 10.0, -10.0), Color::white());
+    let light = PointLight::new(Point::new(0.0, 10.0, -10.0), WHITE);
     let result = m.lighting(&object, &light, &position, &eye, &normal, false);
     assert_eq!(result, Color::new(0.7364, 0.7364, 0.7364));
 }
@@ -60,7 +64,7 @@ fn lighting_with_eye_in_the_path_of_the_reflection_vector() {
     let position = Point::new(0.0, 0.0, 0.0);
     let eye = Vector::new(0.0, -2.0_f64.sqrt() / 2.0, -2.0_f64.sqrt() / 2.0);
     let normal = Vector::new(0.0, 0.0, -1.0);
-    let light = PointLight::new(Point::new(0.0, 10.0, -10.0), Color::white());
+    let light = PointLight::new(Point::new(0.0, 10.0, -10.0), WHITE);
     let result = m.lighting(&object, &light, &position, &eye, &normal, false);
     assert_eq!(
         result,
@@ -75,7 +79,7 @@ fn lighting_with_the_eye_behind_the_suface() {
     let position = Point::new(0.0, 0.0, 0.0);
     let eye = Vector::new(0.0, 0.0, -1.0);
     let normal = Vector::new(0.0, 0.0, -1.0);
-    let light = PointLight::new(Point::new(0.0, 0.0, 10.0), Color::white());
+    let light = PointLight::new(Point::new(0.0, 0.0, 10.0), WHITE);
     let result = m.lighting(&object, &light, &position, &eye, &normal, false);
     assert_eq!(result, Color::new(0.1, 0.1, 0.1));
 }
@@ -87,7 +91,7 @@ fn lighting_with_the_surface_in_shadow() {
     let position = Point::new(0.0, 0.0, 0.0);
     let eye = Vector::new(0.0, 0.0, -1.0);
     let normal = Vector::new(0.0, 0.0, -1.0);
-    let light = PointLight::new(Point::new(0.0, 0.0, -10.0), Color::white());
+    let light = PointLight::new(Point::new(0.0, 0.0, -10.0), WHITE);
     let in_shadow = true;
     let result = m.lighting(&object, &light, &position, &eye, &normal, in_shadow);
     assert_eq!(result, Color::new(0.1, 0.1, 0.1));
@@ -96,7 +100,7 @@ fn lighting_with_the_surface_in_shadow() {
 #[test]
 fn lighting_with_a_pattern_applied() {
     let object = Object::Sphere(Sphere::default());
-    let p = Stripe::new(Color::white(), Color::black(), None);
+    let p = Stripe::new(WHITE, BLACK, None);
     let m = Material::new(
         Color::new(0.8, 1.0, 0.6),
         Some(p.into()),
@@ -127,6 +131,6 @@ fn lighting_with_a_pattern_applied() {
         &normal,
         false,
     );
-    assert_eq!(c1, Color::white());
-    assert_eq!(c2, Color::black());
+    assert_eq!(c1, WHITE);
+    assert_eq!(c2, BLACK);
 }

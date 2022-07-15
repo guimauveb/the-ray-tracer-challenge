@@ -1,7 +1,7 @@
 #[cfg(test)]
 use crate::{
     rt::{
-        color::Color,
+        color::{Color, BLACK, WHITE},
         intersection::Intersection,
         intersections::Intersections,
         material::Material,
@@ -41,7 +41,7 @@ fn the_default_world() {
     let transform = Matrix::<4>::scaling(0.5, 0.5, 0.5);
     let s2 = Sphere::with_transform(transform);
 
-    let light = PointLight::new(Point::new(-10.0, 10.0, -10.0), Color::white());
+    let light = PointLight::new(Point::new(-10.0, 10.0, -10.0), WHITE);
     let world = World::default();
 
     assert_eq!(world.light(), Some(&light));
@@ -78,10 +78,7 @@ fn shading_an_intersection() {
 
 #[test]
 fn shading_an_intersection_from_the_inside() {
-    let w = World::with_light(Some(PointLight::new(
-        Point::new(0.0, 0.25, 0.0),
-        Color::white(),
-    )));
+    let w = World::with_light(Some(PointLight::new(Point::new(0.0, 0.25, 0.0), WHITE)));
     let r = Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 0.0, 1.0));
     let shape = &w.objects().unwrap()[1];
     let i = Intersection::new(0.5, &shape);
@@ -96,7 +93,7 @@ fn the_color_when_a_ray_misses() {
     let w = World::default();
     let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 1.0, 0.0));
     let c = w.color_at(&r, MAX_REFLECTION_DEPTH);
-    let expected_c = Color::black();
+    let expected_c = BLACK;
     assert_eq!(c, expected_c);
 }
 
@@ -278,7 +275,7 @@ fn the_reflected_color_at_the_maximum_recursive_depth() {
     let i = Intersection::new(2.0_f64.sqrt(), &w.objects().unwrap()[2]);
     let comps = i.prepare_computations(&r, None);
     let color = w.reflected_color(&comps, 0);
-    assert_eq!(color, Color::black());
+    assert_eq!(color, BLACK);
 }
 
 #[test]
@@ -292,7 +289,7 @@ fn the_refracted_color_with_an_opaque_surface() {
     ]);
     let comps = xs[0].prepare_computations(&r, Some(&xs));
     let c = w.refracted_color(&comps, 5);
-    assert_eq!(c, Color::black());
+    assert_eq!(c, BLACK);
 }
 
 #[test]
@@ -312,5 +309,5 @@ fn the_refracted_color_at_the_maximum_recursive_depth() {
     ]);
     let comps = xs[0].prepare_computations(&r, Some(&xs));
     let c = w.refracted_color(&comps, 0);
-    assert_eq!(c, Color::black());
+    assert_eq!(c, BLACK);
 }

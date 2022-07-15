@@ -1,8 +1,16 @@
 use {
     crate::{
         rt::{
-            camera::Camera, color::Color, material::Material, matrix::Matrix, patterns::Checkers,
-            plane::Plane, point_light::PointLight, shape::Shape, sphere::Sphere, to_ppm::ToPPM,
+            camera::Camera,
+            color::{Color, BLACK, WHITE},
+            material::Material,
+            matrix::Matrix,
+            patterns::Checkers,
+            plane::Plane,
+            point_light::PointLight,
+            shape::Shape,
+            sphere::Sphere,
+            to_ppm::ToPPM,
             world::World,
         },
         tuple::{point::Point, vector::Vector},
@@ -15,7 +23,7 @@ pub fn spheres() -> Result<(), std::io::Error> {
     let mut material = Material::default();
     material.set_color(Color::new(1.0, 0.9, 0.9));
     material.set_specular(0.0);
-    material.set_pattern(Checkers::new(Color::black(), Color::white(), None).into());
+    material.set_pattern(Checkers::new(BLACK, WHITE, None).into());
     material.set_reflective(0.5);
     let mut floor = Plane::default();
     floor.set_material(material.clone());

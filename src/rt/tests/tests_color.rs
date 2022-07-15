@@ -1,5 +1,5 @@
 #[cfg(test)]
-use crate::rt::color::Color;
+use crate::rt::color::{Color, BLACK, WHITE};
 
 #[test]
 fn can_create_color() {
@@ -11,15 +11,15 @@ fn can_create_color() {
 
 #[test]
 fn can_create_black_color() {
-    let black = Color::black();
-    let expected = Color::black();
+    let black = BLACK;
+    let expected = BLACK;
     assert_eq!(black, expected);
 }
 
 #[test]
 fn can_create_white_color() {
-    let white = Color::white();
-    let expected = Color::white();
+    let white = WHITE;
+    let expected = WHITE;
     assert_eq!(white, expected);
 }
 

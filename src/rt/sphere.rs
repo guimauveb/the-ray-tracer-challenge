@@ -1,5 +1,5 @@
 use {
-    super::{color::Color, material::Material, matrix::Matrix, shape::Shape},
+    super::{color::WHITE, material::Material, matrix::Matrix, shape::Shape},
     crate::tuple::{point::Point, vector::Vector},
 };
 
@@ -22,7 +22,7 @@ impl Sphere {
     /// Creates a sphere with a glassy texture.
     pub fn glassy() -> Self {
         Self {
-            material: Material::new(Color::white(), None, 0.1, 0.9, 0.9, 200.0, 0.0, 1.0, 1.5),
+            material: Material::new(WHITE, None, 0.1, 0.9, 0.9, 200.0, 0.0, 1.0, 1.5),
             ..Self::default()
         }
     }

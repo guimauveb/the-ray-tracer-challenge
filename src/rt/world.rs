@@ -1,6 +1,6 @@
 use crate::{
     rt::{
-        color::Color,
+        color::{Color, BLACK, WHITE},
         computation::Computation,
         material::Material,
         matrix::Matrix,
@@ -14,7 +14,7 @@ use crate::{
 };
 
 /// Maximum number of times `reflected_color` can be called before stopping
-/// the recursion and returning `Color::black()` by default.
+/// the recursion and returning `BLACK` by default.
 /// The puprpose of this limit is to avoid infinite recursion in the case
 /// where two surfaces reflect each other.
 pub const MAX_REFLECTION_DEPTH: u8 = 6;
@@ -27,7 +27,7 @@ pub struct World {
 
 impl World {
     const fn default_light() -> PointLight {
-        PointLight::new(Point::new(-10.0, 10.0, -10.0), Color::white())
+        PointLight::new(Point::new(-10.0, 10.0, -10.0), WHITE)
     }
 
     /// Creates a new world.
@@ -93,7 +93,7 @@ impl World {
                 );
             }
         }
-        Color::black()
+        BLACK
     }
 
     pub fn refracted_color(&self, computations: &Computation, remaining_calls: u8) -> Color {
@@ -105,9 +105,9 @@ impl World {
                 .transparency()
                 == 0.0
         {
-            Color::black()
+            BLACK
         } else {
-            Color::white()
+            WHITE
         }
     }
 
@@ -150,7 +150,7 @@ impl World {
         if remaining_calls == 0
             || computations.intersection().object().material().reflective() == 0.0
         {
-            Color::black()
+            BLACK
         } else {
             let reflect_ray = Ray::new(
                 computations.over_point().clone(),
@@ -176,7 +176,6 @@ impl Default for World {
             1.0,
         );
         let s1 = Sphere::with_material(material);
-
         let transform = Matrix::<4>::scaling(0.5, 0.5, 0.5);
         let s2 = Sphere::with_transform(transform);
 

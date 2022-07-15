@@ -1,5 +1,5 @@
 use super::{
-    color::Color,
+    color::{Color, BLACK},
     ppm::{Ppm, PPM_MAX_CHARACTERS_PER_LINE, PPM_MAX_COLOR_VALUE, PPM_MIN_COLOR_VALUE},
     to_ppm::ToPPM,
 };
@@ -16,7 +16,7 @@ impl Canvas {
         Self {
             width,
             height,
-            pixels: vec![Color::black(); width * height],
+            pixels: vec![BLACK; width * height],
         }
     }
 

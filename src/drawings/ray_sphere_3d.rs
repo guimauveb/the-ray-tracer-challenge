@@ -1,7 +1,7 @@
 use crate::{
     rt::{
         canvas::Canvas,
-        color::Color,
+        color::{Color, WHITE},
         material::Material,
         object::Object,
         point_light::PointLight,
@@ -47,7 +47,7 @@ pub fn ray_sphere_hit() -> Result<(), std::io::Error> {
 
     // Light source
     let light_position = Point::new(-10.0, 10.0, -10.0);
-    let light_color = Color::white();
+    let light_color = WHITE;
     let light = PointLight::new(light_position, light_color);
 
     for y in 0..canvas.height() {

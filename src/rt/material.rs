@@ -1,5 +1,10 @@
 use {
-    super::{color::Color, object::Object, patterns::Pattern, point_light::PointLight},
+    super::{
+        color::{Color, BLACK, WHITE},
+        object::Object,
+        patterns::Pattern,
+        point_light::PointLight,
+    },
     crate::tuple::{point::Point, vector::Vector},
 };
 
@@ -33,7 +38,7 @@ impl Default for Material {
     /// ```
     fn default() -> Self {
         Self {
-            color: Color::white(),
+            color: WHITE,
             pattern: None,
             ambient: 0.1,
             diffuse: 0.9,
@@ -167,7 +172,7 @@ impl Material {
          * the light is on the other side of the surface. */
         let light_dot_normal = point_to_light.dot(normal);
         let (diffuse, specular) = if in_shadow || light_dot_normal < 0.0 {
-            (Color::black(), Color::black())
+            (BLACK, BLACK)
         } else {
             // Compute the diffuse contribution
             let diffuse = effective_color * self.diffuse * light_dot_normal;
@@ -177,7 +182,7 @@ impl Material {
             let reflect = -point_to_light.reflect(normal);
             let reflect_dot_eye = reflect.dot(eye);
             let specular = if reflect_dot_eye <= 0.0 {
-                Color::black()
+                BLACK
             } else {
                 // Compute the specular contribution
                 let factor = reflect_dot_eye.powf(self.shininess); // NOTE - Use a factor power of 2 for faster computation?

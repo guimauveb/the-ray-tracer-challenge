@@ -3,6 +3,9 @@ use {
     std::ops::{Add, Mul, Sub},
 };
 
+pub const BLACK: Color = Color::black();
+pub const WHITE: Color = Color::white();
+
 #[derive(Debug, Clone)]
 pub struct Color {
     red: f64,
@@ -23,7 +26,7 @@ impl Color {
     ///        blue: 0.0,
     ///    }
     /// ```
-    pub const fn black() -> Self {
+    const fn black() -> Self {
         Self {
             red: 0.0,
             green: 0.0,
@@ -39,7 +42,7 @@ impl Color {
     ///        blue: 1.0,
     ///    }
     /// ```
-    pub const fn white() -> Self {
+    const fn white() -> Self {
         Self {
             red: 1.0,
             green: 1.0,

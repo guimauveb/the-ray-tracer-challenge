@@ -1,5 +1,9 @@
 #[cfg(test)]
-use crate::rt::{canvas::Canvas, color::Color, to_ppm::ToPPM};
+use crate::rt::{
+    canvas::Canvas,
+    color::{Color, BLACK},
+    to_ppm::ToPPM,
+};
 
 #[test]
 fn canvas_is_of_correct_size() {
@@ -10,7 +14,7 @@ fn canvas_is_of_correct_size() {
 #[test]
 fn canvas_pixels_are_black_by_default() {
     let canvas = Canvas::new(16, 8);
-    let black = Color::black();
+    let black = BLACK;
     for pixel in canvas.pixels() {
         assert_eq!(pixel, &black);
     }
