@@ -107,6 +107,16 @@ impl World {
         {
             BLACK
         } else {
+            // Find the ratio of the first index of refraction to the second
+            // (inverted from the definition of Snell's Law)
+            let n_ratio = computations.n1() / computations.n2();
+            // cos(theta_i) is the same as the dot product of the two vectors
+            let cos_i = computations.eye_vector().dot(computations.normal_vector());
+            // Find sin(theta_t)^2 via trigonometric identity
+            let sin2_t = n_ratio.powi(2) * (1.0 - cos_i.powi(2));
+            if sin2_t > 1.0 {
+                return BLACK;
+            }
             WHITE
         }
     }

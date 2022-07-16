@@ -311,3 +311,28 @@ fn the_refracted_color_at_the_maximum_recursive_depth() {
     let c = w.refracted_color(&comps, 0);
     assert_eq!(c, BLACK);
 }
+
+#[test]
+fn the_refracted_color_under_total_internal_reflection() {
+    let mut w = World::default();
+    w.objects_mut().unwrap()[0]
+        .material_mut()
+        .set_transparency(1.0);
+    w.objects_mut().unwrap()[0]
+        .material_mut()
+        .set_refractive_index(1.5);
+    let shape = &w.objects().unwrap()[0];
+    let r = Ray::new(
+        Point::new(0.0, 0.0, -2.0_f64.sqrt() / 2.0),
+        Vector::new(0.0, 1.0, 0.0),
+    );
+    let xs = Intersections::new(vec![
+        Intersection::new(-2.0_f64.sqrt() / 2.0, &shape),
+        Intersection::new(2.0_f64.sqrt() / 2.0, &shape),
+    ]);
+    // NOTE - This time we're inside the sphere,
+    // so we need to look at the second intersection (x[1])
+    let comps = xs[1].prepare_computations(&r, Some(&xs));
+    let c = w.refracted_color(&comps, 5);
+    assert_eq!(c, BLACK);
+}
