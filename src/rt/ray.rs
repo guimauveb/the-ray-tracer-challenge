@@ -1,10 +1,6 @@
 use {
     super::{
-        intersections::Intersections,
-        matrix::{Matrix, Transform},
-        object::Object,
-        plane::Plane,
-        shape::Shape,
+        intersections::Intersections, matrix::Matrix, object::Object, plane::Plane, shape::Shape,
         world::World,
     },
     crate::{
@@ -37,10 +33,8 @@ impl Ray {
     pub fn position(&self, distance: f64) -> Point {
         &self.origin + &self.direction * distance
     }
-}
 
-impl Transform for Ray {
-    fn transform(&self, m: &Matrix<4>) -> Self {
+    pub fn transform(&self, m: &Matrix<4>) -> Self {
         Self {
             origin: m * &self.origin,
             direction: m * &self.direction,
