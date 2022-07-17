@@ -6,6 +6,7 @@ use crate::{
         intersections::Intersections,
         material::Material,
         matrix::Matrix,
+        pattern::test_pattern,
         plane::Plane,
         point_light::PointLight,
         ray::{Intersect, Ray},
@@ -335,4 +336,38 @@ fn the_refracted_color_under_total_internal_reflection() {
     let comps = xs[1].prepare_computations(&r, Some(&xs));
     let c = w.refracted_color(&comps, 5);
     assert_eq!(c, BLACK);
+}
+
+#[test]
+fn the_refracted_color_with_a_refracted_ray() {
+    let mut w = World::default();
+    // a
+    w.objects_mut().unwrap()[0].material_mut().set_ambient(1.0);
+    w.objects_mut().unwrap()[0]
+        .material_mut()
+        .set_pattern(test_pattern());
+    // b
+    w.objects_mut().unwrap()[1]
+        .material_mut()
+        .set_transparency(1.0);
+    w.objects_mut().unwrap()[1]
+        .material_mut()
+        .set_refractive_index(1.5);
+
+    let a = &w.objects().unwrap()[0];
+    let b = &w.objects().unwrap()[1];
+
+    let r = Ray::new(Point::new(0.0, 0.0, 0.1), Vector::new(0.0, 1.0, 0.0));
+    let xs = Intersections::new(vec![
+        Intersection::new(-0.9899, &a),
+        Intersection::new(-0.4899, &b),
+        Intersection::new(0.4899, &b),
+        Intersection::new(0.9899, &a),
+    ]);
+    let comps = xs[2].prepare_computations(&r, Some(&xs));
+    let c = w.refracted_color(&comps, 5);
+    // NOTE - Values from the book
+    // assert_eq!(c, Color::new(0.0, 0.99888, 0.04725));
+    // Values computed by this implementation
+    assert_eq!(c, Color::new(0.0, 0.9988745506795582, 0.04721898034382347));
 }

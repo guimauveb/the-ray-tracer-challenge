@@ -3,7 +3,7 @@ use {
     crate::{float::epsilon::EPSILON, tuple::vector::Vector},
 };
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(PartialEq, Clone, Debug)]
 #[non_exhaustive]
 /// Represents the intersection between a ray and an object at point `t` along the ray.
 pub struct Intersection<'object> {

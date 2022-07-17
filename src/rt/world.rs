@@ -19,7 +19,7 @@ use crate::{
 /// where two surfaces reflect each other.
 pub const MAX_REFLECTION_DEPTH: u8 = 6;
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq)]
 pub struct World {
     objects: Option<Vec<Object>>,
     light: Option<PointLight>,
@@ -117,7 +117,22 @@ impl World {
             if sin2_t > 1.0 {
                 return BLACK;
             }
-            WHITE
+            // Find cos(theta_t) via trigonometric identity
+            let cos_t = (1.0 - sin2_t).sqrt();
+            // Compute the direction of the refracted ray
+            let direction = computations.normal_vector() * (n_ratio * cos_i - cos_t)
+                - computations.eye_vector() * n_ratio;
+            // Create the refracted ray
+            let refracted_ray = Ray::new(computations.under_point().clone(), direction);
+
+            // Find the color of the refracted ray, making sure to multiply
+            // by the transparency value to account for any opacity.
+            self.color_at(&refracted_ray, remaining_calls - 1)
+                * computations
+                    .intersection()
+                    .object()
+                    .material()
+                    .transparency()
         }
     }
 
@@ -145,13 +160,10 @@ impl World {
         let distance = point_to_light.magnitude();
         let direction = point_to_light.normalized();
         let ray = Ray::new(point.clone(), direction);
-        let intersections = ray.intersect(self);
-        if let Some(intersections) = intersections {
-            let hit = intersections.hit();
-            if let Some(hit) = hit {
+        if let Some(intersections) = ray.intersect(self) {
+            if let Some(hit) = intersections.hit() {
                 return hit.t() < distance;
             }
-            return false;
         }
         false
     }

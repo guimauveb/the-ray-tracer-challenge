@@ -60,7 +60,7 @@ pub fn ray_sphere_hit() -> Result<(), std::io::Error> {
             canvas.write_pixel(
                 (canvas.width() as i64 / 2_i64 + r.direction().x() as i64) as usize,
                 (canvas.height() as i64 / 2_i64 + r.direction().y() as i64) as usize,
-                red.clone(),
+                red,
             );
         }
     }

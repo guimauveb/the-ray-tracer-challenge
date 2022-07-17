@@ -5,7 +5,7 @@ use crate::{
         color::{Color, BLACK, WHITE},
         material::Material,
         object::Object,
-        patterns::Stripe,
+        pattern::Pattern,
         point_light::PointLight,
         sphere::Sphere,
     },
@@ -100,7 +100,7 @@ fn lighting_with_the_surface_in_shadow() {
 #[test]
 fn lighting_with_a_pattern_applied() {
     let object = Object::Sphere(Sphere::default());
-    let p = Stripe::new(WHITE, BLACK, None);
+    let p = Pattern::stripe(WHITE, BLACK, None);
     let m = Material::new(
         Color::new(0.8, 1.0, 0.6),
         Some(p.into()),

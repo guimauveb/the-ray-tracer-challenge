@@ -49,7 +49,7 @@ impl Canvas {
     // Bonus
     pub fn set_all_pixels_to_color(&mut self, color: &Color) {
         for pixel in &mut self.pixels {
-            *pixel = color.clone();
+            *pixel = *color;
         }
     }
 }

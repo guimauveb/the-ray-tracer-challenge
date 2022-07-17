@@ -12,7 +12,6 @@ pub fn draw_clock() -> Result<(), std::io::Error> {
     let origin = Point::new(512.0 / 2.0, 512.0 / 2.0, 0.0);
     // The first point will be at (x: 196.0, y: 0.0) and will be rotated by (loop index * 30°) at each loop
     let point = Point::new(196.0, 0.0, 0.0);
-    let white = WHITE;
     // 12 hours
     for i in 0..12 {
         // 30° == (PI/6.0)
@@ -21,7 +20,7 @@ pub fn draw_clock() -> Result<(), std::io::Error> {
         canvas.write_pixel(
             (origin.x() + rotated_point.x()) as usize,
             canvas.height() - (origin.y() + rotated_point.y()) as usize,
-            white.clone(),
+            WHITE,
         );
     }
 

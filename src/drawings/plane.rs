@@ -15,7 +15,7 @@ pub fn spheres() -> Result<(), std::io::Error> {
     material.set_specular(0.0);
 
     let mut floor = Plane::default();
-    floor.set_material(material.clone());
+    floor.set_material(material);
 
     let mut first_pane = Plane::default();
     first_pane.set_transform(
@@ -23,7 +23,9 @@ pub fn spheres() -> Result<(), std::io::Error> {
             * Matrix::<4>::translation(0.0, 0.0, 2.5)
             * Matrix::<4>::rotation_x(PI / 2.0),
     );
-    let mut first_pane_material = material.clone();
+    let mut first_pane_material = Material::default();
+    first_pane_material.set_color(Color::new(0.2, 0.2, 0.2));
+    first_pane_material.set_specular(0.0);
     first_pane_material.set_color(Color::new(0.3, 0.3, 0.4));
     first_pane_material.set_diffuse(0.7);
     first_pane_material.set_specular(0.3);
@@ -35,7 +37,9 @@ pub fn spheres() -> Result<(), std::io::Error> {
             * Matrix::<4>::rotation_y(PI / 3.0)
             * Matrix::<4>::rotation_x(PI / 2.0),
     );
-    let mut second_pane_material = material.clone();
+    let mut second_pane_material = Material::default();
+    second_pane_material.set_color(Color::new(0.2, 0.2, 0.2));
+    second_pane_material.set_specular(0.0);
     second_pane_material.set_color(Color::new(0.3, 0.3, 0.4));
     second_pane_material.set_diffuse(0.7);
     second_pane_material.set_specular(0.3);
@@ -47,7 +51,9 @@ pub fn spheres() -> Result<(), std::io::Error> {
             * Matrix::<4>::rotation_y(2.0 * PI / 3.0)
             * Matrix::<4>::rotation_x(PI / 2.0),
     );
-    let mut third_pane_material = material.clone();
+    let mut third_pane_material = Material::default();
+    third_pane_material.set_color(Color::new(0.2, 0.2, 0.2));
+    third_pane_material.set_specular(0.0);
     third_pane_material.set_color(Color::new(0.3, 0.3, 0.4));
     third_pane_material.set_diffuse(0.7);
     third_pane_material.set_specular(0.3);
@@ -57,7 +63,9 @@ pub fn spheres() -> Result<(), std::io::Error> {
     fourth_pane.set_transform(
         Matrix::<4>::translation(0.0, 0.0, -6.0) * Matrix::<4>::rotation_x(PI / 2.0),
     );
-    let mut fourth_pane_material = material.clone();
+    let mut fourth_pane_material = Material::default();
+    fourth_pane_material.set_color(Color::new(0.2, 0.2, 0.2));
+    fourth_pane_material.set_specular(0.0);
     fourth_pane_material.set_color(Color::new(0.1, 0.1, 0.1));
     fourth_pane_material.set_diffuse(0.7);
     fourth_pane.set_material(fourth_pane_material);
@@ -68,7 +76,9 @@ pub fn spheres() -> Result<(), std::io::Error> {
             * Matrix::<4>::rotation_y(PI / 3.0)
             * Matrix::<4>::rotation_x(PI / 2.0),
     );
-    let mut fifth_pane_material = material.clone();
+    let mut fifth_pane_material = Material::default();
+    fifth_pane_material.set_color(Color::new(0.2, 0.2, 0.2));
+    fifth_pane_material.set_specular(0.0);
     fifth_pane_material.set_color(Color::new(0.3, 0.3, 0.4));
     fifth_pane_material.set_diffuse(0.7);
     fifth_pane_material.set_specular(0.3);
@@ -80,7 +90,9 @@ pub fn spheres() -> Result<(), std::io::Error> {
             * Matrix::<4>::rotation_y(-PI / 3.0)
             * Matrix::<4>::rotation_x(PI / 2.0),
     );
-    let mut sixth_pane_material = material.clone();
+    let mut sixth_pane_material = Material::default();
+    sixth_pane_material.set_color(Color::new(0.2, 0.2, 0.2));
+    sixth_pane_material.set_specular(0.0);
     sixth_pane_material.set_color(Color::new(0.3, 0.3, 0.4));
     sixth_pane_material.set_diffuse(0.7);
     sixth_pane_material.set_specular(0.3);
@@ -88,7 +100,9 @@ pub fn spheres() -> Result<(), std::io::Error> {
 
     // The large sphere in the middle is a unit sphere, translated upward slightly and colored green.
     let mut middle = Sphere::default();
-    let mut middle_material = material.clone();
+    let mut middle_material = Material::default();
+    middle_material.set_color(Color::new(0.2, 0.2, 0.2));
+    middle_material.set_specular(0.0);
     middle.set_transform(Matrix::<4>::translation(-0.5, 10.0, -5.0));
     middle_material.set_color(Color::new(0.1, 1.0, 0.5));
     middle_material.set_diffuse(0.7);
@@ -100,7 +114,9 @@ pub fn spheres() -> Result<(), std::io::Error> {
     right.set_transform(
         Matrix::<4>::translation(1.0, 11.3, -5.3) * Matrix::<4>::scaling(0.5, 0.5, 0.5),
     );
-    let mut right_material = material.clone();
+    let mut right_material = Material::default();
+    right_material.set_color(Color::new(0.2, 0.2, 0.2));
+    right_material.set_specular(0.0);
     right_material.set_color(Color::new(0.5, 1.0, 0.1));
     right_material.set_diffuse(0.7);
     right_material.set_specular(0.3);
@@ -111,7 +127,9 @@ pub fn spheres() -> Result<(), std::io::Error> {
     left.set_transform(
         Matrix::<4>::translation(1.3, 12.5, -5.3) * Matrix::<4>::scaling(0.33, 0.33, 0.33),
     );
-    let mut left_material = material;
+    let mut left_material = Material::default();
+    left_material.set_color(Color::new(0.2, 0.2, 0.2));
+    left_material.set_specular(0.0);
     left_material.set_color(Color::new(1.0, 0.8, 0.1));
     left_material.set_diffuse(0.7);
     left_material.set_specular(0.3);

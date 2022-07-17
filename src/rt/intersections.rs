@@ -4,7 +4,6 @@ use {
 };
 
 /// Wrapper around a `Vec<Intersection<'objects>>` that keeps intersections sorted.
-#[derive(Debug)]
 pub struct Intersections<'objects>(Vec<Intersection<'objects>>);
 
 impl<'object> From<([f64; 2], &'object Object)> for Intersections<'object> {
@@ -77,11 +76,11 @@ impl<'objects> Intersections<'objects> {
 
 // Use an extension trait to add additional methods on a type that we don't "control".
 pub trait IntersectionsExt {
-    fn hit<'objects>(&'objects self) -> Option<&'objects Intersection<'objects>>;
+    fn hit(&self) -> Option<&Intersection>;
 }
 
-impl<'objects> IntersectionsExt for &'objects [Intersection<'objects>] {
-    fn hit(&self) -> Option<&'objects Intersection<'objects>> {
+impl IntersectionsExt for &[Intersection<'_>] {
+    fn hit(&self) -> Option<&Intersection> {
         self.iter().find(|&i| i.t() > 0.0)
     }
 }

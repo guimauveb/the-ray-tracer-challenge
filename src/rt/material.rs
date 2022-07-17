@@ -2,13 +2,16 @@ use {
     super::{
         color::{Color, BLACK, WHITE},
         object::Object,
-        patterns::Pattern,
+        pattern::Pattern,
         point_light::PointLight,
     },
-    crate::tuple::{point::Point, vector::Vector},
+    crate::{
+        approx_eq::ApproxEq,
+        tuple::{point::Point, vector::Vector},
+    },
 };
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(Debug)]
 pub struct Material {
     color: Color,
     pattern: Option<Pattern>,
@@ -19,6 +22,45 @@ pub struct Material {
     reflective: f64,
     transparency: f64,
     refractive_index: f64,
+}
+
+impl PartialEq for Material {
+    fn eq(&self, rhs: &Self) -> bool {
+        // Since patterns are actually functions,
+        // we cannot compare them.
+        if self.pattern().is_some() {
+            false
+        } else {
+            self.color == rhs.color
+                && self.ambient.approx_eq(rhs.ambient)
+                && self.diffuse.approx_eq(rhs.diffuse)
+                && self.specular.approx_eq(rhs.specular)
+                && self.shininess.approx_eq(rhs.shininess)
+                && self.reflective.approx_eq(rhs.reflective)
+                && self.transparency.approx_eq(rhs.transparency)
+                && self.refractive_index.approx_eq(rhs.refractive_index)
+        }
+    }
+}
+
+impl Clone for Material {
+    fn clone(&self) -> Self {
+        if self.pattern().is_some() {
+            panic!("Cannot duplicate a Material containing a Pattern.");
+        } else {
+            Self {
+                color: self.color,
+                pattern: None,
+                ambient: self.ambient,
+                diffuse: self.diffuse,
+                specular: self.specular,
+                shininess: self.shininess,
+                reflective: self.reflective,
+                transparency: self.transparency,
+                refractive_index: self.refractive_index,
+            }
+        }
+    }
 }
 
 impl Default for Material {
@@ -50,6 +92,7 @@ impl Default for Material {
         }
     }
 }
+
 impl Material {
     pub const fn new(
         color: Color,
@@ -70,8 +113,8 @@ impl Material {
             specular,
             shininess,
             reflective,
-            refractive_index,
             transparency,
+            refractive_index,
         }
     }
 
@@ -157,16 +200,16 @@ impl Material {
         normal: &Vector,
         in_shadow: bool,
     ) -> Color {
-        let color = self.pattern.as_ref().map_or_else(
-            || self.color.clone(),
-            |p| p.pattern_at_object(object, point),
-        );
+        let color = self
+            .pattern
+            .as_ref()
+            .map_or_else(|| self.color, |p| p.at_object(object, point));
         // Combine the surface color with the light intensity
         let effective_color = &color * light.intensity();
         // Find the direction to the light source (point -> light source)
         let point_to_light = (light.position() - point).normalized();
         // Compute the ambient contribution
-        let ambient = &effective_color * self.ambient;
+        let ambient = effective_color * self.ambient;
         /* light_dot_normal represents the cosine of the angle between the
          * light vector and the normal vector. A negative number means
          * the light is on the other side of the surface. */

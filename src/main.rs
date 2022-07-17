@@ -1,3 +1,6 @@
+#![warn(clippy::pedantic)]
+#![allow(clippy::must_use_candidate)]
+#![allow(clippy::return_self_not_must_use)]
 #![allow(incomplete_features)]
 #![feature(generic_const_exprs)]
 
@@ -6,13 +9,6 @@ pub mod drawings;
 pub mod float;
 pub mod rt;
 pub mod tuple;
-
-// TODO - Test patterns
-use rt::{
-    color::Color,
-    matrix::Matrix,
-    patterns::{Checkers, Gradient, Ring},
-};
 
 fn main() {
     //if let Err(e) = drawing::projectile::launch_projecticle() {

@@ -5,7 +5,7 @@ use {
             color::{Color, BLACK, WHITE},
             material::Material,
             matrix::Matrix,
-            patterns::Checkers,
+            pattern::Pattern,
             plane::Plane,
             point_light::PointLight,
             shape::Shape,
@@ -23,29 +23,39 @@ pub fn spheres() -> Result<(), std::io::Error> {
     let mut material = Material::default();
     material.set_color(Color::new(1.0, 0.9, 0.9));
     material.set_specular(0.0);
-    material.set_pattern(Checkers::new(BLACK, WHITE, None).into());
+    material.set_pattern(Pattern::checkers(BLACK, WHITE, None));
     material.set_reflective(0.5);
     let mut floor = Plane::default();
-    floor.set_material(material.clone());
+    floor.set_material(material);
 
     // The wall on the left has the same scale and color as the floor, but is also rotated and translated into place.
+    let mut material = Material::default();
+    material.set_color(Color::new(1.0, 0.9, 0.9));
+    material.set_specular(0.0);
+    material.set_pattern(Pattern::checkers(BLACK, WHITE, None));
+    material.set_reflective(0.5);
     let left_wall = Sphere::new(
         Point::default(),
         Matrix::<4>::translation(0.0, 0.0, 5.0)
             * Matrix::<4>::rotation_y(-PI / 4.0)
             * Matrix::<4>::rotation_x(PI / 2.0)
             * Matrix::<4>::scaling(10.0, 0.01, 10.0),
-        material.clone(),
+        material,
     );
 
     // The wall on the right side is identical to the left wall, but is rotated the opposite direction in y.
+    let mut material = Material::default();
+    material.set_color(Color::new(1.0, 0.9, 0.9));
+    material.set_specular(0.0);
+    material.set_pattern(Pattern::checkers(BLACK, WHITE, None));
+    material.set_reflective(0.5);
     let right_wall = Sphere::new(
         Point::default(),
         Matrix::<4>::translation(0.0, 0.0, 5.0)
             * Matrix::<4>::rotation_y(PI / 4.0)
             * Matrix::<4>::rotation_x(PI / 2.0)
             * Matrix::<4>::scaling(10.0, 0.01, 10.0),
-        material.clone(),
+        material,
     );
 
     // The large sphere in the middle is a unit sphere, translated upward slightly and colored green.

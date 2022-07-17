@@ -311,9 +311,7 @@ impl Matrix<4> {
     ///     2. Divide each cofactor by the determinant of the matrix
     ///     3. Return the resulting matrix
     pub fn inverse(&self) -> Result<Self, MatrixError<4>> {
-        if !(self.is_invertible()) {
-            Err(MatrixError::NotInvertible(self))
-        } else {
+        if self.is_invertible() {
             Ok(Self([
                 [
                     self.cofactor([0, 0]) / self.determinant(),
@@ -340,6 +338,8 @@ impl Matrix<4> {
                     self.cofactor([3, 3]) / self.determinant(),
                 ],
             ]))
+        } else {
+            Err(MatrixError::NotInvertible(self))
         }
     }
 

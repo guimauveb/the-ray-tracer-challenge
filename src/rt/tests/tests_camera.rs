@@ -21,7 +21,6 @@ fn constructing_a_camera() {
 #[test]
 fn the_pixel_size_for_a_horizontal_canvas() {
     let c = Camera::new(200.0, 125.0, PI / 2.0, None);
-    println!("c: {}", c.pixel_size());
     assert!(c.pixel_size().approx_eq(0.01));
 }
 

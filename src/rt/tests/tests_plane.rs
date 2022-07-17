@@ -46,7 +46,7 @@ fn a_ray_intersecting_a_plane_from_above() {
     let xs = r.intersect(&p);
     if let Some(xs) = xs {
         assert_eq!(xs[0].t(), 1.0);
-        assert_eq!(xs[0].object(), &p);
+        assert!(std::ptr::eq(xs[0].object(), &p));
     } else {
         panic!("No intersections!");
     }

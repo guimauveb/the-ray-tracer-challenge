@@ -6,16 +6,22 @@ use {
 /// Since a plane has no curvature, the normal is always a `Vector { 0.0, 1.0, 0.0 }`.
 const PLANE_NORMAL: Vector = Vector::new(0.0, 1.0, 0.0);
 
-#[derive(PartialEq, Debug)]
+#[derive(Debug)]
 pub struct Plane {
     transform: Matrix<4>,
     material: Material,
 }
 
+impl PartialEq for Plane {
+    fn eq(&self, rhs: &Self) -> bool {
+        std::ptr::eq(self, rhs)
+    }
+}
+
 impl Default for Plane {
     fn default() -> Self {
         Self {
-            transform: Matrix::<4>::identity(),
+            transform: Matrix::identity(),
             material: Material::default(),
         }
     }

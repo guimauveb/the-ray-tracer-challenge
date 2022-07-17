@@ -48,7 +48,7 @@ pub fn launch_projecticle() -> Result<(), std::io::Error> {
         canvas.write_pixel(
             projectile.position.x() as usize,
             canvas.height() - (projectile.position.y() as usize),
-            projectile_color.clone(),
+            projectile_color,
         );
         projectile.tick(&environment);
     }

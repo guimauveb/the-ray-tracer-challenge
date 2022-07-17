@@ -6,7 +6,7 @@ use {
 pub const BLACK: Color = Color::black();
 pub const WHITE: Color = Color::white();
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct Color {
     red: f64,
     green: f64,
