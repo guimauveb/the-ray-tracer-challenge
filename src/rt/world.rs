@@ -146,8 +146,15 @@ impl World {
             self.is_shadowed(computations.over_point()),
         );
         let reflected = self.reflected_color(computations, remaining_calls);
+        let refracted = self.refracted_color(computations, remaining_calls);
 
-        surface + reflected
+        let material = computations.intersection().object().material();
+        if material.reflective() > 0.0 && material.transparency() > 0.0 {
+            let reflectance = computations.schlick();
+            surface + reflected * reflectance + refracted * (1.0 - reflectance)
+        } else {
+            surface + reflected + refracted
+        }
     }
 
     pub fn is_shadowed(&self, point: &Point) -> bool {

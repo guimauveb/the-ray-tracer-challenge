@@ -85,4 +85,24 @@ impl<'object> Computation<'object> {
     pub const fn n2(&self) -> f64 {
         self.refractive_indices.1
     }
+
+    /// See [Reflections and refractions in Ray Tracing, Bram de Greve](https://graphics.stanford.edu/courses/cs148-10-summer/docs/2006--degreve--reflection_refraction.pdf)
+    pub fn schlick(&self) -> f64 {
+        // Find the cosine of the angle between the eye and normal vectors.
+        let mut cos = self.eye_vector.dot(&self.normal_vector);
+        // Total internal reflection can only occur if n1 > n2
+        if self.n1() > self.n2() {
+            let n = self.n1() / self.n2();
+            let sin2_t = n.powi(2) * (1.0 - cos.powi(2));
+            if sin2_t > 1.0 {
+                return 1.0;
+            }
+            // Compute cos(theta_t) using trig identity
+            let cos_t = (1.0 - sin2_t).sqrt();
+            // When n1 > n2, use cos(theta_t) instead
+            cos = cos_t;
+        }
+        let r0 = ((self.n1() - self.n2()) / (self.n1() + self.n2())).powi(2);
+        r0 + (1.0 - r0) * (1.0 - cos).powi(5)
+    }
 }

@@ -371,3 +371,60 @@ fn the_refracted_color_with_a_refracted_ray() {
     // Values computed by this implementation
     assert_eq!(c, Color::new(0.0, 0.9988745506795582, 0.04721898034382347));
 }
+
+#[test]
+fn shade_hit_with_a_transparent_material() {
+    let mut w = World::default();
+    let mut floor = Plane::default();
+    floor.set_transform(Matrix::translation(0.0, -1.0, 0.0));
+    floor.material_mut().set_transparency(0.5);
+    floor.material_mut().set_refractive_index(1.5);
+    w.add_object(floor.into());
+
+    let mut ball = Sphere::default();
+    ball.material_mut().set_color(Color::new(1.0, 0.0, 0.0));
+    ball.material_mut().set_ambient(0.5);
+    ball.set_transform(Matrix::translation(0.0, -3.5, -0.5));
+    w.add_object(ball.into());
+
+    let r = Ray::new(
+        Point::new(0.0, 0.0, -3.0),
+        Vector::new(0.0, -2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0),
+    );
+    let xs = Intersections::new(vec![Intersection::new(
+        2.0_f64.sqrt(),
+        &w.objects().unwrap()[2],
+    )]);
+    let comps = xs[0].prepare_computations(&r, Some(&xs));
+    let color = w.shade_hit(&comps, 5);
+    assert_eq!(color, Color::new(0.93642, 0.68642, 0.68642));
+}
+
+#[test]
+fn shade_hit_with_a_reflective_transparent_material() {
+    let mut w = World::default();
+    let r = Ray::new(
+        Point::new(0.0, 0.0, -3.0),
+        Vector::new(0.0, -2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0),
+    );
+    let mut floor = Plane::default();
+    floor.set_transform(Matrix::translation(0.0, -1.0, 0.0));
+    floor.material_mut().set_reflective(0.5);
+    floor.material_mut().set_transparency(0.5);
+    floor.material_mut().set_refractive_index(1.5);
+    w.add_object(floor.into());
+
+    let mut ball = Sphere::default();
+    ball.material_mut().set_color(Color::new(1.0, 0.0, 0.0));
+    ball.material_mut().set_ambient(0.5);
+    ball.set_transform(Matrix::translation(0.0, -3.5, -0.5));
+    w.add_object(ball.into());
+
+    let xs = Intersections::new(vec![Intersection::new(
+        2.0_f64.sqrt(),
+        &w.objects().unwrap()[2],
+    )]);
+    let comps = xs[0].prepare_computations(&r, Some(&xs));
+    let color = w.shade_hit(&comps, 5);
+    assert_eq!(color, Color::new(0.93391, 0.69643, 0.69243));
+}

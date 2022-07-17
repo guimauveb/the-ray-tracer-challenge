@@ -1,5 +1,6 @@
 #[cfg(test)]
 use crate::{
+    approx_eq::ApproxEq,
     float::epsilon::EPSILON,
     rt::{
         computation::Computation,
@@ -174,4 +175,43 @@ fn the_under_point_is_offset_below_the_surface() {
     let comps = xs[0].prepare_computations(&r, Some(&xs));
     assert!(comps.under_point().z() > EPSILON / 2.0);
     assert!(comps.point().z() < comps.under_point().z());
+}
+
+#[test]
+fn the_schlick_approximation_under_total_internal_reflection() {
+    let shape = Object::Sphere(Sphere::glassy());
+    let r = Ray::new(
+        Point::new(0.0, 0.0, -2.0_f64 / 2.0),
+        Vector::new(0.0, 1.0, 0.0),
+    );
+    let xs = Intersections::new(vec![
+        Intersection::new(-2.0_f64.sqrt() / 2.0, &shape),
+        Intersection::new(2.0_f64.sqrt() / 2.0, &shape),
+    ]);
+    let comps = xs[1].prepare_computations(&r, Some(&xs));
+    let reflectance = comps.schlick();
+    assert!(reflectance.approx_eq(1.0));
+}
+
+#[test]
+fn the_schlick_approximation_with_a_perpendicular_viewing_angle() {
+    let shape = Object::Sphere(Sphere::glassy());
+    let r = Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 1.0, 0.0));
+    let xs = Intersections::new(vec![
+        Intersection::new(-1.0, &shape),
+        Intersection::new(1.0, &shape),
+    ]);
+    let comps = xs[1].prepare_computations(&r, Some(&xs));
+    let reflectance = comps.schlick();
+    assert!(reflectance.approx_eq(0.04));
+}
+
+#[test]
+fn the_schlick_approximation_with_small_angle_and_n2_gt_n1() {
+    let shape = Object::Sphere(Sphere::glassy());
+    let r = Ray::new(Point::new(0.0, 0.99, -2.0), Vector::new(0.0, 0.0, 1.0));
+    let xs = Intersections::new(vec![Intersection::new(1.8589, &shape)]);
+    let comps = xs[0].prepare_computations(&r, Some(&xs));
+    let reflectance = comps.schlick();
+    assert!(reflectance.approx_eq(0.48873));
 }
