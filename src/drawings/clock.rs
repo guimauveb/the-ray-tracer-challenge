@@ -15,7 +15,7 @@ pub fn draw_clock() -> Result<(), std::io::Error> {
     // 12 hours
     for i in 0..12 {
         // 30° == (PI/6.0)
-        let rotation = Matrix::<4>::rotation_z(i as f64 * PI / 6.0);
+        let rotation = Matrix::<4>::rotation_z(f64::from(i) * PI / 6.0);
         let rotated_point = &rotation * &point;
         canvas.write_pixel(
             (origin.x() + rotated_point.x()) as usize,

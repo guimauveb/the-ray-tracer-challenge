@@ -22,4 +22,6 @@
 
 #### ✅ Chapter 10 - Patterns
 
-#### 👨🏼‍💻 Chapter 11 - Reflection and Refraction
+#### ✅ Chapter 11 - Reflection and Refraction
+
+#### 👨🏼‍💻 Chapter 12 - Cubes
